@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="card mt-4 mx-5" style="width: 18rem;">
+    <img src="{% static 'pages/images/social-media.jpg' %}" class="card-img-top" alt="...">
+    <div class="card-body">
+      <h5 class="card-title">Social Media Accounts</h5>
+      <p class="card-text">
+        <form id="editForm" method="post" action="{% url 'edit' %}">
+            {%csrf_token%}
+        <div class="sma">
+            <img src="{% static '../static/pages/images/fb.jpeg' %}" width="20" height="20">
+            <label>{{acc.1 | default:'Facebook'}}</label>
+        </div>
+        <div class="sma">
+            <img src="{% static '../static/pages/images/ins.jpeg' %}" width="20" height="20">
+            <label>{{acc.2 | default:'Instagram'}}</label>
+        </div>
+        <div class="sma">
+            <img src="{% static '../static/pages/images/in.jpeg' %}" width="20" height="20">
+            <label>{{acc.3 | default:'LinkedIn'}}</label>
+        </div>
+        <div class="sma">
+            <img src="{% static '../static/pages/images/git.jpeg' %}" width="20" height="20">
+            <label>{{acc.4 | default:'GitHub'}}</label>
+        </div> 
+      </p>
+      <button type="submit" class="btn btn-primary d-block"><a href='{% url 'edit' %}' style='color:white;'>Edit</a></button>
+    </div>
+  {% endblock %}

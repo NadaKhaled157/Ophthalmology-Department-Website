@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+{%include 'pages/navbar.html'%}
+<link rel="stylesheet"  href="{% static 'pages/profile.css' %}">
+
+<div class="d-flex">
+  {%include 'pages/left.html'%}
+
+  <div class='d-flex flex-column'></div>
+    {%include 'pages/middle.html'%}
+  </div>
+
+{%include 'pages/right.html'%}
+  </div>
+  </div>
+
+</div>
+{% comment %} <div>{% include 'pages/sidenav.html' %}</div> {% endcomment %}
+{% endblock %}

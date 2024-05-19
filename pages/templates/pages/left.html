@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="card mt-4 mx-3" style="width: 18rem;">
+    <img src="/media/{{ img_path }}" class="card-img-top" alt="Profile Image">
+    
+    <div class="card-body">
+        <h5 class="card-title">{{loginfo.1}} {{loginfo.2}}</h5>
+        <p style='text-align: center; font-weight:bold;'>Admin</p>
+        <p class="card-text">Member since May, 2024</p>
+    </div>
+
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">🚚 Orders: 40</li>
+      <li class="list-group-item">🗯️ Posts: 30</li>
+      <li class="list-group-item">📋 Tasks Done: 15</li>
+    </ul>
+
+    <div class="card-body">
+      <button class="btn btn-primary">Send Message</button>
+    </div>
+
+</div>
+
+{% endblock %}

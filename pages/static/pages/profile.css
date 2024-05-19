@@ -1,0 +1,220 @@
+.final {
+    width: 300px;
+    height: 150px;
+    margin-left: 1000px;
+    margin-top: 50px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 5px 5px 1px grey;
+   }
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+.container {
+    max-width: 600px;
+    margin: 50px auto;
+    margin-left: 280px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 5px 5px 1px grey;
+  }
+  
+  
+.profile-info {
+    text-align: left;
+  }
+.profi{
+  margin-bottom: 20px;
+  }
+  
+.tabs {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+  }
+  
+.tab {
+    padding: 10px 20px;
+    margin: 0 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+  }
+  
+.tab.active {
+    background-color: #e0e0e0;
+  }
+  
+.tab-content {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    display: none;
+  }
+  
+.tab-content.active {
+    display: block;
+  }
+  
+.activity-item {
+    background-color: #d36161; /* Background color for activity items */
+    padding: 5px 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+  }
+.chat-item {
+    background-color: #1cc45c; /* Background color for chat items */
+    padding: 5px 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+.chat-content {
+    display: none;
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #2b2f75;
+    border-radius: 5px;
+  }
+
+
+/* navbar */
+.navbar{
+    background-color: #fff;
+    color: #333;
+    box-shadow: 0px 4px 8px 0px grey;
+    height: 70px;
+  }
+.title {
+    font-family: 'Dancing Script';
+    
+    position: absolute;
+    right: 45%;
+  }
+
+body {
+    background-color: #e8f5ff;
+    font-family: Arial;
+    overflow: hidden;
+  }
+
+/* Side Nav */
+.sidenav {
+    background-color: #fff;
+    color: #333;
+    height: 70%;
+    padding-top: 20px;
+    position: absolute;
+    width: 250px;
+    box-shadow: 0px 5px 5px 1px grey;
+  }
+.profile {
+    margin-bottom: 20px;
+    margin-top: -12px;
+    text-align: center;
+  }
+.name {
+    font-size: 20px;
+    text-align: left;
+    margin-bottom: 30px;
+    margin-left: 20px;
+    font-weight: bold;
+    padding-top: 20px;
+  }
+.profile img {
+    border-radius: 50%;
+    box-shadow: 0px 0px 5px 1px grey;
+  }
+.joindate {
+    font-size: 13px;
+    padding-top: 20px;
+  }
+.admin{
+    background-color: rgb(25, 180, 82);
+    width: 60px;
+    height: 20px;
+    color: white;
+    text-align: center;
+    margin-left: 85px;
+    margin-top: 20px;
+    border-radius: 3px;
+    box-shadow: 0px 0px 5px 1px grey;
+  }
+/* .info{
+    box-shadow: -9px 0px 5px 1px grey;
+    width: 250px;
+    height: 110px;
+    margin-top: 20px;
+    border: #5d5757;
+  } */
+.order{
+    width: 250px;
+    margin-top: 20px;
+    margin-left: 0px;
+    margin-right: 5px;
+  }
+.order img{
+    margin-left: -220px;
+  }
+.o{
+    margin-left: -100px;
+    margin-top: -19px;
+  }
+.posts{
+    width: 250px;
+    margin-top: 20px;
+    margin-left: 0px;
+    margin-right: 5px;
+  }
+.posts img{
+    margin-left: -220px;
+  }
+.p{
+    margin-left: -100px;
+    margin-top: -18px;
+  }
+.tasks{
+    width: 250px;
+    margin-top: 20px;
+    margin-left: 0px;
+    margin-right: 5px;
+  }
+.tasks img{
+    margin-left: -220px;
+  }
+.t{
+    margin-left: -100px;
+    margin-top: -18px;
+  }
+.send{
+    background-color: rgb(25, 180, 82); /* Green */
+    border: none;
+    color: white;
+    width: 150px;
+    height: 40px;
+    text-align: center;
+    margin-left: 3px;
+    margin-top: 20px;
+    border-radius: 3px;
+    box-shadow: 0px 0px 5px 1px grey;
+  }
+.message :hover{
+    cursor: pointer;
+    background-color: rgb(117, 132, 122);
+  }
+
+  /* IS USED!!!!!!!!!!!!!!!!
+.resize-image {
+    width: 100px;
+    height: 100px;
+} */

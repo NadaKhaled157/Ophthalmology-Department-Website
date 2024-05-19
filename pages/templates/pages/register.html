@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_title  %}
+Registeration Page
+{% endblock %}
+
+{% block css_style  %}
+<link rel="stylesheet" href="static\bootstrap.min.css">
+<style>
+  .custom-row {
+    margin-bottom: 70px;
+  }
+
+h1{
+    text-align: center;
+    padding-bottom: 20px;
+    padding-top: 30px;
+    color: #006b3c;
+}
+
+</style>
+
+{% comment %} <link rel="stylesheet" href="pages\static\pages\login.css"> {% endcomment %}
+{% endblock %}
+
+{% block content %}
+<div class="card mb-3" style="max-width: 100%; width: 100%; height: 100vh;">
+  <div class="row g-0">
+    <div class="col-md-4 d-flex align-items-center">
+      <img src="{% static 'images/team-logo.png'%}" class="img-fluid rounded-start" alt="Team Logo">
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <h1 class="card-title">Welcome To Registeration Page</h1>
+
+        <form action="/" method="POST" enctype='multipart/form-data'>
+            {%csrf_token%}
+    <div class="custom-row mb-3">
+            <input type="text" class="form-control" name="email" placeholder="Email" aria-label="Email" aria-describedby="basic-addon1" required>
+    </div>
+   <div class="custom-row mb-3">
+      <input type="text" class="form-control" name="first_name"  placeholder="First name" aria-label="First name" required>
+      </div>
+      <div class="custom-row mb-3">
+        <input type="text" class="form-control" name="last_name" placeholder="Last name" aria-label="Last name" required>
+      </div>
+    <div class="custom-row mb-3">
+            <input type="password" class="form-control" name="password" placeholder="Password" required>
+        </div>
+
+    <div class="custom-row mb-3">
+        <input type="password" class="form-control" name="confirm-password" placeholder="Confirm Password" required>
+        </div>
+    <div class="custom-row mb-3">
+            <input type="text" class="form-control" name="address" placeholder="Address" required>
+        </div>
+    <div class="custom-row mb-3">
+            <input type="number" class="form-control" name="number" placeholder="Phone Number" required>
+        </div>
+
+<fieldset class="custom-row mb-3">
+   <label class="text">Gender</label>
+   <div class="col-lg-10">
+     <div class="form-check">
+       <input class="form-check-input" type="radio" name="gender" id="male" value="option1">
+       <label class="form-check-label" for="Male">
+         Male
+       </label>
+     </div>
+     <div class="form-check">
+       <input class="form-check-input" type="radio" name="gender" id="female" value="option2">
+       <label class="form-check-label" for="Female">
+         Female
+       </label>
+     </div>
+   </div>
+ </fieldset>
+ <div class="mb-3">
+  <label for="formFile" class="form-label">Choose a Profile Image</label>
+  <input class="form-control" type="file" id="formFile" name="img">
+</div>
+  <input type="submit" class="btn btn-success d-block mx-auto" style="width:100%;" value="Register">
+        </form>
+        <h6 class="mt-2">Already have an account? <a href="{% url "login-page" %}">Login Now!</a></h6>
+    </div>
+</div>
+</div>
+</div>
+
+{% comment %} Bootstrap {% endcomment %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="d-flex flex-column">
+<div class="card mx-auto mt-4 col-sm-6" style="width: 35rem;">
+    <div class ="containter d-flex justify-content-center"<a href="Homepage.php"><img src="{% static 'pages/images/social-media.jpg' %}" class="card-img-top mx-auto" alt="social media" style="width:70%"></a></div>
+    <div class="card-body">
+        <h2 class="text-center" style="color:rgb(21, 115, 71)"><strong>Social Media Accounts</strong></h2><br>
+        <form id="editForm" method="POST" action="{% url 'edit' %}">
+            {%csrf_token%}
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" name="fb" placeholder="Facebook" aria-label="fb" aria-describedby="basic-addon1">
+        </div>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" name="ins" placeholder="Instagram" aria-label="fb" aria-describedby="basic-addon1">
+        </div>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" name="ln" placeholder="LinkedIn" aria-label="ln" aria-describedby="basic-addon1">
+        </div>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" name="git" placeholder="GitHub" aria-label="git" aria-describedby="basic-addon1">
+        </div>
+            <input type="submit" class="btn btn-success d-block mx-auto" style="width:100%;" value="SUBMIT">
+        </form>
+    </div>
+</div>
+</div>
+{%endblock%}

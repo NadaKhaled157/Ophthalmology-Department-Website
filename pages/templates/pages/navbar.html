@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<nav class="navbar bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">
+        <img src="{% static 'images/team-logo.png' %}" alt="Logo" width="30" height="24" class="d-inline-block align-text-top h-50">
+        {{loginfo.1}}'s Profile Page
+      </a>
+      <button class="btn btn-outline-success" type="submit"><a href="{% url 'login-page' %}">Logout</a></button>
+    </div>
+    
+  </nav>
+
+  {% endblock %}

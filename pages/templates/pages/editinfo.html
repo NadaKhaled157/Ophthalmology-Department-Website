@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="d-flex flex-column">
+<div class="card mx-auto mt-4 col-sm-6" style="width: 35rem;">
+    <div class ="containter d-flex justify-content-center"<a href="Homepage.php"><img src="{% static 'pages/images/social-media.jpg' %}" class="card-img-top mx-auto" alt="social media" style="width:70%"></a></div>
+    <div class="card-body">
+        <h2 class="text-center" style="color:rgb(21, 115, 71)"><strong>Edit Your Info</strong></h2><br>
+        {% comment %} <form id="editForm" method="POST" action="{% url 'edit' %}"> {% endcomment %}
+        <form action="{% url 'edit' %}" method="POST" enctype='multipart/form-data' id="editForm">
+            {%csrf_token%}
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" name="first" placeholder="First Name" aria-label="fb" aria-describedby="basic-addon1">
+        </div>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" name="last" placeholder="Last Name" aria-label="fb" aria-describedby="basic-addon1">
+        </div>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" name="email" placeholder="Email" aria-label="in" aria-describedby="basic-addon1">
+        </div>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" name="phone" placeholder="Phone Number" aria-label="git" aria-describedby="basic-addon1">
+        </div>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" name="add" placeholder="Address" aria-label="git" aria-describedby="basic-addon1">
+        </div>
+        <div class="mb-3">
+            <label for="formFile" class="form-label">Change Profile Photo</label>
+            <input class="form-control" type="file" id="formFile" name="img">
+        </div>
+            <input type="submit" class="btn btn-success d-block mx-auto" style="width:100%;" value="Save Changes">
+        </form>
+    </div>
+</div>
+</div>
+{%endblock%}

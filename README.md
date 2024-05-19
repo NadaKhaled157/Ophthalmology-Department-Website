@@ -1,2 +1,2 @@
-# Ophthalmology-Department
-A website for ophthalmology depatment in a hospital.
+# MySufferingQL
+A web application project using Django 
