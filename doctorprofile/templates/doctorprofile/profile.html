@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Profile</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Doctor Profile</h1>
+
+        <!-- Doctor Info -->
+        <div class="card my-4">
+            <div class="card-header">
+                Doctor Information
+            </div>
+            <div class="card-body">
+                    <p>Name: Dr. {{ doctor.1 }} {{ doctor.2}}</p>
+                    <p>Specialization: {{ doctor.4 }}</p>
+                    <p>Email: {{ doctor.5 }}</p>
+                <!-- Edit Doctor Info Button -->
+                <a href="#" class="btn btn-primary">Edit Info</a>
+            </div>
+        </div>
+
+        <!-- Weekly Schedule -->
+        <div class="card my-4">
+            <div class="card-header">
+                Weekly Schedule
+            </div>
+            <div class="card-body">
+                <!-- Display Weekly Schedule -->
+                    <p>Available at:
+                        {% for day, timeslot in availability %}
+                            {{ day }} from {{ timeslot }}
+                            {% if not forloop.last %},{% endif %}
+                        {% endfor %}
+                    </p>
+                    
+                <!-- Edit Weekly Schedule Button -->
+                <a href="#" class="btn btn-primary">Edit Schedule</a>
+            </div>
+        </div>
+
+        <!-- Appointments -->
+        <div class="card my-4">
+            <div class="card-header">
+                Appointments
+            </div>
+            <div class="card-body">
+                <!-- Display Appointments -->
+                <ul>
+                    <li>Patient: Alice Smith | Date: 2024-05-20 | Time: 10:00 AM</li>
+                    <li>Patient: Bob Johnson | Date: 2024-05-21 | Time: 11:00 AM</li>
+                </ul>
+                <!-- Cancel Appointment Button -->
+                <a href="#" class="btn btn-danger">Cancel Appointment</a>
+            </div>
+        </div>
+
+        <!-- Patients' Health Records -->
+        <div class="card my-4">
+            <div class="card-header">
+                Patients' Health Records
+            </div>
+            <div class="card-body">
+                <!-- Display Patients' Health Records -->
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Patient Name</th>
+                            <th>Condition</th>
+                            <th>Treatment</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Alice Smith</td>
+                            <td>High Blood Pressure</td>
+                            <td>Medication</td>
+                        </tr>
+                        <tr>
+                            <td>Bob Johnson</td>
+                            <td>Diabetes</td>
+                            <td>Insulin</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS (Optional for Collapse/Modal functionality) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

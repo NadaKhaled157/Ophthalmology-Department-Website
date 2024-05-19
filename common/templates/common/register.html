@@ -6,7 +6,7 @@ Registeration Page
 {% endblock %}
 
 {% block css_style  %}
-<link rel="stylesheet" href="static\bootstrap.min.css">
+{% comment %} <link rel="stylesheet" href="static\bootstrap.min.css"> {% endcomment %}
 <style>
   .custom-row {
     margin-bottom: 70px;
@@ -35,6 +35,7 @@ h1{
         <h1 class="card-title">Welcome To Registeration Page</h1>
 
         <form action="/" method="POST" enctype='multipart/form-data'>
+          {% comment %} ADD EXTRA INFO FROM PATIENT TABLE {% endcomment %}
             {%csrf_token%}
     <div class="custom-row mb-3">
             <input type="text" class="form-control" name="email" placeholder="Email" aria-label="Email" aria-describedby="basic-addon1" required>
