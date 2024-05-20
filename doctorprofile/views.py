@@ -40,6 +40,29 @@ def doctor_profile(request):
             availability = cursor.fetchall()
             print(doctor)
             print(availability)
-            return render(request, 'profile.html', {'doctor': doctor, 'availability': availability})
+            return render(request, 'doctorprofile/profile.html', {'doctor': doctor, 'availability': availability})
         else:
             return HttpResponse("No doctors found in the database.")
+
+def forms(request):
+    did = 17 ##Get DR ID from session##
+    if request.method == 'POST':
+        response = request.POST.get('response')
+        form_num= request.GET.get('modal_id')
+        with connection.cursor() as cursor:
+            cursor.execute("INSERT INTO form (response) VALUES (%s) WHERE fnum = %s", [response, form_num])
+        return
+    with connection.cursor() as cursor:
+
+        cursor.execute("""SELECT p.p_fname, p.p_lname, f.fnum, f.request,f.response
+                        FROM patient AS p
+                        INNER JOIN form AS f ON p.pid = f.pid;
+                    """)
+        form_data = cursor.fetchall()
+    return render(request,'doctorprofile/forms.html',{'forms':form_data})
+
+
+#I TEST SOME PRINTS HERE DO NOT DELETE
+def test (request):
+    password = make_password('docpass1')
+    return HttpResponse(password)

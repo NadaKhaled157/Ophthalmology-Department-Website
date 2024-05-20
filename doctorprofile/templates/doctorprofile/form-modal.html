@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<!-- Modal -->
+<div class="modal fade" id="modal{{ modal_id }}" tabindex="-1" aria-labelledby="exampleModalLabel{{ modal_id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fs-5" id="exampleModalLabel{{ modal_id }}">Respond to {{ p_fname }} {{ p_lname }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'doctorprofile:forms' %}" method="post">
+                    {%csrf_token%}
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Recipient:</label>
+                        <input type="text" class="form-control" id="recipient-name" value="{{ p_fname }} {{ p_lname }}" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Request:</label>
+                        <p>Hi</p>
+                    </div>
+                    <div class="mb-3">
+
+                        <label for="message-text" class="col-form-label">Message:</label>
+                        <textarea class="form-control" id="response?modal_id"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <input type="submit" class="btn btn-success" value="Send Response">
+            </div>
+        </div>
+    </form>
+    </div>
+</div>
+{% endblock %}

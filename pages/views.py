@@ -110,7 +110,7 @@ def authenticate_user(request):
             #                                 </div>""")
             wrong_email = "This user does not exist"
             return render(request, "pages/login.html",{'wrong': wrong_email})
-
+    return render(request, "pages/login.html")
 
 # def login_success(request,email):
     

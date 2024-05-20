@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <img src="{% static 'images/team-logo.png' %}" alt=".." width="30" height="24" class="d-inline-block align-text-top">
+            Doctor Profile
+          </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <a class="nav-link active" aria-current="page" href="#">Home</a>
+          <a class="nav-link" href="#">Appointments</a>
+          <a class="nav-link" href="#">Patient Records</a>
+          <a class="nav-link" href="{% url 'doctorprofile:forms' %}">Forms</a>
+          
+        </div>
+      </div>
+    </div>
+  </nav>
+
+{%endblock%}

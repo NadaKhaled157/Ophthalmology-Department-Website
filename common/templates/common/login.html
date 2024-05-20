@@ -7,12 +7,26 @@ Login Page
 
 {% block content %}
 
-<div class="card mx-auto mt-4 col-sm-6" style="width: 35rem;">
+<div class="card mx-auto mt-3 col-sm-6" style="width: 35rem;">
     <div class ="containter d-flex justify-content-center"<a href="Homepage.php"><img src="{% static 'images/team-logo.png' %}" class="card-img-top mx-auto" alt="Team Logo" style="width:80%"></a></div>
     <div class="card-body">
         <h2 class="text-center" style="color:rgb(21, 115, 71)"><strong>Welcome Back!</strong></h2><br>
         <form action="{% url 'authenticate_user' %}" method="post">
             {%csrf_token%}
+        <div class="form-check d-flex justify-content-center">
+            <div class="px-4 py-2">
+                <input class="form-check-input" type="radio" name="role" id="flexRadioDefault1" value="doctor">
+                <label class="form-check-label" for="flexRadioDefault1">
+                    Doctor
+                </label>
+            </div>
+            <div class="px-4 py-2">
+                <input class="form-check-input" type="radio" name="role" id="flexRadioDefault2" value="patient">
+                <label class="form-check-label" for="flexRadioDefault2">
+                    Patient
+                </label>
+            </div>
+        </div>
         <div class="input-group mb-3">
             <input type="text" class="form-control" name="email" placeholder="Email" aria-label="Email" aria-describedby="basic-addon1">
         </div>

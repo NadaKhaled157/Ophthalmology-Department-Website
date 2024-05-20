@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+{% include 'doctorprofile/navbar.html' %}
+<div class="container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Form Number</th>
+                <th scope="col">Patient Name</th>
+                <th scope="col">Form Status</th>
+                <th scope="col">Handle</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for form in forms %}
+            <tr>
+                <th scope="row">{{ form.2 }}</th>
+                <td>{{ form.0 }} {{ form.1 }}</td>
+                <td>Otto</td>
+                <td>
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal{{ form.2 }}">
+                        Respond
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% for form in forms %}
+    {% include 'doctorprofile/form-modal.html' with modal_id=form.2 p_fname=form.0 p_lname=form.1 %}
+{% endfor %}
+{% endblock %}

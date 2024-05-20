@@ -58,10 +58,11 @@ def index(request):
             notmatch = "Passwords didn't match!"
             return render(request, "common/register.html", {'match': notmatch})
             # return HttpResponse('''Password is incorrect.''')
-    return render(request, "common/register.html")
+    else:
+        return render(request, "common/register.html")
 
-def login(request):
-    return render(request, "common/login.html")
+# def login(request):
+#     return render(request, "common/login.html")
 
 def authenticate_user(request):
     # Clearing session and cookies
@@ -71,27 +72,33 @@ def authenticate_user(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
-
+        role = request.POST.get('role')
         with connection.cursor() as cursor:
             ##Add if condition of radio button (is user a patient or doctor?)##
-            cursor.execute("SELECT * FROM useraccount WHERE email = %s", [email])
+            cursor.execute(f"SELECT * FROM {role} WHERE email = %s", [email])
             ##
             user = cursor.fetchone()
-
         if user:
             ##Add if condition of radio button (is user a patient or doctor?)##
             ##and get password index from the different tables to validate password##
             hashed_password = user[4]
+            # return HttpResponse(check_password(password, hashed_password))
             ##
             if check_password(password, hashed_password):
-                request.session['id']=[user[0]]
-                return redirect('profile')
+            # if (password==hashed_password):
+                request.session['id']=[user[0]] ##What is this??##
+                # request.session['id']= user[2]
+                if role == "doctor":
+                    return redirect(reverse('doctorprofile:doctor-page'))
+                if role == "patient":
+                    return redirect(reverse('patientprofile:patient-page')) ##Ensure patient app and view name match##
             else:
                 wrong_pass = "Wrong Password"
-                redirect('login-page')
+                redirect('authenticate_user')
                 return render(request, "common/login.html",{'wrong': wrong_pass})
 
         else:
             wrong_email = "This user does not exist"
             return render(request, "common/login.html",{'wrong': wrong_email})
+    return render(request, "common/login.html")
 
