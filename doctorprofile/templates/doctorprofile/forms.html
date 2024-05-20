@@ -2,7 +2,9 @@
 {% load static %}
 {% block content %}
 {% include 'doctorprofile/navbar.html' %}
+
 <div class="container">
+    <h1 class="mx-auto my-1">Answer Patient Inquiries</h1>
     <table class="table">
         <thead>
             <tr>
@@ -15,22 +17,44 @@
         <tbody>
             {% for form in forms %}
             <tr>
-                <th scope="row">{{ form.2 }}</th>
-                <td>{{ form.0 }} {{ form.1 }}</td>
-                <td>Otto</td>
+                <th scope="row">{{ form.0 }}</th>
+                <td>{{ form.1 }} {{ form.2 }}</td>
+                {% comment %} {%if form.4==%} {% endcomment %}
+                <td>{{form.5}}</td>
                 <td>
                     <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal{{ form.2 }}">
+                    <div class='d-flex'>
+                    <button type="button" class="btn btn-primary mx-1" data-bs-toggle="modal" data-bs-target="#modal{{ form.0 }}">
+                        {%if form.5 == "Pending"%}
                         Respond
+                        {%elif form.5 == "Answered"%}
+                        Edit Response
+                        {%endif%}
                     </button>
+                    <form action="{% url 'doctorprofile:forms' %}" method='POST'>
+                        <input type="hidden" name="deleted_form" value="{{ form.0 }}">
+                        {%csrf_token%}
+                    <input type="submit" class="btn btn-danger mx-1" value="Delete">
+                    </form>
+                </div>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    {% comment %} <form action="{% url 'doctorprofile:forms' %}" method='POST'>
+        {%csrf_token%}
+        {%if clicked_answered%}
+        <input type="hidden" name="answered_forms" value=False>
+        <input type="submit" class="btn btn-primary d-block" value="View Pending Forms">
+        {%else%}
+        <input type="hidden" name="answered_forms" value=True>
+        <input type="submit" class="btn btn-primary d-block" value="View Answered Forms">
+        {%endif%}
+    </form> {% endcomment %}
 </div>
 
 {% for form in forms %}
-    {% include 'doctorprofile/form-modal.html' with modal_id=form.2 p_fname=form.0 p_lname=form.1 %}
+    {% include 'doctorprofile/form-modal.html' with modal_id=form.0 p_fname=form.1 p_lname=form.2 inquiry=form.3 %}
 {% endfor %}
 {% endblock %}

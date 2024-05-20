@@ -6,33 +6,44 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title fs-5" id="exampleModalLabel{{ modal_id }}">Respond to {{ p_fname }} {{ p_lname }}</h5>
+                <h5 class="modal-title fs-5" id="exampleModalLabel{{ modal_id }}">Respond to Patient</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <form action="{% url 'doctorprofile:forms' %}" method="POST">
+                {%csrf_token%}
             <div class="modal-body">
-                <form action="{% url 'doctorprofile:forms' %}" method="post">
-                    {%csrf_token%}
+                <div class="mb-3">
+                    <label for="modal_id" class="col-form-label"><strong>Form Number:</strong></label>
+                    <input type="text" class="form-control" id="modal_id" name="modal_id" value="{{ modal_id }}" readonly>
+                </div>
+                <div class="mb-3">
+                    <label for="recipient-name" class="col-form-label"><strong>Patient Name:</strong></label>
+                    <input type="text" class="form-control" id="recipient-name" value="{{ p_fname }} {{ p_lname }}" readonly>
+                </div>
+                <div class="mb-3">
+                    <label for="recipient-name" class="col-form-label"><strong>Request:</strong></label>
+                        <p>{{inquiry}}</p>
+                </div>
+                {%if form.5 == "Pending"%}
                     <div class="mb-3">
-                        <label for="recipient-name" class="col-form-label">Recipient:</label>
-                        <input type="text" class="form-control" id="recipient-name" value="{{ p_fname }} {{ p_lname }}" readonly>
+                        <label for="response" class="col-form-label"><strong>Write a Response:</strong></label>
+                        <textarea class="form-control" id="response" name="response"></textarea>
                     </div>
+                {%elif form.5 == "Answered"%}
                     <div class="mb-3">
-                        <label for="recipient-name" class="col-form-label">Request:</label>
-                        <p>Hi</p>
+                        <label for="response" class="col-form-label"><strong>Edit Your Response:</strong></label>
+                        <textarea class="form-control" id="response" name="response">{{form.4}}</textarea>
+                        {% comment %} <p>{{form.4}}</p> {% endcomment %}
                     </div>
-                    <div class="mb-3">
-
-                        <label for="message-text" class="col-form-label">Message:</label>
-                        <textarea class="form-control" id="response?modal_id"></textarea>
-                    </div>
-                </form>
+                
+                {%endif%}
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <input type="submit" class="btn btn-success" value="Send Response">
             </div>
         </div>
-    </form>
+            </form>
     </div>
 </div>
 {% endblock %}

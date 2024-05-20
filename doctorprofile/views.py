@@ -46,20 +46,43 @@ def doctor_profile(request):
 
 def forms(request):
     did = 17 ##Get DR ID from session##
+    status = request.GET.get('status', 'all')  # 'all' is the default value if 'status' is not provided
     if request.method == 'POST':
         response = request.POST.get('response')
-        form_num= request.GET.get('modal_id')
+        form_num= request.POST.get('modal_id')
+        # clicked_answered= request.POST.get('answered_forms')
+        
         with connection.cursor() as cursor:
-            cursor.execute("INSERT INTO form (response) VALUES (%s) WHERE fnum = %s", [response, form_num])
-        return
-    with connection.cursor() as cursor:
+            del_fnum = request.POST.get('deleted_form')
+            if del_fnum is not None:  #deleting form
+                cursor.execute("DELETE from form where fnum = %s",[del_fnum])
+            else: #inserting reponse
+                cursor.execute("UPDATE form SET response = %s WHERE fnum = %s", [response, form_num])
 
-        cursor.execute("""SELECT p.p_fname, p.p_lname, f.fnum, f.request,f.response
+    with connection.cursor() as cursor: #displaying forms related to this doctor
+            if status =='answered':
+                cursor.execute("""SELECT f.fnum, p.p_fname, p.p_lname, f.request,f.response, f.form_status
                         FROM patient AS p
-                        INNER JOIN form AS f ON p.pid = f.pid;
-                    """)
-        form_data = cursor.fetchall()
-    return render(request,'doctorprofile/forms.html',{'forms':form_data})
+                        INNER JOIN form AS f ON p.pid = f.pid
+                        WHERE f.form_status = 'Answered';
+                        """)
+            elif status == 'pending':
+                cursor.execute("""SELECT f.fnum, p.p_fname, p.p_lname, f.request,f.response, f.form_status
+                        FROM patient AS p
+                        INNER JOIN form AS f ON p.pid = f.pid
+                        WHERE f.form_status = 'Pending';
+                        """)
+            if cursor.description is not None:
+                form_data = cursor.fetchall()
+                return render(request,'doctorprofile/profile.html',{'forms':form_data})
+
+    # with connection.cursor() as cursor: #displaying forms related to this doctor
+    #     cursor.execute("""SELECT p.p_fname, p.p_lname, f.fnum, f.request,f.response
+    #                     FROM patient AS p
+    #                     INNER JOIN form AS f ON p.pid = f.pid;
+    #                     """)
+    # return HttpResponse(form_data)    
+    return render(request,'doctorprofile/profile.html')
 
 
 #I TEST SOME PRINTS HERE DO NOT DELETE
