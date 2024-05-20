@@ -32,25 +32,25 @@ def index(request):
             img_name = img.name
             img_path = default_storage.save(img_name, img)
         with connection.cursor() as cursor:
-           cursor.execute("SELECT Email FROM useraccount WHERE Email = %s", [email])
-           email_db = cursor.fetchone()
-           if email_db:
-                exist = "Email already exists!"
-                return render(request, "common/register.html", {'exist': exist})
+            cursor.execute("SELECT Email FROM useraccount WHERE Email = %s", [email])
+            email_db = cursor.fetchone()
+        if email_db:
+            exist = "Email already exists!"
+            return render(request, "common/register.html", {'exist': exist})
         if raw_password == raw_password_2:
             password= make_password(raw_password)
             with connection.cursor() as cursor:
-                    ##EDIT BASED ON PATIENT TABLE##
-                    cursor.execute("""
-                        INSERT INTO patient (Fname,Lname, Email, passward, address, phone, gender, image)
-                        VALUES (%s, %s, %s,%s, %s, %s, %s, %s);
-                    """, [first_name, last_name, email, password, address, phone_number, gender, img_path]) 
-                
-            with connection.cursor() as cursor:
                 ##EDIT BASED ON PATIENT TABLE##
+                cursor.execute("""
+                INSERT INTO patient (Fname,Lname, Email, passward, address, phone, gender, image)
+                VALUES (%s, %s, %s,%s, %s, %s, %s, %s);
+                """, [first_name, last_name, email, password, address, phone_number, gender, img_path]) 
+                    
+            with connection.cursor() as cursor:
+            ##EDIT BASED ON PATIENT TABLE##
                 cursor.execute("""SELECT id
-                               FROM useraccount
-                               WHERE email = %s""", [email])
+                           FROM useraccount
+                           WHERE email = %s""", [email])
                 id = cursor.fetchone()
             request.session['id']=id
             return redirect('profile')

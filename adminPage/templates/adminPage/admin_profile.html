@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-WGB7/2PS3vy7l7w4iKpMtslHx/DGqCyIyBkFEYsWvHf9hAtW2C37KDwDg5XbX5QVzCL+fxSJX6Vhq72ew6fqBA==" crossorigin="anonymous" referrerpolicy="no-referrer" /> -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/octicons/16.1.1/build/font/octicons.min.css" integrity="sha384-29Z7gS9aZ6OCypz8sOfjAr5ccsoTfBGeOwxZmXmU7ZZdB5B/EoH2QuzBlA14g0AI" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class = "container">
+        <h5>Admin Dashboard</h5>
+        <!-- Admin username -->
+        <div class="card my-4">
+            <div class="card-body">
+                <label>Username: {{name}}</label>
+            </div>
+        </div>
+    </div>
+    <!-- {% comment %} doctor information {% endcomment %} -->
+    <div class="container">
+    <div class = "card my-4">
+        <div class="card-header">
+            <h6>Staff</h6>
+            <a href="{% url 'hire' %}" class="btn btn-primary">Add Employee</a>
+        </div>
+        <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Employee Name</th>
+                    <th scope="col">Role</th>
+                    <th scope="col">Salary</th>
+                    <th scope="col">Remove</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for emp in staff %}
+                <tr scope="row" data-id="{{ emp.0 }}">
+                    <td>{{emp.0}}</td>
+                    <td>{{emp.1}} {{emp.2}}</td>
+                    <td>{{emp.3}}</td>
+                    <td>{{emp.4}}</td>
+                    <td data-id="{{ emp.0 }}"><button class="btn btn-danger" class="remove-button">Remove</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    </div>
+    </div>
+    <!-- Bootstrap JS (Optional for Collapse/Modal functionality) -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
+    <!--Doesn't work-->
+    <script>
+        $(document).ready(function(){
+            $('.remove-button').click(function(){
+                var itemRow = $(this).closest('tr');
+                var itemId = itemRow.data('id');
+    
+                $.ajax({
+                    url: "{% url 'remove_staff' item_id=0 %}".replace('0', itemId),
+                    type: 'POST',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            itemRow.remove();
+                        } else {
+                            alert('Failed to remove the item.');
+                        }
+                    },
+                    error: function() {
+                        alert('Error occurred while removing the item.');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
