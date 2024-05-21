@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-{% include 'doctorprofile/navbar.html' %}
+{% include 'doctorprofile/navbar.html' with doctor_id=doctor_id %}
 
 <div class="container">
     <h1 class="mx-auto my-2">Answer Patient Inquiries</h1>

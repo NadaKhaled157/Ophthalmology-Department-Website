@@ -6,6 +6,12 @@ Login Page
 {% endblock %}
 
 {% block content %}
+{%if wrong%}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    Incorrect Password. Please Try again.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+{%endif%}
 
 <div class="card mx-auto mt-3 col-sm-6" style="width: 35rem;">
     <div class ="containter d-flex justify-content-center"<a href="Homepage.php"><img src="{% static 'images/team-logo.png' %}" class="card-img-top mx-auto" alt="Team Logo" style="width:80%"></a></div>

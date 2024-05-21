@@ -1,0 +1,45 @@
+{% include 'doctorprofile/navbar.html' with doctor_id=doctor_id %}
+<div class="container">
+    <div class="card my-4">
+        <div class="card-header">
+            Patients' Health Records
+        </div>
+        <div class="card-body">
+            <!-- Display Patients' Health Records -->
+            
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Patient Name</th>
+                            <th>Patient-ID</th>
+                            <th>Diagnosis</th>
+                            <th>Treatment</th>
+                            <th>Dosage</th>
+                            <th>Followup</th>
+                            <th>Frequency</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for patientrecord in patientrecord %}
+                        <tr>
+                            <form method="POST" action="{% url 'doctorprofile:edit-record' %}?pid={{ patientrecord.1 }}">
+                                {% csrf_token %}
+                            <td>{{ patientrecord.0 }}</td>
+                            <td>{{ patientrecord.1 }}</td>
+                            <td><input class="text" placeholder="{{ patientrecord.2 }}" value="{{ patientrecord.2 }}" name="diagnosis" style="width:100px; border-color:rgba(0,0,0,0);"></td>
+                            <td><input class="text" placeholder="{{ patientrecord.3 }}" value="{{ patientrecord.3 }}" name="treatment" style="width:150px; border-color:rgba(0,0,0,0);"></td>
+                            <td><input class="text" placeholder="{{ patientrecord.4 }}" value="{{ patientrecord.4 }}" name="dosage" style="width:100px; border-color:rgba(0,0,0,0);"></td>
+                            <td><input class="text" placeholder="{{ patientrecord.5 }}" value="{{ patientrecord.5 }}" name="follow_up" style="width:100px; border-color:rgba(0,0,0,0);"></td>
+                            <td><input class="text" placeholder="{{ patientrecord.6 }}" value="{{ patientrecord.6 }}" name="frequency" style="width:100px; border-color:rgba(0,0,0,0);"></td>
+                            <td><input type="submit" class="btn btn-primary" value="Edit"></td>
+                        </form>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            
+        </div>
+    </div>
+</div>
+

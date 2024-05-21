@@ -86,7 +86,7 @@ def authenticate_user(request):
                 request.session['id']=[user[0]] ##What is this??##
                 # request.session['id']= user[2]
                 if role == "doctor":
-                    return redirect(reverse('doctorprofile:doctor-page')+ f'?doctor_id={user[0]}')
+                    return redirect(reverse('doctorprofile:doctor-page')+ f'?doctor_id={user[0]}') #user[0] is did
                 if role == "patient":
                     return redirect(reverse('patientprofile:patient-page')+ f'?patient_id={user[0]}') ##Ensure patient app and view name match##
             else:
