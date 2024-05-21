@@ -98,17 +98,20 @@ def forms(request):
     # return HttpResponse(form_data)    
     return render(request,'doctorprofile/forms.html')
 
+from django.shortcuts import render, redirect
+from django.urls import reverse
+from django.core.files.storage import default_storage
+from django.db import connection
+
 def edit_info(request):
     doctor_id = request.GET.get('doctor_id')
-    # id = request.session.get('id')[0]
-    if id:
+    if doctor_id:
         if request.method == 'POST':
-            #Staff Data
+            # Staff Data
             fname = request.POST.get('fname')
             lname = request.POST.get('lname')
-
             address = request.POST.get('address')
-            #Doctor Data
+            # Doctor Data
             email = request.POST.get('email')
             img = request.FILES.get('img')
             if img:
@@ -116,16 +119,22 @@ def edit_info(request):
                 img_path = default_storage.save(img_name, img)
                 with connection.cursor() as cursor:
                     cursor.execute("SELECT eid from doctor where did = %s", [doctor_id])
-                    eid = cursor.fetchone()
+                    eid = cursor.fetchone()[0]
                     cursor.execute("""UPDATE staff
-                                    SET fname = %s, lname = %s, address = %s
-                                    WHERE eid = %s""", [fname, lname, address, eid])
+                                      SET fname = %s, lname = %s, address = %s
+                                      WHERE eid = %s""", [fname, lname, address, eid])
                     cursor.execute("""UPDATE doctor
-                                    SET email = %s, d_photo = %s
-                                    WHERE did = %s""", [email, img_path, doctor_id])
+                                      SET email = %s, d_photo = %s
+                                      WHERE did = %s""", [email, img_path, doctor_id])
             return redirect('doctorprofile:doctor-page')
-    # return render(request, 'doctorprofile:edit-info'+ f'?doctor_id={doctor_id}')
-    return redirect(reverse('doctorprofile:edit-info'+ f'?doctor_id={doctor_id}'))
+        else:
+            # Handle GET request here if necessary
+            pass
+    else:
+        # Handle the case where doctor_id is not provided
+        pass
+    return render(request, 'doctorprofile/edit-info.html', {'doctor_id': doctor_id})
+
 
 
 #I TEST SOME PRINTS HERE DO NOT DELETE

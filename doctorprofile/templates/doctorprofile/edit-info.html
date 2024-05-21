@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% comment %} {% extends 'base.html' %}
 {% load static %}
 {% block content %}
 <div class="d-flex flex-column">
@@ -7,9 +7,9 @@
     <div class="card-body">
         <h2 class="text-center" style="color:rgb(21, 115, 71)"><strong>Edit Your Info</strong></h2><br>
         {% comment %} <form id="editForm" method="POST" action="{% url 'edit' %}"> {% endcomment %}
-        <form action="{% url 'doctorprofile:edit-info' %}?doctor_id={{doctor_id}}" method="POST" enctype='multipart/form-data' id="editForm">
+        <form action="{% url 'doctorprofile:edit-info' %}?doctor_id={{doctor_id}}" method="GET" enctype='multipart/form-data' id="editForm">
             {%csrf_token%}
-            {{doctor.0}}
+        <input type="hidden" name="doctor_id" value="{{ doctor_id }}">
         <div class="input-group mb-3">
             <input type="text" class="form-control" name="fname" placeholder="First Name" aria-label="fb" aria-describedby="basic-addon1">
         </div>
@@ -31,4 +31,48 @@
     </div>
 </div>
 </div>
-{%endblock%}
+{%endblock%} {% endcomment %}
+
+
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="d-flex flex-column">
+    <div class="card mx-auto mt-4 col-sm-6" style="width: 35rem;">
+        <div class="container d-flex justify-content-center">
+            <a href="#">
+                <img src="{% static 'images/hospital-logo.jpeg' %}" class="card-img-top mx-auto" alt="Hospital Logo" style="width:70%">
+            </a>
+        </div>
+        <div class="card-body">
+            <h2 class="text-center" style="color:rgb(21, 115, 71)"><strong>Edit Your Info</strong></h2><br>
+            <form action="{% url 'doctorprofile:edit-info' %}" method="GET">
+                <input type="hidden" name="doctor_id" value="{{ doctor_id }}">
+                <input type="submit" class="btn btn-primary" value="Edit Info">
+            </form>
+            <form action="{% url 'doctorprofile:edit-info' %}" method="POST" enctype='multipart/form-data'>
+                {% csrf_token %}
+                <!-- Form fields here -->
+                <input type="hidden" name="doctor_id" value="{{ doctor_id }}">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" name="fname" placeholder="First Name" aria-label="fb" aria-describedby="basic-addon1">
+        </div>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" name="lname" placeholder="Last Name" aria-label="fb" aria-describedby="basic-addon1">
+        </div>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" name="email" placeholder="Email" aria-label="in" aria-describedby="basic-addon1">
+        </div>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" name="address" placeholder="Address" aria-label="git" aria-describedby="basic-addon1">
+        </div>
+        <div class="mb-3">
+            <label for="formFile" class="form-label">Change Profile Photo</label>
+            <input class="form-control" type="file" id="formFile" name="img">
+        </div>
+                <input type="submit" class="btn btn-success d-block mx-auto" style="width:100%;" value="Save Changes">
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
