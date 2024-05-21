@@ -1,0 +1,47 @@
+<div class="card-header">
+    <div class="row" align="center">
+        <h6 class="col-sm">Staff</h6>
+        <div  class="col-sm">
+            <form method="get" action="{% url 'admin_profile' %}" id="actionForm">
+                {% csrf_token %}
+                <div class="form-group">
+                    <div class="row">
+                        <select class="form-control" name="group" onchange="document.getElementById('actionForm').submit();">
+                            <option value="">Sort by</option>
+                            <option value="eid">ID</option>
+                            <option value="salary">Salary</option>
+                            <option value="role">Role</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="card-body">
+    <table class="table">
+        <thead>
+            <tr scope="col" align="center">
+                <th>ID</th>
+                <th>Employee Name</th>
+                <th>Role</th>
+                <th>Salary</th>
+                <th>Modify</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for emp in staff %}
+            <tr scope="row" align="center">
+                <td>{{emp.0}}</td>
+                <td>{{emp.1}} {{emp.2}}</td>
+                <td>{{emp.3}}</td>
+                <td>{{emp.4}}</td>
+                <td>
+                    <a href="{%  url 'edit_emp' emp.0 %}"><i class="fa-solid fa-pen-to-square fs-5 me-3"></i></a>
+                    <a href="{% url 'fire' emp.0 %}" class="link-dark"><i class="fa-solid fa-trash fs-5"></i></a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
