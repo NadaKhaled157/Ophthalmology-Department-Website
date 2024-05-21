@@ -13,62 +13,75 @@
 </head>
 
 <body>
-    <h5 class="navbar-brand">Admin Dashboard</h5>
-    <div class="d-flex">
-        {% include 'adminPage/left.html' %}
-    </div>
-    <div  class='d-flex flex-column'>
     <div class="container">
-    <div class = "card my-4">
-        <div class="card-header">
-            <div class="row">
-                <h6 class="col-sm">Staff</h6>
-                <div  class="col-sm">
-                    <form method="get" action="{% url 'admin_profile' %}">
-                        {% csrf_token %}
-                        <select name="group" class="form-control">
-                            <option value="eid">ID</option>
-                            <option value="role">Role</option>
-                            <option value="salary">Salary</option>
-                            <option value="name">Name</option>
-                        </select>
-                        <button type="submit">Sort</button>
-                    </form>
-                </div>
-                <div  class="col-sm">
-                    <a href="{% url 'hire' %}" class="btn btn-primary">Add Employee</a>
-                </div>
+        <div class="navbar navbar-expand-lg navbar-dark">
+            <h4 class="text-center" align="center">Admin Dashboard</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="d-flex">
+                {% include 'adminPage/left.html' %}
             </div>
         </div>
-        <div class="card-body">
-        <table class="table">
-            <thead>
-                <tr scope="col" align="center">
-                    <th>ID</th>
-                    <th>Employee Name</th>
-                    <th>Role</th>
-                    <th>Salary</th>
-                    <th>Modify</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for emp in staff %}
-                <tr scope="row" align="center">
-                    <td>{{emp.0}}</td>
-                    <td>{{emp.1}} {{emp.2}}</td>
-                    <td>{{emp.3}}</td>
-                    <td>{{emp.4}}</td>
-                    <td>
-                        <a href="{%  url 'edit_emp' emp.0 %}"><i class="fa-solid fa-pen-to-square fs-5 me-3"></i></a>
-                        <a href="{% url 'fire' emp.0 %}" class="link-dark"><i class="fa-solid fa-trash fs-5"></i></a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="col-sm-9">
+            <div class="container">
+                <div class = "card my-4">
+                    <div class="card-header">
+                        <div class="row" align="center">
+                            <h6 class="col-sm">Staff</h6>
+                            <div  class="col-sm">
+                                <form method="get" action="{% url 'admin_profile' %}">
+                                    {% csrf_token %}
+                                    <div class="row">
+                                        <div class="col-sm-8">
+                                            <select name="group" class="form-control">
+                                                <option value="eid">ID</option>
+                                                <option value="role">Role</option>
+                                                <option value="salary">Salary</option>
+                                                <option value="name">Name</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <button type="submit" class="btn btn-secondary">Sort</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        <div  class="col-sm">
+                        <a href="{% url 'hire' %}" class="btn btn-primary">Add Employee</a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr scope="col" align="center">
+                            <th>ID</th>
+                            <th>Employee Name</th>
+                            <th>Role</th>
+                            <th>Salary</th>
+                            <th>Modify</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for emp in staff %}
+                        <tr scope="row" align="center">
+                            <td>{{emp.0}}</td>
+                            <td>{{emp.1}} {{emp.2}}</td>
+                            <td>{{emp.3}}</td>
+                            <td>{{emp.4}}</td>
+                            <td>
+                                <a href="{%  url 'edit_emp' emp.0 %}"><i class="fa-solid fa-pen-to-square fs-5 me-3"></i></a>
+                                <a href="{% url 'fire' emp.0 %}" class="link-dark"><i class="fa-solid fa-trash fs-5"></i></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-    </div>
-    </div>
-    </div>
+
 </body>
 </html>
