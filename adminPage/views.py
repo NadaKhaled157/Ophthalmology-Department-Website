@@ -1,27 +1,25 @@
+from urllib import request
 from django.shortcuts import render, HttpResponse, redirect
 from django.db import connection
-from django.http import JsonResponse
 
 # Create your views here.
 
 def admin_profile(request):
+    order = request.GET.get('group', 'eid')
+    with connection.cursor() as cursor:
+        cursor.execute("""SELECT eid, fname, lname, role, salary
+                        FROM staff
+                        ORDER BY """ + order)
+        data = cursor.fetchall()
     with connection.cursor() as cursor:
         cursor.execute("""SELECT username 
                         FROM admin""")
         admin = cursor.fetchone()
     return render(request, 'adminPage/admin_profile.html', {'name': admin,
-                                                            'staff': view_staff(request)})
-
-def view_staff(request):
-    with connection.cursor() as cursor:
-        cursor.execute("""SELECT eid, fname, lname, role, salary
-                        FROM staff""")
-        data = cursor.fetchall()
-    return data
+                                                            'staff': data})
 
 def hire(request):
     if request.method == 'POST':
-        # return HttpResponse("in post")
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
         phone_number = request.POST.get('number')
@@ -39,10 +37,20 @@ def hire(request):
         return redirect("admin_profile")
     return render(request, 'adminPage/add_emp.html')
 
-def remove_staff(request, id):
+def edit_emp(request, id):
     if request.method == "POST":
+        role = request.POST.get('role')
+        salary = request.POST.get('salary')
         with connection.cursor() as cursor:
-            cursor.execute("""DELETE FROM staff
-                            WHERE eid = %s""", [id])
-        return JsonResponse({'success': True})
-    return JsonResponse({'success': False})
+            cursor.execute("""UPDATE staff
+                           set role = %s, salary = %s
+                           WHERE eid = %s""", [role, salary, id])
+        return redirect("admin_profile")
+    return render(request, 'adminPage/edit_emp.html', {'id':id})
+
+def fire(request, id):
+    with connection.cursor() as cursor:
+        cursor.execute("""DELETE FROM staff
+                        WHERE eid = %s""", [id])
+    return redirect('admin_profile')
+

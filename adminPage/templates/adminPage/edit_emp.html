@@ -1,0 +1,19 @@
+{% load static %}
+<div class="d-flex flex-column">
+<div class="card mx-auto mt-4 col-sm-6" style="width: 35rem;">
+    <div class ="containter d-flex justify-content-center"<a href="Homepage.php"><img src="{% static 'pages/images/social-media.jpg' %}" class="card-img-top mx-auto" alt="social media" style="width:70%"></a></div>
+    <div class="card-body">
+        <h2 class="text-center" style="color:rgb(21, 115, 71)"><strong>Edit Employee</strong></h2><br>
+        <form action="{% url 'edit_emp' id %}" method="POST">
+            {%csrf_token%}
+            <div>
+                <input type="text" class="form-control" name="role" placeholder="Role" required>
+            </div>
+            <div class="custom-row mb-3">
+                <input type="text" class="form-control" name="salary" placeholder="10000$" required>
+            </div>
+            <input type="submit" class="btn btn-success d-block mx-auto" style="width:100%;" value="Edit">
+        </form>
+    </div>
+</div>
+</div>
