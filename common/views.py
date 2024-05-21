@@ -1,15 +1,13 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect, Http404
-from django.db import connection, transaction
+from django.db import connection
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.hashers import make_password
-from django.conf import settings
 from django.urls import reverse
 from django.shortcuts import render
 from django.contrib.auth.hashers import make_password
 from django.core.files.storage import default_storage
 from django.db import connection
-from datetime import datetime
+from django.contrib.auth.forms import UserCreationForm
 
 
 # Create your views here.
@@ -17,6 +15,7 @@ def index(request):
     # Clearing session and cookies
     request.session.flush()
     request.session.modified = True
+    form = UserCreationForm()
     img_path = None 
     if request.method == 'POST':
         first_name = request.POST.get('first_name')
@@ -73,10 +72,8 @@ def authenticate_user(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
         role = request.POST.get('role')
-        with connection.cursor() as cursor:
-            ##Add if condition of radio button (is user a patient or doctor?)##
+        with connection.cursor() as cursor:        
             cursor.execute(f"SELECT * FROM {role} WHERE email = %s", [email])
-            ##
             user = cursor.fetchone()
         if user:
             ##Add if condition of radio button (is user a patient or doctor?)##
@@ -89,7 +86,7 @@ def authenticate_user(request):
                 request.session['id']=[user[0]] ##What is this??##
                 # request.session['id']= user[2]
                 if role == "doctor":
-                    return redirect(reverse('doctorprofile:doctor-page'))
+                    return redirect(reverse('doctorprofile:doctor-page')+ f'?user_id={user[0]}')
                 if role == "patient":
                     return redirect(reverse('patientprofile:patient-page')) ##Ensure patient app and view name match##
             else:

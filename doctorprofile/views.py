@@ -14,19 +14,33 @@ from datetime import datetime
 
 # Create your views here.
 def doctor_profile(request):
+    doctor_id = request.GET.get('doctor_id')
+    # return HttpResponse(doctor_id)
     with connection.cursor() as cursor:
         # Fetch the info of the first doctor from the database
+        # cursor.execute(
+            
+        #     """
+        #     SELECT s.eid, s.fname,s.lname, d.did, d.d_specialization, d.email 
+        #     FROM staff s 
+        #     JOIN doctor d ON s.eid = d.eid 
+        #     WHERE s.role = 'doctor' 
+        #     ORDER BY s.eid 
+        #     LIMIT 1 
+        # """)
         cursor.execute(
             
             """
-            SELECT s.eid, s.fname,s.lname, d.did, d.d_specialization, d.email 
+            SELECT s.eid, s.fname,s.lname, d.did, d.d_specialization, d.email, d.d_photo 
             FROM staff s 
             JOIN doctor d ON s.eid = d.eid 
-            WHERE s.role = 'doctor' 
-            ORDER BY s.eid 
-            LIMIT 1 
-        """)
+            WHERE s.role = 'Doctor' 
+            AND d.did = %s
+        """, [doctor_id])
         doctor = cursor.fetchone()
+        encoded_path = doctor[6].tobytes()
+        img_path= encoded_path.decode('utf-8')
+        # return HttpResponse(doctor)
 
         if doctor:
             doctor_id = doctor[3]  
@@ -40,7 +54,7 @@ def doctor_profile(request):
             availability = cursor.fetchall()
             print(doctor)
             print(availability)
-            return render(request, 'doctorprofile/profile.html', {'doctor': doctor, 'availability': availability})
+            return render(request, 'doctorprofile/profile.html', {'doctor': doctor, 'availability': availability, 'img_path':img_path})
         else:
             return HttpResponse("No doctors found in the database.")
 
@@ -66,7 +80,7 @@ def forms(request):
                         INNER JOIN form AS f ON p.pid = f.pid
                         WHERE f.form_status = 'Answered';
                         """)
-            elif status == 'pending':
+            else:
                 cursor.execute("""SELECT f.fnum, p.p_fname, p.p_lname, f.request,f.response, f.form_status
                         FROM patient AS p
                         INNER JOIN form AS f ON p.pid = f.pid
@@ -74,7 +88,7 @@ def forms(request):
                         """)
             if cursor.description is not None:
                 form_data = cursor.fetchall()
-                return render(request,'doctorprofile/profile.html',{'forms':form_data})
+                return render(request,'doctorprofile/forms.html',{'forms':form_data})
 
     # with connection.cursor() as cursor: #displaying forms related to this doctor
     #     cursor.execute("""SELECT p.p_fname, p.p_lname, f.fnum, f.request,f.response
@@ -82,7 +96,36 @@ def forms(request):
     #                     INNER JOIN form AS f ON p.pid = f.pid;
     #                     """)
     # return HttpResponse(form_data)    
-    return render(request,'doctorprofile/profile.html')
+    return render(request,'doctorprofile/forms.html')
+
+def edit_info(request):
+    doctor_id = request.GET.get('doctor_id')
+    # id = request.session.get('id')[0]
+    if id:
+        if request.method == 'POST':
+            #Staff Data
+            fname = request.POST.get('fname')
+            lname = request.POST.get('lname')
+
+            address = request.POST.get('address')
+            #Doctor Data
+            email = request.POST.get('email')
+            img = request.FILES.get('img')
+            if img:
+                img_name = img.name
+                img_path = default_storage.save(img_name, img)
+                with connection.cursor() as cursor:
+                    cursor.execute("SELECT eid from doctor where did = %s", [doctor_id])
+                    eid = cursor.fetchone()
+                    cursor.execute("""UPDATE staff
+                                    SET fname = %s, lname = %s, address = %s
+                                    WHERE eid = %s""", [fname, lname, address, eid])
+                    cursor.execute("""UPDATE doctor
+                                    SET email = %s, d_photo = %s
+                                    WHERE did = %s""", [email, img_path, doctor_id])
+            return redirect('doctorprofile:doctor-page')
+    # return render(request, 'doctorprofile:edit-info'+ f'?doctor_id={doctor_id}')
+    return redirect(reverse('doctorprofile:edit-info'+ f'?doctor_id={doctor_id}'))
 
 
 #I TEST SOME PRINTS HERE DO NOT DELETE

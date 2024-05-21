@@ -2,8 +2,8 @@
 {% load static %}
 {% block content %}
     {%include 'doctorprofile/navbar.html'%}
-    <li><a class="dropdown-item" href="{% url 'doctorprofile:forms' %}?status=pending">Pending Inquiries</a></li>
-              <li><a class="dropdown-item" href="{% url 'doctorprofile:forms' %}?status=answered">Answered Inquiries</a></li>
+    <li><a href="{% url 'doctorprofile:forms' %}?status=pending">Pending Inquiries</a></li>
+              <li><a href="{% url 'doctorprofile:forms' %}?status=answered">Answered Inquiries</a></li>
     <div class="container">
         <h1>Doctor Profile</h1>
 
@@ -13,11 +13,14 @@
                 Doctor Information
             </div>
             <div class="card-body">
+                <img src="/media/{{ img_path }}" class="card-img-top" alt="Profile Image" style="width:100px; height:100px;">
+                <div>
                     <p>Name: Dr. {{ doctor.1 }} {{ doctor.2}}</p>
                     <p>Specialization: {{ doctor.4 }}</p>
                     <p>Email: {{ doctor.5 }}</p>
                 <!-- Edit Doctor Info Button -->
-                <a href="#" class="btn btn-primary">Edit Info</a>
+                <a href="{% url 'doctorprofile:edit-info' %}?doctor_id={{doctor.0}}" class="btn btn-primary">Edit Info</a>
+                <div>
             </div>
         </div>
 
