@@ -58,7 +58,7 @@ def doctor_profile(request):
 
 def forms(request):
     did = request.GET.get('doctor_id') ##Get DR ID from session##
-    status = request.GET.get('status', 'all')  # is this used?
+    status = request.GET.get('status')  # is this used?
     if request.method == 'POST':
         response = request.POST.get('response')
         form_num= request.POST.get('modal_id')
@@ -69,7 +69,7 @@ def forms(request):
             if del_fnum is not None:  #deleting form
                 cursor.execute("DELETE from form where fnum = %s",[del_fnum])
             else: #inserting reponse
-                cursor.execute("UPDATE form SET response = %s WHERE fnum = %s", [response, form_num])
+                cursor.execute("UPDATE form SET response = %s, form_status='Answered' WHERE fnum = %s", [response, form_num])
 
     with connection.cursor() as cursor: #displaying forms related to this doctor
             if status =='answered':
@@ -94,7 +94,7 @@ def forms(request):
 def edit_info(request):
     doctor_id = request.GET.get('doctor_id')
     if request.method == 'POST':
-            d_id = request.POST.get('doctor_id')
+            doctor_id = request.POST.get('doctor_id')
             # Staff Data
             fname = request.POST.get('fname')
             lname = request.POST.get('lname')
@@ -102,22 +102,23 @@ def edit_info(request):
             # Doctor Data
             email = request.POST.get('email')
             password = request.POST.get('password')
+            hashed_password=make_password(password)
             img = request.FILES.get('img')
             img_name = img.name
             img_path = default_storage.save(img_name, img)
             with connection.cursor() as cursor:
-                cursor.execute("SELECT eid from doctor where did = %s", [d_id])
+                cursor.execute("SELECT eid from doctor where did = %s", [doctor_id])
                 eid = cursor.fetchone()[0]
                 cursor.execute("""UPDATE staff
                                       SET fname = %s, lname = %s, address = %s
                                       WHERE eid = %s""", [fname, lname, address, eid])
                 cursor.execute("""UPDATE doctor
                                       SET email = %s, d_photo = %s, password = %s
-                                      WHERE did = %s""", [email, img_path, password ,d_id])
-            target_url = f'/doctor/?doctor_id={d_id}'
+                                      WHERE did = %s""", [email, img_path, hashed_password ,doctor_id])
+            target_url = f'/doctor/?doctor_id={doctor_id}'
             return redirect(target_url)
     with connection.cursor() as cursor:
-                cursor.execute("SELECT eid from doctor where did = %s", [d_id])
+                cursor.execute("SELECT eid from doctor where did = %s", [doctor_id])
     return render(request, 'doctorprofile/edit-info.html', {'doctor_id': doctor_id})
 
 def p_record(request):

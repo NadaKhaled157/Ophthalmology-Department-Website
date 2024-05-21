@@ -55,6 +55,6 @@
 </div>
 
 {% for form in forms %}
-    {% include 'doctorprofile/form-modal.html' with modal_id=form.0 p_fname=form.1 p_lname=form.2 inquiry=form.3 %}
+    {% include 'doctorprofile/form-modal.html' with modal_id=form.0 p_fname=form.1 p_lname=form.2 inquiry=form.3 doctor_id=doctor_id %}
 {% endfor %}
 {% endblock %}
