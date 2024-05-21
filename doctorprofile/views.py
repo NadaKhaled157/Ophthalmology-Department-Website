@@ -29,7 +29,6 @@ def doctor_profile(request):
         #     LIMIT 1 
         # """)
         cursor.execute(
-            
             """
             SELECT s.eid, s.fname,s.lname, d.did, d.d_specialization, d.email, d.d_photo 
             FROM staff s 

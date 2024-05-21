@@ -86,9 +86,9 @@ def authenticate_user(request):
                 request.session['id']=[user[0]] ##What is this??##
                 # request.session['id']= user[2]
                 if role == "doctor":
-                    return redirect(reverse('doctorprofile:doctor-page')+ f'?user_id={user[0]}')
+                    return redirect(reverse('doctorprofile:doctor-page')+ f'?doctor_id={user[0]}')
                 if role == "patient":
-                    return redirect(reverse('patientprofile:patient-page')) ##Ensure patient app and view name match##
+                    return redirect(reverse('patientprofile:patient-page')+ f'?patient_id={user[0]}') ##Ensure patient app and view name match##
             else:
                 wrong_pass = "Wrong Password"
                 redirect('authenticate_user')
