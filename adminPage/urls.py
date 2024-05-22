@@ -10,4 +10,8 @@ urlpatterns=[
     path('add_nur/', views.add_nur, name = "add_nur"),
     path('add_tech/', views.add_tech, name = "add_tech"),
     path('cancel/', views.cancel, name = "cancel"),
+    path('rmv_doc/<int:id>/', views.rmv_doc, name = 'rmv_doc'),
+    path('rmv_nur/<int:id>/', views.rmv_nur, name = 'rmv_nur'),
+    path('rmv_tech/<int:id>/', views.rmv_tech, name = 'rmv_tech'),
+
 ]

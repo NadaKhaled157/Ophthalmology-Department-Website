@@ -68,7 +68,6 @@ def admin_profile(request):
             viewed = tech_view('tid')
         elif view == 'appointment':
             viewed = app_view()
-
     return render(request, 'adminPage/admin_profile.html', {'name': admin,
                                                             'patient':patients,
                                                             'doctorn':doctors,
@@ -98,12 +97,12 @@ def doctor_view(order):
 
 def nurse_view(order):
     with connection.cursor() as cursor:
-        cursor.execute("""SELECT t1.nid, t1.fname, t1.lname, t1.age, t1.n_specialization, t1.salary, t2.fname, t2.lname
-                       FROM (SELECT nid, fname, lname, age, n_specialization, s.salary, n.did FROM nurse n
-                            LEFT JOIN staff s ON n.nid = s.eid) AS t1
-                        JOIN (SELECT fname, lname, d.did FROM doctor d
-                            JOIN staff s ON d.did = s.eid) AS t2
-                       ON t1.did = t2.did
+        cursor.execute("""SELECT t1.nid, t1.fname, t1.lname, t1.age, t1.salary, t1.n_specialization, t2.fname, t2.lname
+                       FROM (SELECT nid, did, n_specialization, age, fname, lname, salary
+                            FROM nurse n JOIN staff s ON n.eid = s.eid) AS t1
+                       JOIN (SELECT did, fname, lname
+                            FROM doctor d JOIN staff s ON d.eid = s.eid) AS t2
+                       ON t1.did = t2.did 
                        ORDER BY """ + order)
         nurses = cursor.fetchall()
     return nurses
@@ -111,24 +110,26 @@ def nurse_view(order):
 def tech_view(order):
     with connection.cursor() as cursor:
         cursor.execute("""SELECT t1.tid, t1.fname, t1.lname, t1.age, t1.salary, t2.fname, t2.lname
-                       FROM (SELECT tid, fname, lname, age, s.salary, t.did FROM technician t
-                            LEFT JOIN staff s ON t.tid = s.eid) AS t1
-                        JOIN (SELECT fname, lname, d.did FROM doctor d
-                            JOIN staff s ON d.did = s.eid) AS t2
+                       FROM (SELECT tid, did, age, fname, lname, salary
+                            FROM technician t JOIN staff s ON t.eid = s.eid) AS t1
+                       JOIN (SELECT did, fname, lname
+                            FROM doctor d JOIN staff s ON d.eid = s.eid) AS t2
                        ON t1.did = t2.did
                        ORDER BY """ + order)
         tech = cursor.fetchall()
     return tech
 
+# not working
 def app_view():
     with connection.cursor() as cursor:
-        cursor.execute("""SELECT t1.pid, t1.p_fname, t1.p_lname, t3.fname, t3.lname
-                       FROM (SELECT a.pid, p_fname, p_lname, app_date, app_time, app_type, rnum, a.aid FROM appointment a
-                            JOIN patient p ON a.pid = p.pid) AS t1
-                        JOIN (SELECT fname, lname, a.did, a.aid FROM appointment a
-                            JOIN (SELECT s.fname, s.lname, d.did
-                                FROM doctor d JOIN staff s ON d.did = s.eid) AS t2 ON a.did = t2.did) AS t3
-                       ON t1.aid = t3.aid""")
+        cursor.execute("""SELECT t3.aid, t3.p_fname, t3.p_lname, t3.fname, t3.lname, t3.app_date, t3.app_time, t3.rnum, t3.app_type, b.amount
+                        FROM (SELECT t1.aid, t1.app_date, t1.app_time, t1.app_type, t1.bid, t1.did, t1.rnum, t1.p_fname, t1.p_lname, t2.fname, t2.lname
+                            FROM (SELECT aid, app_date, app_time, app_type, bid, a.did, rnum, p_fname, p_lname
+                                FROM appointment a JOIN patient p ON a.pid = p.pid) AS t1
+                            JOIN (SELECT fname, lname, did
+                                FROM doctor d JOIN staff s ON d.eid = s.eid) AS t2
+                            ON t1.did = t2.did) AS t3
+                        JOIN billing b ON t3.bid = b.bid""")
         apps = cursor.fetchall()
     return apps
 
@@ -221,6 +222,54 @@ def edit_emp(request, id):
                            WHERE eid = %s""", [role, salary, id])
         return redirect("admin_profile")
     return render(request, 'adminPage/edit_emp.html', {'id':id})
+
+def rmv_doc(request, id):
+    with connection.cursor() as cursor:
+        cursor.execute("""SELECT eid
+                       FROM doctor
+                       WHERE did = %s""", [id])
+        eid = cursor.fetchone()
+
+    with connection.cursor() as cursor:
+        cursor.execute("""DELETE FROM doctor
+                        WHERE did = %s""", [id])
+        
+    with connection.cursor() as cursor:
+        cursor.execute("""DELETE FROM staff
+                        WHERE eid = %s""", [eid])
+    return redirect('admin_profile')
+
+def rmv_nur(request, id):
+    with connection.cursor() as cursor:
+        cursor.execute("""SELECT eid
+                       FROM nurse
+                       WHERE did = %s""", [id])
+        eid = cursor.fetchone()
+
+    with connection.cursor() as cursor:
+        cursor.execute("""DELETE FROM nurse
+                        WHERE nid = %s""", [id])
+        
+    with connection.cursor() as cursor:
+        cursor.execute("""DELETE FROM staff
+                        WHERE eid = %s""", [eid])
+    return redirect('admin_profile')
+
+def rmv_tech(request, id):
+    with connection.cursor() as cursor:
+        cursor.execute("""SELECT eid
+                       FROM technician
+                       WHERE did = %s""", [id])
+        eid = cursor.fetchone()
+
+    with connection.cursor() as cursor:
+        cursor.execute("""DELETE FROM technician
+                        WHERE did = %s""", [id])
+        
+    with connection.cursor() as cursor:
+        cursor.execute("""DELETE FROM staff
+                        WHERE eid = %s""", [eid])
+    return redirect('admin_profile')
 
 def fire(request, id):
     with connection.cursor() as cursor:

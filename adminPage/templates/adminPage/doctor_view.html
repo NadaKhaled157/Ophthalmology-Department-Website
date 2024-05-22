@@ -44,7 +44,7 @@
                 <td>{{doc.6}}</td>
                 <td>
                     <a href="{%  url 'edit_emp' doc.0 %}" class="link-dark"><i class="fa-solid fa-pen-to-square fs-5 me-3"></i></a>
-                    <a href="{% url 'fire' doc.0 %}" class="link-dark"><i class="fa-solid fa-trash fs-5"></i></a>
+                    <a href="{% url 'rmv_doc' doc.0 %}" class="link-dark"><i class="fa-solid fa-trash fs-5"></i></a>
                 </td>
             </tr>
             {% endfor %}
