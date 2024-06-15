@@ -20,23 +20,23 @@
                 <!-- Form fields here -->
                 <input type="hidden" name="doctor_id" value="{{ doctor_id }}">
         <div class="input-group mb-3">
-            <input type="text" class="form-control" name="fname" placeholder="First Name" aria-label="fname" aria-describedby="basic-addon1">
+            <input type="text" class="form-control" name="fname" placeholder="{{doctor.1}}" value="{{doctor.1}}" aria-label="fname" aria-describedby="basic-addon1">
         </div>
         <div class="input-group mb-3">
-            <input type="text" class="form-control" name="lname" placeholder="Last Name" aria-label="lname" aria-describedby="basic-addon1">
+            <input type="text" class="form-control" name="lname" placeholder="{{doctor.2}}" value="{{doctor.2}}" aria-label="lname" aria-describedby="basic-addon1">
         </div>
         <div class="input-group mb-3">
-            <input type="text" class="form-control" name="email" placeholder="Email" aria-label="email" aria-describedby="basic-addon1">
+            <input type="text" class="form-control" name="email" placeholder="{{doctor.5}}" value="{{doctor.5}}" aria-label="email" aria-describedby="basic-addon1">
         </div>
         <div class="input-group mb-3">
-            <input type="text" class="form-control" name="address" placeholder="Address" aria-label="address" aria-describedby="basic-addon1">
+            <input type="text" class="form-control" name="address" placeholder="{{doctor.7}}" value="{{doctor.7}}" aria-label="address" aria-describedby="basic-addon1">
         </div>
         <div class="input-group mb-3">
             <input type="password" class="form-control" name="password" placeholder="Password" aria-label="password" aria-describedby="basic-addon1">
         </div>
         <div class="mb-3">
             <label for="formFile" class="form-label">Change Profile Photo</label>
-            <input class="form-control" type="file" id="formFile" name="img">
+            <input class="form-control" type="file" id="formFile" name="img" value = "{{img_path}}">
         </div>
                 <input type="submit" class="btn btn-success d-block mx-auto" style="width:100%;" value="Save Changes">
             </form>

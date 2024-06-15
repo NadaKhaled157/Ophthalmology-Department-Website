@@ -6,9 +6,19 @@ Login Page
 {% endblock %}
 
 {% block content %}
-{%if wrong%}
+{%if no_role%}
 <div class="alert alert-danger alert-dismissible fade show" role="alert">
-    Incorrect Password. Please Try again.
+    Please specify whether you are a Doctor or a Patient.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+{%elif wrong_pass%}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    The password you entered is incorrect. Please try again.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+{%elif wrong_email%}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    This email doesn't exist. Please try again.
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
 {%endif%}

@@ -16,44 +16,36 @@ from datetime import datetime
 def doctor_profile(request):
     doctor_id = request.GET.get('doctor_id')
     # return HttpResponse(doctor_id)
-    with connection.cursor() as cursor:
-        # Fetch the info of the first doctor from the database
-        # cursor.execute(
-        #     """
-        #     SELECT s.eid, s.fname,s.lname, d.did, d.d_specialization, d.email 
-        #     FROM staff s 
-        #     JOIN doctor d ON s.eid = d.eid 
-        #     WHERE s.role = 'doctor' 
-        #     ORDER BY s.eid 
-        #     LIMIT 1 
-        # """)
-        cursor.execute(
-            """
-            SELECT s.eid, s.fname,s.lname, d.did, d.d_specialization, d.email, d.d_photo 
-            FROM staff s 
-            JOIN doctor d ON s.eid = d.eid 
-            WHERE s.role = 'Doctor' 
-            AND d.did = %s
-        """, [doctor_id])
-        doctor = cursor.fetchone()
+    # with connection.cursor() as cursor:
+    #     cursor.execute(
+    #         """
+    #         SELECT s.eid, s.fname,s.lname, d.did, d.d_specialization, d.email, d.d_photo 
+    #         FROM staff s 
+    #         JOIN doctor d ON s.eid = d.eid 
+    #         WHERE s.role = 'Doctor' 
+    #         AND d.did = %s
+    #     """, [doctor_id])
+    #     doctor = cursor.fetchone()
+    doctor, img_path = retrieve_doctor(doctor_id)
         # return HttpResponse(doctor)
-        encoded_path = doctor[6].tobytes()
-        img_path= encoded_path.decode('utf-8')
+    # encoded_path = doctor[6].tobytes()
+    # img_path= encoded_path.decode('utf-8')
         # return HttpResponse(doctor)
 
-        if doctor:
-            doctor_id = doctor[3] 
+    if doctor:
+        doctor_id = doctor[3] 
             # Fetch the availability for the doctor
+        with connection.cursor() as cursor:
             cursor.execute("""
                 SELECT day, start_time
                 FROM availability 
                 WHERE did = %s
             """, [doctor_id])
             availability = cursor.fetchall()
-            print(doctor)
-            print(availability)
-            return render(request, 'doctorprofile/profile.html', {'doctor': doctor, 'availability': availability, 'img_path':img_path,'doctor_id':doctor_id})
-        else:
+        print(doctor)
+        print(availability)
+        return render(request, 'doctorprofile/profile.html', {'doctor': doctor, 'availability': availability, 'img_path':img_path,'doctor_id':doctor_id})
+    else:
             return HttpResponse("No doctors found in the database.")
 
 def forms(request):
@@ -104,8 +96,15 @@ def edit_info(request):
             password = request.POST.get('password')
             hashed_password=make_password(password)
             img = request.FILES.get('img')
-            img_name = img.name
-            img_path = default_storage.save(img_name, img)
+            if img: #if new photo
+                img_name = img.name
+                img_path = default_storage.save(img_name, img)
+            else: #get old photo
+                with connection.cursor() as cursor:
+                    cursor.execute("SELECT d_photo from doctor where did = %s", [doctor_id])
+                    doctor = cursor.fetchone()[0]
+                    encoded_path = doctor.tobytes()
+                    img_path= encoded_path.decode('utf-8')
             with connection.cursor() as cursor:
                 cursor.execute("SELECT eid from doctor where did = %s", [doctor_id])
                 eid = cursor.fetchone()[0]
@@ -117,9 +116,13 @@ def edit_info(request):
                                       WHERE did = %s""", [email, img_path, hashed_password ,doctor_id])
             target_url = f'/doctor/?doctor_id={doctor_id}'
             return redirect(target_url)
-    with connection.cursor() as cursor:
-                cursor.execute("SELECT eid from doctor where did = %s", [doctor_id])
-    return render(request, 'doctorprofile/edit-info.html', {'doctor_id': doctor_id})
+    else:
+        doctor_data, img_path = retrieve_doctor(doctor_id)
+    ##not sure why we're getting eid?
+    # with connection.cursor() as cursor:
+    #             cursor.execute("SELECT eid from doctor where did = %s", [doctor_id])
+    ##
+        return render(request, 'doctorprofile/edit-info.html', {'doctor_id': doctor_id, 'doctor':doctor_data, 'img_path':img_path})
 
 def p_record(request):
     doctor_id = request.GET.get('doctor_id')
@@ -207,3 +210,18 @@ def test (request):
     # return HttpResponse(password)
     return render(request, 'doctorprofile/test.html')
     # return HttpResponse(check_password(password, hashed))
+
+def retrieve_doctor(did):
+    with connection.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT s.eid, s.fname,s.lname, d.did, d.d_specialization, d.email, d.d_photo, s.address, d.password
+            FROM staff s 
+            JOIN doctor d ON s.eid = d.eid 
+            WHERE s.role = 'Doctor' 
+            AND d.did = %s
+        """, [did])
+        doctor = cursor.fetchone()
+        encoded_path = doctor[6].tobytes()
+        img_path= encoded_path.decode('utf-8')
+    return doctor, img_path

@@ -72,6 +72,7 @@ def authenticate_user(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
         role = request.POST.get('role')
+        if role == None: return render(request, "common/login.html",{'no_role': True})
         with connection.cursor() as cursor:        
             cursor.execute(f"SELECT * FROM {role} WHERE email = %s", [email])
             user = cursor.fetchone()
@@ -92,10 +93,10 @@ def authenticate_user(request):
             else:
                 wrong_pass = "Wrong Password"
                 redirect('authenticate_user')
-                return render(request, "common/login.html",{'wrong': wrong_pass})
+                return render(request, "common/login.html",{'wrong_pass': True})
 
         else:
             wrong_email = "This user does not exist"
-            return render(request, "common/login.html",{'wrong': wrong_email})
+            return render(request, "common/login.html",{'wrong_email': True})
     return render(request, "common/login.html")
 
