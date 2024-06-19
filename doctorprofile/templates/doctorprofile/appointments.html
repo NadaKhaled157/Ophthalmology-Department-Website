@@ -1,63 +1,40 @@
 {% include 'doctorprofile/navbar.html' with doctor_id=doctor_id %}
-    <div class="container">
-        <div class="card my-4">
-            <div class="card-header">
-                Appointments
-            </div>
-            <div class="card-body">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Date</th>
-                                <th>Time</th>
-                                <th>Type</th>
-                                <th>Room</th>
-                                <th>Patient-Name</th>
-                                <th></th> <!-- Empty header for the delete button -->
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for appointment in appointments %}
-                                <td>{{ appointment.0 }}</td>     
-                                <td>{{ appointment.1 }}</td>
-                                <td>{{ appointment.2 }}</td>
-                                <td>{{ appointment.3 }}</td>
-                                <td>{{ appointment.4 }}</td>
-                                <td>{{ appointment.5 }} {{ appointment.6 }}</td>
-                                <td><button class="btn btn-danger" onclick="deleteAppointment('{{ appointment.0 }}')">Delete</button></td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-
-            </div>
-        </div>
+<div class="container">
+  <div class="card my-4">
+    <div class="card-header" style="background-color: #3b7197; color:white;">Appointments</div>
+    <div class="card-body">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Number</th>
+            <th>Patient Name</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Type</th>
+            <th>Room Number</th>
+            <th></th> <!-- Empty header for the delete button -->
+          </tr>
+        </thead>
+        <tbody>
+          {% for appointment in appointments %}
+            <tr>
+              <td>{{ appointment.0 }}</td>
+              <td>{{ appointment.1 }} {{ appointment.2 }}</td>
+              <td>{{ appointment.3 }}</td>
+              <td>{{ appointment.4 }}</td>
+              <td>{{ appointment.5 }}</td>
+              <td>{{ appointment.6 }}</td>
+              <td>
+                <form action="{% url 'doctorprofile:appointments-page' %}?doctor_id={{ doctor_id }}" method="POST">
+                  <input type="hidden" name="deleted_app" value="{{ appointment.0 }}" />
+                  {% csrf_token %}
+                  <input type="submit" class="btn btn-danger mx-1" value="Cancel Appointment" />
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
-
-    
-    <script>
-       function deleteAppointment(appointmentId) {
-    fetch(`delete_appointment/${appointmentId}/`, {
-        method: 'DELETE',
-        headers: {
-            'X-CSRFToken': '{{ csrf_token }}',
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => {
-        if (response.ok) {
-            document.getElementById(`row_${appointmentId}`).remove();
-            window.location.href = 'doctor-page';
-
-        }
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-    });
-}
-
-
-    </script>
-    
-
+  </div>
+</div>

@@ -1,57 +1,93 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load static %}
 
-{% block page_title  %}
-Login Page
+{% block page_title %}
+  Login Page
 {% endblock %}
 
 {% block content %}
-{%if no_role%}
-<div class="alert alert-danger alert-dismissible fade show" role="alert">
-    Please specify whether you are a Doctor or a Patient.
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-{%elif wrong_pass%}
-<div class="alert alert-danger alert-dismissible fade show" role="alert">
-    The password you entered is incorrect. Please try again.
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-{%elif wrong_email%}
-<div class="alert alert-danger alert-dismissible fade show" role="alert">
-    This email doesn't exist. Please try again.
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-{%endif%}
-
-<div class="card mx-auto mt-3 col-sm-6" style="width: 35rem;">
-    <div class ="containter d-flex justify-content-center"<a href="Homepage.php"><img src="{% static 'images/team-logo.png' %}" class="card-img-top mx-auto" alt="Team Logo" style="width:80%"></a></div>
-    <div class="card-body">
-        <h2 class="text-center" style="color:rgb(21, 115, 71)"><strong>Welcome Back!</strong></h2><br>
-        <form action="{% url 'authenticate_user' %}" method="post">
-            {%csrf_token%}
-        <div class="form-check d-flex justify-content-center">
-            <div class="px-4 py-2">
-                <input class="form-check-input" type="radio" name="role" id="flexRadioDefault1" value="doctor">
-                <label class="form-check-label" for="flexRadioDefault1">
-                    Doctor
-                </label>
-            </div>
-            <div class="px-4 py-2">
-                <input class="form-check-input" type="radio" name="role" id="flexRadioDefault2" value="patient">
-                <label class="form-check-label" for="flexRadioDefault2">
-                    Patient
-                </label>
-            </div>
-        </div>
-        <div class="input-group mb-3">
-            <input type="text" class="form-control" name="email" placeholder="Email" aria-label="Email" aria-describedby="basic-addon1">
-        </div>
-        <div class="input-group mb-3">
-            <input type="password" class="form-control" name="password" placeholder="Password" aria-label="Username" aria-describedby="basic-addon1">
-        </div>
-        <p class="mt-1">Don't have an account? <a href="{% url 'registeration-page' %}">Sign up Here!</a></p>
-            <input type="submit" class="btn btn-success d-block mx-auto" style="width:100%;" value="LOGIN">
-        </form>
+  {% if no_role %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      Please specify whether you are a Doctor or a Patient.
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-</div>
+  {% elif wrong_pass %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      The password you entered is incorrect. Please try again.
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% elif wrong_email %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      This email doesn't exist. Please try again.
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% elif not_logged_in %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      Please login first.
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endif %}
+
+  {% block css_style %}
+    <link rel="stylesheet" href="{% static 'common/login.css' %}" />
+  {% endblock %}
+  <section class="h-100 gradient-form" style="background-color: #eee;">
+    <div class="container py-5 h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-xl-10">
+          <div class="card rounded-3 text-black">
+            <div class="row g-0">
+              <div class="col-lg-6 d-flex align-items-center gradient-custom-2">
+                <div class="text-white px-3 py-4 p-md-5 mx-md-4">
+                  <h4 class="mb-4">We are more than just a hospital</h4>
+                  <p class="small mb-0" style="text-align: justify;">Your vision and eye health are our top priority. Our team of experienced ophthalmologists is dedicated to providing comprehensive eye care, from routine eye exams to advanced surgical procedures. Utilizing state-of-the-art technology, we diagnose and treat a wide range of eye conditions, including cataracts, glaucoma, macular degeneration, and diabetic retinopathy. We are committed to offering personalized care to ensure the best outcomes for our patients. Trust us to safeguard your sight and help you maintain optimal eye health.</p>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="card-body p-md-5 mx-md-4">
+                  <div class="text-center">
+                    <img src="{% static 'images/logo.jpg' %}" style="width: 185px;" alt="logo" />
+                    <h4 class="mt-1 mb-5 pb-1">MySufferingQL Hospital</h4>
+                  </div>
+                  <form action="{% url 'common:authenticate_user' %}" method="post">
+                    {% csrf_token %}
+                    <p>Please login to your account</p>
+                    <div class="form-check d-flex justify-content-center">
+                      <div class="px-4 py-2">
+                        <input class="form-check-input" type="radio" name="role" id="flexRadioDefault1" value="doctor" />
+                        <label class="form-check-label" for="flexRadioDefault1">Doctor</label>
+                      </div>
+                      <div class="px-4 py-2">
+                        <input class="form-check-input" type="radio" name="role" id="flexRadioDefault2" value="patient" />
+                        <label class="form-check-label" for="flexRadioDefault2">Patient</label>
+                      </div>
+                    </div>
+
+                    <div class="input-group mb-3">
+                      <input type="text" class="form-control" name="email" placeholder="Email" aria-label="Email" aria-describedby="basic-addon1" />
+                    </div>
+
+                    <div class="input-group mb-3">
+                      <input type="password" class="form-control" name="password" placeholder="Password" aria-label="Username" aria-describedby="basic-addon1" />
+                    </div>
+
+                    {% comment %} <div class="text-center pt-1 mb-5 pb-1">
+                      <button data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3" type="button">Log in</button>
+                      <a class="text-muted" href="#!">Forgot password?</a>
+                    </div> {% endcomment %}
+                    <div class="text-center pt-1 mb-1 pb-1">
+                      <input type="submit" data-mdb-button-init data-mdb-ripple-init class="btn shadow btn-block fa-lg gradient-custom-2 mb-3" style="width:100%; color:white;" value="LOGIN" />
+                    </div>
+                    <p>
+                      Don't have an account? <a href="{% url 'common:registeration-page' %}">Sign up Here!</a>
+                    </p>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 {% endblock %}

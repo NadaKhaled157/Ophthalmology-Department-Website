@@ -8,6 +8,7 @@ from django.contrib.auth.hashers import make_password
 from django.core.files.storage import default_storage
 from django.db import connection
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import authenticate, login, logout
 
 
 # Create your views here.
@@ -60,14 +61,12 @@ def index(request):
     else:
         return render(request, "common/register.html")
 
-# def login(request):
-#     return render(request, "common/login.html")
-
 def authenticate_user(request):
     # Clearing session and cookies
-    request.session.flush()
-    request.session.modified = True
-
+    not_logged_in = request.session.get('not_logged_in_alert', False)
+    if not_logged_in == True:
+        request.session['not_logged_in'] = False
+        return render(request, "common/login.html", {'not_logged_in':not_logged_in})
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
@@ -87,16 +86,28 @@ def authenticate_user(request):
                 request.session['id']=[user[0]] ##What is this??##
                 # request.session['id']= user[2]
                 if role == "doctor":
+                    request.session['logged_in_user'] = user[0]
                     return redirect(reverse('doctorprofile:doctor-page')+ f'?doctor_id={user[0]}') #user[0] is did
                 if role == "patient":
                     return redirect(reverse('patientprofile:patient-page')+ f'?patient_id={user[0]}') ##Ensure patient app and view name match##
             else:
                 wrong_pass = "Wrong Password"
                 redirect('authenticate_user')
-                return render(request, "common/login.html",{'wrong_pass': True})
+                return render(request, "common/login.html",{'wrong_pass': True, 'not_logged_in':not_logged_in})
 
         else:
             wrong_email = "This user does not exist"
-            return render(request, "common/login.html",{'wrong_email': True})
-    return render(request, "common/login.html")
+            return render(request, "common/login.html",{'wrong_email': True, 'not_logged_in':not_logged_in})
+    return render(request, "common/login.html", {'not_logged_in':not_logged_in})
+
+from django.db import connection
+from django.contrib.auth import authenticate, login
+from django.http import HttpResponseRedirect
+
+
+#Not implemented yet
+def logout(request):
+    request.session.flush()
+    #Make it go to homepage
+    return redirect('authenticate_user')
 
