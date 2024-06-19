@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_title %}
+  Patient Inquiries
+{% endblock %}
+{% block content %}
+  {% include 'doctorprofile/navbar.html' with doctor_id=doctor_id %}
+  <div class="container">
+    <div class="card my-4">
+      <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #74bde0; color:white;">
+        Answer Patient Inquiries{% if request.GET.status == 'pending' %}
+          <a href="{% url 'doctorprofile:forms' %}?status=answered"><button type="button" class="btn btn-light float-right" style="color:#3b7197; border-color: #3b7197;">Go to Answered Inquiries</button></a>
+        {% elif request.GET.status == 'answered' %}
+          <a href="{% url 'doctorprofile:forms' %}?status=pending"><button type="button" class="btn btn-light float-right" style="color:#3b7197; border-color: #3b7197;">Go to Pending Inquiries</button></a>
+        {% endif %}
+      </div>
+      <div class="card-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Form Number</th>
+              <th scope="col">Patient Name</th>
+              <th scope="col">Form Status</th>
+              <th scope="col">Handle</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for form in forms %}
+              <tr>
+                <th scope="row">{{ form.0 }}</th>
+                <td>{{ form.1 }} {{ form.2 }}</td>
+                <td>{{ form.5 }}</td>
+                <td>
+                  <!-- Button trigger modal -->
+                  <div class="d-flex">
+                    <button type="button" class="btn btn-light mx-1" style="color:#3b7197; border-color: #3b7197;" data-bs-toggle="modal" data-bs-target="#modal{{ form.0 }}">
+                      {% if form.5 == 'Pending' %}
+                        Respond
+                      {% elif form.5 == 'Answered' %}
+                        Edit Response
+                      {% endif %}
+                    </button>
+                    <form action="{% url 'doctorprofile:forms' %}?status={{ form.5|lower }}" method="POST">
+                      <input type="hidden" name="deleted_form" value="{{ form.0 }}" />
+                      {% csrf_token %}
+                      <input type="submit" class="btn btn-outline-danger mx-1" value="Delete" />
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  {% for form in forms %}
+    {% include 'doctorprofile/form-modal.html' with modal_id=form.0 p_fname=form.1 p_lname=form.2 inquiry=form.3 doctor_id=doctor_id %}
+  {% endfor %}
+{% endblock %}

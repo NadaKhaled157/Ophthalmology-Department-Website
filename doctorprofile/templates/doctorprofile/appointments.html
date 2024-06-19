@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_title %}
+  Appointments
+{% endblock %}
+{% block content %}
+  {% include 'doctorprofile/navbar.html' with doctor_id=doctor_id %}
+  <div class="container">
+    <div class="card my-4">
+      <div class="card-header" style="background-color: #3b7197; color:white;">Appointments</div>
+      <div class="card-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Number</th>
+              <th>Patient Name</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Type</th>
+              <th>Room Number</th>
+              <th></th> <!-- Empty header for the delete button -->
+            </tr>
+          </thead>
+          <tbody>
+            {% for appointment in appointments %}
+              <tr>
+                <td>{{ appointment.0 }}</td>
+                <td>{{ appointment.1 }} {{ appointment.2 }}</td>
+                <td>{{ appointment.3 }}</td>
+                <td>{{ appointment.4 }}</td>
+                <td>{{ appointment.5 }}</td>
+                <td>{{ appointment.6 }}</td>
+                <td>
+                  <form action="{% url 'doctorprofile:appointments-page' %}" method="POST">
+                    <input type="hidden" name="deleted_app" value="{{ appointment.0 }}" />
+                    {% csrf_token %}
+                    <input type="submit" class="btn btn-danger mx-1" value="Cancel Appointment" />
+                  </form>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,46 @@
+<div class="container">
+    <div class = "card my-4">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-sm-6">
+                    <h5>Statistics</h5>
+                </div>
+                <div class="col-sm">
+                    <form method="post" action="{% url 'admin_profile' %}" id="actionForm">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <div class="row">
+                                <select class="form-control" name="view" onchange="document.getElementById('actionForm').submit();">
+                                    <option value="">View table</option>
+                                    <option value="doctor">Doctors</option>
+                                    <option value="nurse">Nurses</option>
+                                    <option value="technician">Technicians</option>
+                                    <option value="patient">Patients</option>
+                                    <option value="appointment">Appointments</option>
+                                    <option value="remove">Remove</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div  class="col-sm">
+                    <a href="{% url 'role' %}" class="btn btn-primary">Add Employee</a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <label class="col-sm-2">Staff: {{staffn.0}} </label>
+                <label class="col-sm-2">Doctors: {{doctorn.0}} </label>
+            </div>
+            <div class="row">
+                <label class="col-sm-2">Nurses: {{nurse.0}} </label>
+                <label class="col-sm-2">Technicians: {{tech.0}} </label>
+            </div>
+            <div class="row">
+                <label class="col-sm-2">Patients: {{patient.0}} </label>
+                <label class="col-sm-2">Appointments: {{app.0}} </label>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,54 @@
+<div class="container">
+    {% comment %}
+    <div class="row" align="center">
+        <h6 class="col-sm">Doctor</h6>
+        <div  class="col-sm">
+            <form method="get" action="{% url 'admin_profile' %}" id="actionForm">
+                {% csrf_token %}
+                <div class="form-group">
+                    <div class="row">
+                        <select class="form-control" name="group" onchange="document.getElementById('actionForm').submit();">
+                            <option value="">Sort by</option>
+                            <option value="eid">ID</option>
+                            <option value="salary">Salary</option>
+                            <option value="role">Name</option>
+                            <option value="d_spacialization">Specialization</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endcomment %}
+    <h4 align="center">Doctors</h4>
+    <table class="table">
+        <thead>
+            <tr scope="col" align="center">
+                <th>ID</th>
+                <th>Doctor Name</th>
+                <th>Age</th>
+                <th>Email</th>
+                <th>Specialization</th>
+                <th>Salary</th>
+                <th>Modify</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for doc in viewed %}
+            <tr scope="row" align="center">
+                <td>{{doc.0}}</td>
+                <td>{{doc.1}} {{doc.2}}</td>
+                <td>{{doc.3}}</td>
+                <td>{{doc.5}}</td>
+                <td>{{doc.4}}</td>
+                <td>{{doc.6}}</td>
+                <td>
+                    <a href="{%  url 'edit_doc' doc.0 %}" class="link-dark"><i class="fa-solid fa-pen-to-square fs-5 me-3"></i></a>
+                    <a href="{% url 'rmv_doc' doc.0 %}" class="link-dark"><i class="fa-solid fa-trash fs-5"></i></a>
+                    <a href="{% url 'available' doc.0 %}" class="link-dark"><i class="fa-duotone fa-clock"></i></a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
