@@ -15,14 +15,16 @@ from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def doctor_profile(request):
-    doctor_id = int(request.GET.get('doctor_id'))
+    # doctor_id = int(request.GET.get('doctor_id'))
+    doctor_requested = int(request.GET.get('doctor_id'))
     try:
-        doctor_requested = request.session['logged_in_user']
+        # doctor_requested = request.session['logged_in_user']
+        doctor_id = request.session['logged_in_user']
     except:
-        request.session['not_logged_in_alert'] = True
+        request.session['not_logged_in'] = True
         return redirect('common:authenticate_user')
     if doctor_requested != doctor_id:
-        request.session['not_logged_in_alert'] = True
+        request.session['not_logged_in'] = True
         return redirect('common:authenticate_user')
     doctor, img_path = retrieve_doctor(doctor_id)
     if doctor:

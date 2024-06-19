@@ -62,10 +62,9 @@ def index(request):
         return render(request, "common/register.html")
 
 def authenticate_user(request):
-    # Clearing session and cookies
     not_logged_in = request.session.get('not_logged_in_alert', False)
     if not_logged_in == True:
-        request.session['not_logged_in'] = False
+        request.session['not_logged_in_alert'] = False
         return render(request, "common/login.html", {'not_logged_in':not_logged_in})
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -93,12 +92,12 @@ def authenticate_user(request):
             else:
                 wrong_pass = "Wrong Password"
                 redirect('authenticate_user')
-                return render(request, "common/login.html",{'wrong_pass': True, 'not_logged_in':not_logged_in})
+                return render(request, "common/login.html",{'wrong_pass': True})
 
         else:
             wrong_email = "This user does not exist"
-            return render(request, "common/login.html",{'wrong_email': True, 'not_logged_in':not_logged_in})
-    return render(request, "common/login.html", {'not_logged_in':not_logged_in})
+            return render(request, "common/login.html",{'wrong_email': True})
+    return render(request, "common/login.html")
 
 from django.db import connection
 from django.contrib.auth import authenticate, login
