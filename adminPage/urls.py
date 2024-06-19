@@ -16,4 +16,6 @@ urlpatterns=[
     path('edit_nur/<int:id>/', views.edit_nur, name = "edit_nur"),
     path('edit_doc/<int:id>/', views.edit_doc, name = "edit_doc"),
     path('edit_tech/<int:id>/', views.edit_tech, name = "edit_tech"),
+    path('available/<int:id>/', views.available, name = "available"),
+
 ]

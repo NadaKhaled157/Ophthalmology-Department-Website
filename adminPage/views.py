@@ -327,6 +327,14 @@ def edit_tech(request, id):
         return redirect('admin_profile')
     return render(request, 'adminPage/edit_tech.html', {'tid': id,
                                                         'tech':data})
+def available(request, id):
+    with connection.cursor() as cursor:
+        cursor.execute("""SELECT s.fname, s.lname, a.day, a.shift_start, a.shift_end
+                       FROM availability a JOIN doctor d ON a.did = d.did
+                       JOIN staff s ON s.eid = d.eid
+                       WHERE a.did = %s""", [id])
+        time = cursor.fetchall()
+    return render(request, 'adminPage/available.html', {'time': time})
 
 def rmv_doc(request, id):
     with connection.cursor() as cursor:
