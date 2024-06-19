@@ -1,94 +1,93 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load static %}
 
-{% block page_title  %}
-Registeration Page
+{% block page_title %}
+  Registeration Page
 {% endblock %}
 
-{% block css_style  %}
-{% comment %} <link rel="stylesheet" href="static\bootstrap.min.css"> {% endcomment %}
-<style>
-  .custom-row {
-    margin-bottom: 70px;
-  }
-
-h1{
-    text-align: center;
-    padding-bottom: 20px;
-    padding-top: 30px;
-    color: #006b3c;
-}
-
-</style>
-
-{% comment %} <link rel="stylesheet" href="pages\static\pages\login.css"> {% endcomment %}
+{% block css_style %}
+  <style>
+    .custom-row {
+      margin-bottom: 70px;
+    }
+    
+    h1 {
+      text-align: center;
+      padding-bottom: 20px;
+      padding-top: 30px;
+      color: #006b3c;
+    }
+  </style>
+  <link rel="stylesheet" href="{% static 'common/login.css' %}" />
+  {% comment %} <link rel="stylesheet" href="pages\static\pages\login.css" /> {% endcomment %}
 {% endblock %}
 
 {% block content %}
-<div class="card mb-3" style="max-width: 100%; width: 100%; height: 100vh;">
-  <div class="row g-0">
-    <div class="col-md-4 d-flex align-items-center">
-      <img src="{% static 'images/team-logo.png'%}" class="img-fluid rounded-start" alt="Team Logo">
-    </div>
-    <div class="col-md-8">
-      <div class="card-body">
-        <h1 class="card-title">Welcome To Registeration Page</h1>
-
-        <form action="/" method="POST" enctype='multipart/form-data'>
-          {% comment %} ADD EXTRA INFO FROM PATIENT TABLE {% endcomment %}
-            {%csrf_token%}
-    <div class="custom-row mb-3">
-            <input type="text" class="form-control" name="email" placeholder="Email" aria-label="Email" aria-describedby="basic-addon1" required>
-    </div>
-   <div class="custom-row mb-3">
-      <input type="text" class="form-control" name="first_name"  placeholder="First name" aria-label="First name" required>
+  <section class="h-100 gradient-form" style="background-color: #eee;">
+    <div class="container py-5 h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-xl-10">
+          <div class="card rounded-3 text-black">
+            <div class="row g-0">
+              <div class="col-lg-6">
+                <div class="card-body p-md-4 mx-md-3">
+                  <div class="text-center mb-2">
+                    <img src="{% static 'images/logo.jpg' %}" style="width: 185px;" alt="logo" />
+                  </div>
+                  <form action="common:registeration-page" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="custom-row d-flex mb-3">
+                      <input type="text" class="form-control me-2" name="first_name" placeholder="First name" aria-label="First name" required />
+                      <input type="text" class="form-control" name="last_name" placeholder="Last name" aria-label="Last name" required />
+                    </div>
+                    <div class="custom-row mb-3">
+                      <input type="text" class="form-control" name="email" placeholder="Email" aria-label="Email" aria-describedby="basic-addon1" required />
+                    </div>
+                    <div class="custom-row d-flex mb-3">
+                      <input type="password" class="form-control me-2" name="password" placeholder="Password" required />
+                      <input type="password" class="form-control" name="confirm-password" placeholder="Confirm Password" required />
+                    </div>
+                    <div class="custom-row mb-3">
+                      <input type="text" class="form-control" name="address" placeholder="Address" required />
+                    </div>
+                    <div class="custom-row d-flex mb-3">
+                      <input type="number" class="form-control me-2" name="age" placeholder="Age" required />
+                      <input type="text" class="form-control" name="number" placeholder="Phone Number" required />
+                    </div>
+                    <fieldset class="custom-row mb-2" style="display: flex; justify-content: center;">
+                      <div class="form-check mx-auto" style="margin-right: 10px;">
+                        <input class="form-check-input" type="radio" name="gender" id="male" value="option1" />
+                        <label class="form-check-label" for="Male">Male</label>
+                      </div>
+                      <div class="form-check mx-auto">
+                        <input class="form-check-input" type="radio" name="gender" id="female" value="option2" />
+                        <label class="form-check-label" for="Female">Female</label>
+                      </div>
+                    </fieldset>
+                    <div class="mb-3">
+                      <label for="formFile" class="form-label">Choose a Profile Image</label>
+                      <input class="form-control" type="file" id="formFile" name="img" />
+                    </div>
+                    <div class="text-center pt-1 mb-1 pb-1">
+                      <input type="submit" data-mdb-button-init data-mdb-ripple-init class="btn shadow btn-block fa-lg gradient-custom-2 mb-3" style="width:100%; color:white;" value="SIGNUP" />
+                    </div>
+                  </form>
+                  <p>
+                    Already have an account? <a href="{% url 'common:authenticate_user' %}">Login Now!</a>
+                  </p>
+                </div>
+              </div>
+              <div class="col-lg-6 d-flex align-items-center gradient-custom-2">
+                <div class="text-white px-3 py-4 p-md-5 mx-md-4">
+                  <h4 class="mb-4">We are more than just a hospital</h4>
+                  <p class="small mb-0" style="text-align: justify;">Your vision and eye health are our top priority. Our team of experienced ophthalmologists is dedicated to providing comprehensive eye care, from routine eye exams to advanced surgical procedures. Utilizing state-of-the-art technology, we diagnose and treat a wide range of eye conditions, including cataracts, glaucoma, macular degeneration, and diabetic retinopathy. We are committed to offering personalized care to ensure the best outcomes for our patients. Trust us to safeguard your sight and help you maintain optimal eye health.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="custom-row mb-3">
-        <input type="text" class="form-control" name="last_name" placeholder="Last name" aria-label="Last name" required>
-      </div>
-    <div class="custom-row mb-3">
-            <input type="password" class="form-control" name="password" placeholder="Password" required>
-        </div>
-
-    <div class="custom-row mb-3">
-        <input type="password" class="form-control" name="confirm-password" placeholder="Confirm Password" required>
-        </div>
-    <div class="custom-row mb-3">
-            <input type="text" class="form-control" name="address" placeholder="Address" required>
-        </div>
-    <div class="custom-row mb-3">
-            <input type="number" class="form-control" name="number" placeholder="Phone Number" required>
-        </div>
-
-<fieldset class="custom-row mb-3">
-   <label class="text">Gender</label>
-   <div class="col-lg-10">
-     <div class="form-check">
-       <input class="form-check-input" type="radio" name="gender" id="male" value="option1">
-       <label class="form-check-label" for="Male">
-         Male
-       </label>
-     </div>
-     <div class="form-check">
-       <input class="form-check-input" type="radio" name="gender" id="female" value="option2">
-       <label class="form-check-label" for="Female">
-         Female
-       </label>
-     </div>
-   </div>
- </fieldset>
- <div class="mb-3">
-  <label for="formFile" class="form-label">Choose a Profile Image</label>
-  <input class="form-control" type="file" id="formFile" name="img">
-</div>
-  <input type="submit" class="btn btn-success d-block mx-auto" style="width:100%;" value="Register">
-        </form>
-        <h6 class="mt-2">Already have an account? <a href="{% url "login-page" %}">Login Now!</a></h6>
     </div>
-</div>
-</div>
-</div>
-
-{% comment %} Bootstrap {% endcomment %}
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  </section>
+  {% comment %} <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script> {% endcomment %}
 {% endblock %}
