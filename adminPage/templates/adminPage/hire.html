@@ -14,9 +14,9 @@
                 <h4 style="font-weight: bold;">Specify the role</h4>
             </div>
             <div class="card-body">
-                <a href="{% url 'add_doc' %}" class="btn btn-success" style="width: 20rem; margin-bottom: 1rem; font-weight: bold; font-size: large;">Doctor</a><br>
-                <a href="{% url 'add_nur' %}" class="btn btn-primary" style="width: 20rem; margin-bottom: 1rem; font-weight: bold; font-size: large;">Nurse</a><br>
-                <a href="{% url 'add_tech' %}" class="btn btn-secondary" style="width: 20rem; margin-bottom: 1rem; font-weight: bold; font-size: large;">Technician</a>
+                <a href="{% url 'add_doc' %}" class="btn btn-success" name='doc'style="width: 20rem; margin-bottom: 1rem; font-weight: bold; font-size: large;">Doctor</a><br>
+                <a href="{% url 'add_nur' %}" class="btn btn-primary" name='nur'style="width: 20rem; margin-bottom: 1rem; font-weight: bold; font-size: large;">Nurse</a><br>
+                <a href="{% url 'add_tech' %}" class="btn btn-secondary" name='tech'style="width: 20rem; margin-bottom: 1rem; font-weight: bold; font-size: large;">Technician</a>
                 <a href="{% url 'cancel' %}" class="btn btn-danger" style="width: 20rem; font-weight: bold; font-size: large;">Cancel</a>
             </div>
         </dive>
