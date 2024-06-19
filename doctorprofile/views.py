@@ -15,15 +15,9 @@ from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def doctor_profile(request):
-    # doctor_id = int(request.GET.get('doctor_id'))
-    doctor_requested = int(request.GET.get('doctor_id'))
     try:
-        # doctor_requested = request.session['logged_in_user']
         doctor_id = request.session['logged_in_user']
     except:
-        request.session['not_logged_in'] = True
-        return redirect('common:authenticate_user')
-    if doctor_requested != doctor_id:
         request.session['not_logged_in'] = True
         return redirect('common:authenticate_user')
     doctor, img_path = retrieve_doctor(doctor_id)
@@ -47,6 +41,7 @@ def doctor_profile(request):
         print(availability)
         return render(request, 'doctorprofile/profile.html', {'doctor': doctor, 'shifts': shifts,'appointments':appointments, 'img_path':img_path,'doctor_id':doctor_id})
     else:
+            #return a better error
             return HttpResponse("No doctors found in the database.")
 
 def forms(request):
@@ -61,14 +56,21 @@ def forms(request):
     #     request.session['not_logged_in_alert'] = True
     #     return redirect('common:authenticate_user')
 
-    doctor_requested = int(request.GET.get('doctor_id'))
+    # doctor_requested = int(request.GET.get('doctor_id'))
+    # try:
+    #     # doctor_requested = request.session['logged_in_user']
+    #     doctor_id = request.session['logged_in_user']
+    # except:
+    #     request.session['not_logged_in'] = True
+    #     return redirect('common:authenticate_user')
+    # if doctor_requested != doctor_id:
+    #     request.session['not_logged_in'] = True
+    #     return redirect('common:authenticate_user')
+
     try:
         # doctor_requested = request.session['logged_in_user']
         doctor_id = request.session['logged_in_user']
     except:
-        request.session['not_logged_in'] = True
-        return redirect('common:authenticate_user')
-    if doctor_requested != doctor_id:
         request.session['not_logged_in'] = True
         return redirect('common:authenticate_user')
 
@@ -108,29 +110,14 @@ def forms(request):
     # return render(request,'doctorprofile/forms.html',{'forms':form_data,'doctor_id':did})
 
 def edit_info(request):
-    # doctor_id = int(request.GET.get('doctor_id'))
-    # try:
-    #     doctor_requested = request.session['logged_in_user']
-    # except:
-    #     request.session['not_logged_in_alert'] = True
-    #     return redirect('common:authenticate_user')
-    # if doctor_requested != doctor_id:
-    #     request.session['not_logged_in_alert'] = True
-    #     return redirect('common:authenticate_user')
-
-    doctor_requested = int(request.GET.get('doctor_id'))
     try:
-        # doctor_requested = request.session['logged_in_user']
         doctor_id = request.session['logged_in_user']
     except:
         request.session['not_logged_in'] = True
         return redirect('common:authenticate_user')
-    if doctor_requested != doctor_id:
-        request.session['not_logged_in'] = True
-        return redirect('common:authenticate_user')
 
     if request.method == 'POST':
-            doctor_id = request.POST.get('doctor_id')
+            # doctor_id = request.POST.get('doctor_id')
             # Staff Data
             fname = request.POST.get('fname')
             lname = request.POST.get('lname')
@@ -139,12 +126,12 @@ def edit_info(request):
             email = request.POST.get('email')
             phone = request.POST.get('phone')
             password = request.POST.get('password')
-            ##If they left password blank, keep their old one.
-            if password is None:
-                with connection.cursor() as cursor:
-                    cursor.execute("SELECT password from doctor where did = %s", [doctor_id])
-                    password = cursor.fetchone()[0]
-            ##
+            # ##If they left password blank, keep their old one.
+            # if password is None:
+            #     with connection.cursor() as cursor:
+            #         cursor.execute("SELECT password from doctor where did = %s", [doctor_id])
+            #         password = cursor.fetchone()[0]
+            # ##
             hashed_password=make_password(password)
             img = request.FILES.get('img')
             if img: #if new photo
@@ -165,24 +152,17 @@ def edit_info(request):
                 cursor.execute("""UPDATE doctor
                                     SET email = %s, d_photo = %s, password = %s
                                     WHERE did = %s""", [email, img_path, hashed_password ,doctor_id])
-            target_url = f'/doctor/?doctor_id={doctor_id}'
-            return redirect(target_url)
+            # target_url = f'/doctor/?doctor_id={doctor_id}'
+            return redirect('doctorprofile:doctor_profile')
     else:
         doctor_data, img_path = retrieve_doctor(doctor_id)
         return render(request, 'doctorprofile/edit-info.html', {'doctor_id': doctor_id, 'doctor':doctor_data, 'img_path':img_path})
         
 
 def p_record(request):
-    # doctor_id = request.GET.get('doctor_id')
-
-    doctor_requested = int(request.GET.get('doctor_id'))
     try:
-        # doctor_requested = request.session['logged_in_user']
         doctor_id = request.session['logged_in_user']
     except:
-        request.session['not_logged_in'] = True
-        return redirect('common:authenticate_user')
-    if doctor_requested != doctor_id:
         request.session['not_logged_in'] = True
         return redirect('common:authenticate_user')
     
@@ -207,11 +187,9 @@ def p_record(request):
 
 def edit_record(request):
     pid = request.GET.get('pid')
-    # return HttpResponse(pid)
     if request.method == "POST":
         # return HttpResponse('inside POST')
-        p_name = request.POST.get('p_name')
-        # pid = request.POST.get('pid')
+        # p_name = request.POST.get('p_name')
         diagnosis = request.POST.get('diagnosis')
         treatment = request.POST.get('treatment')
         dosage = request.POST.get('dosage')
@@ -223,31 +201,15 @@ def edit_record(request):
                            WHERE pid = %s
                             """, [diagnosis,treatment,dosage,follow_up,frequency, pid])
             cursor.execute("SELECT did FROM patient WHERE pid = %s",[pid])
-            did=cursor.fetchone()
-            # return HttpResponse(pid)
+            did=cursor.fetchone()[0]
         target_url = f'/doctor/patientrecord/?doctor_id={did[0]}'
         return redirect(target_url)
     
 def appointments(request):
     deleted_app = request.POST.get('deleted_app')
-    # doctor_id = int(request.GET.get('doctor_id'))
-    # try:
-    #     doctor_requested = request.session['logged_in_user']
-    # except:
-    #     request.session['not_logged_in_alert'] = True
-    #     return redirect('common:authenticate_user')
-    # if doctor_requested != doctor_id:
-    #     request.session['not_logged_in_alert'] = True
-    #     return redirect('common:authenticate_user')
-
-    doctor_requested = int(request.GET.get('doctor_id'))
     try:
-        # doctor_requested = request.session['logged_in_user']
         doctor_id = request.session['logged_in_user']
     except:
-        request.session['not_logged_in'] = True
-        return redirect('common:authenticate_user')
-    if doctor_requested != doctor_id:
         request.session['not_logged_in'] = True
         return redirect('common:authenticate_user')
     
@@ -260,9 +222,7 @@ def appointments(request):
                     cancelled_bid = cursor.fetchone()[0]
                     cursor.execute("UPDATE billing set payment_status = 'Cancelled' WHERE bid = %s", [cancelled_bid])
                     cursor.execute("DELETE from appointment where aid = %s",[deleted_app])
-                # return HttpResponse('inside deleted_app')
         appointments = retrieve_appointments(doctor_id)
-        # print(appointments)
     return render(request, 'doctorprofile/appointments.html', {'appointments': appointments, 'doctor_id':doctor_id})
 
 def retrieve_doctor(did):
@@ -299,32 +259,10 @@ def retrieve_appointments(did):
         appointments = cursor.fetchall()
     return appointments
 
-# def delete_appointment(request, appointment_id):
-#     # with connection.cursor() as cursor:
-#     #     try:
-#     #         cursor.execute("DELETE FROM appointment WHERE aid = %s", [appointment_id])
-#     #         if cursor.rowcount > 0:
-#     #             return JsonResponse({'message': 'Appointment deleted successfully.'}, status=200)
-#     #         else:
-#     #             return JsonResponse({'message': 'Appointment not found.'}, status=404)
-#     #     except Exception as e:
-#     #         return JsonResponse({'message': 'Error deleting appointment.', 'error': str(e)}, status=500)
-        
-#      with connection.cursor() as cursor:
-#             cursor.execute("DELETE FROM appointment WHERE aid = %s", [appointment_id])
-#             if cursor.rowcount > 0:
-#                 return redirect('doctorprofile:doctor-page')
-#             return redirect('doctorprofile:doctor-page')
-
 #I TEST SOME PRINTS HERE DO NOT DELETE
 def test (request):
-    password = make_password('docpass1')
-    hashed = 'pbkdf2_sha256$600000$L2wwgvl6VsLe8IrBKQPauh$xzWMgoqSuIhv2B6nxm5vz40wPuoY/OGHqEwo/xtK22c='
+    password = make_password('hiddenkey1')
+    hashed = 'pbkdf2_sha256$600000$OT9oWKU5A05bOsCaXM3ygP$cxtmxNljVX/6e3/OQPEY8L15g8pezf4Lwjil7al+gc0='
     # return HttpResponse(password)
     #return render(request, 'doctorprofile/test.html')
     return HttpResponse(check_password(password, hashed))
-
-
-
-# def profile_front(request):
-#     return render (request, 'doctorprofile/doctorprofile.html')

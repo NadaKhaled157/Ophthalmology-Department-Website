@@ -25,7 +25,7 @@
               <td>{{ appointment.5 }}</td>
               <td>{{ appointment.6 }}</td>
               <td>
-                <form action="{% url 'doctorprofile:appointments-page' %}?doctor_id={{ doctor_id }}" method="POST">
+                <form action="{% url 'doctorprofile:appointments-page' %}" method="POST">
                   <input type="hidden" name="deleted_app" value="{{ appointment.0 }}" />
                   {% csrf_token %}
                   <input type="submit" class="btn btn-danger mx-1" value="Cancel Appointment" />

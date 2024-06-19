@@ -8,32 +8,19 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            {% comment %} <a class="nav-link active" aria-current="page" href="{% url 'doctorprofile:doctor-page' %}?doctor_id={{ doctor_id }}">Home</a> {% endcomment %}
-            <a class="nav-link active" aria-current="page" href="{% url 'doctorprofile:doctor-page' %}?doctor_id={{ doctor_id }}">Home</a>
+            <a class="nav-link active" aria-current="page" href="{% url 'doctorprofile:doctor-page' %}">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'doctorprofile:appointments-page' %}?doctor_id={{ doctor_id }}">Appointments</a>
+            <a class="nav-link" href="{% url 'doctorprofile:appointments-page' %}">Appointments</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'doctorprofile:patientrecord-page' %}?doctor_id={{ doctor_id }}">Patient Health Records</a>
+            <a class="nav-link" href="{% url 'doctorprofile:patientrecord-page' %}">Patient Health Records</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'doctorprofile:forms' %}?status=pending&doctor_id={{ doctor_id }}">Patient Inquiries</a>
+            <a class="nav-link" href="{% url 'doctorprofile:forms' %}?status=pending">Patient Inquiries</a>
           </li>
-          {% comment %} <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Patient Inquiries</a>
-            <ul class="dropdown-menu">
-              <li>
-                <a class="dropdown-item" href="{% url 'doctorprofile:forms' %}?status=pending&doctor_id={{ doctor_id }}">Pending Inquiries</a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="{% url 'doctorprofile:forms' %}?status=answered&doctor_id={{ doctor_id }}">Answered Inquiries</a>
-              </li>
-            </ul>
-          </li> {% endcomment %}
         </ul>
         <a href="{% url 'common:logout' %}"><button type="button" class="btn btn-light float-right" style="background-color:#3b7197; color:white; border-color: #3b7197;">Logout</button></a>
-        {% comment %} <a href="{% url 'common:logout' %}">Logout</a> {% endcomment %}
       </div>
     </div>
   </nav>

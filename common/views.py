@@ -86,9 +86,9 @@ def authenticate_user(request):
                 # request.session['id']= user[2]
                 if role == "doctor":
                     request.session['logged_in_user'] = user[0]
-                    return redirect(reverse('doctorprofile:doctor-page')+ f'?doctor_id={user[0]}') #user[0] is did
+                    return redirect(reverse('doctorprofile:doctor-page')) #user[0] is did
                 if role == "patient":
-                    return redirect(reverse('patientprofile:patient-page')+ f'?patient_id={user[0]}') ##Ensure patient app and view name match##
+                    return redirect(reverse('patientprofile:patient-page')) ##Ensure patient app and view name match##
             else:
                 wrong_pass = "Wrong Password"
                 redirect('common:authenticate_user')
@@ -108,5 +108,5 @@ from django.http import HttpResponseRedirect
 def logout(request):
     request.session.flush()
     #Make it go to homepage
-    return redirect('authenticate_user')
+    return redirect('common:authenticate_user')
 

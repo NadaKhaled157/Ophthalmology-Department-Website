@@ -14,22 +14,22 @@
           <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none"><span class="fs-5 d-none d-sm-inline">Menu</span></a>
           <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
             <li class="nav-item">
-              <a href="{% url 'doctorprofile:doctor-page' %}?doctor_id={{ doctor_id }}" class="nav-link align-middle px-0" style="color:white;"><i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Home</span></a>
+              <a href="{% url 'doctorprofile:doctor-page' %}" class="nav-link align-middle px-0" style="color:white;"><i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Home</span></a>
             </li>
             <li class="nav-item">
-              <a href="{% url 'doctorprofile:appointments-page' %}?doctor_id={{ doctor_id }}" class="nav-link align-middle px-0" style="color:white;"><i class="fs-4"></i> <span class="ms-1 d-none d-sm-inline">Appointments</span></a>
+              <a href="{% url 'doctorprofile:appointments-page' %}" class="nav-link align-middle px-0" style="color:white;"><i class="fs-4"></i> <span class="ms-1 d-none d-sm-inline">Appointments</span></a>
             </li>
             <li class="nav-item">
-              <a href="{% url 'doctorprofile:patientrecord-page' %}?doctor_id={{ doctor_id }}" class="nav-link align-middle px-0" style="color:white;"><i class="fs-4"></i> <span class="ms-1 d-none d-sm-inline">Patient Health Records</span></a>
+              <a href="{% url 'doctorprofile:patientrecord-page' %}" class="nav-link align-middle px-0" style="color:white;"><i class="fs-4"></i> <span class="ms-1 d-none d-sm-inline">Patient Health Records</span></a>
             </li>
             <li>
               <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle" style="color:white;"><i class="fs-4 bi-speedometer2"></i> <span class="ms-1 d-none d-sm-inline">Patient Inquiries</span></a>
               <ul class="collapse nav flex-column ms-1" id="submenu1" data-bs-parent="#menu">
                 <li class="w-100">
-                  <a href="{% url 'doctorprofile:forms' %}?status=pending&doctor_id={{ doctor_id }}" class="nav-link px-0" style="color:white;"><span class="d-none d-sm-inline">- Pending Inquiries</span></a>
+                  <a href="{% url 'doctorprofile:forms' %}?status=pending" class="nav-link px-0" style="color:white;"><span class="d-none d-sm-inline">- Pending Inquiries</span></a>
                 </li>
                 <li>
-                  <a href="{% url 'doctorprofile:forms' %}?status=answered&doctor_id={{ doctor_id }}" class="nav-link px-0" style="color:white;"><span class="d-none d-sm-inline">- Answered Inquiries</span></a>
+                  <a href="{% url 'doctorprofile:forms' %}?status=answered" class="nav-link px-0" style="color:white;"><span class="d-none d-sm-inline">- Answered Inquiries</span></a>
                 </li>
               </ul>
             </li>
@@ -37,7 +37,7 @@
           <hr />
           <div class="dropdown pb-4">
             <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-              <img src="../../media\doctor1_KHkpGuZ.jpeg" alt="hugenerd" width="30" height="30" class="rounded-circle" />
+              <img src="/media/{{ img_path }}" alt="hugenerd" width="40" height="40" class="rounded-circle" />
               <span class="d-none d-sm-inline mx-1">Dr. {{ doctor.1 }}</span>
             </a>
             <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
@@ -45,7 +45,7 @@
                 <a class="dropdown-item" href="#">Admin Request?</a>
               </li>
               <li>
-                <a class="dropdown-item" href="{% url 'doctorprofile:edit-info' %}?doctor_id={{ doctor.3 }}">Edit Profile</a>
+                <a class="dropdown-item" href="{% url 'doctorprofile:edit-info' %}">Edit Profile</a>
               </li>
               <li>
                 <hr class="dropdown-divider" />
@@ -58,13 +58,10 @@
         </div>
       </div>
       <div class="col py-3">
-        <div class="card d-flex flex-row justify-content-center">
-          <div>
-            <!-- Replace #colorcode1 with your desired color for the left part -->
-            <img src="../../media/doctor1_KHkpGuZ.jpeg" class="rounded-circle border border-dark ms-5 mt-3" style="width: 150px; height: 150px; object-fit: cover;" alt="Profile Image" />
-            <h3>Dr. {{ doctor.1 }} {{ doctor.2 }}</h3>
-            <p class="mx-auto" style="text-align:center;">{{ doctor.4 }}</p>
-          </div>
+        <div class="card d-flex flex-column align-items-center">
+          <img src="/media/{{ img_path }}" class="rounded-circle border border-dark mt-3" style="width: 150px; height: 150px; object-fit: cover;" alt="Profile Image" />
+          <h3>Dr. {{ doctor.1 }} {{ doctor.2 }}</h3>
+          <p class="mx-auto" style="text-align:center;">{{ doctor.4 }}</p>
         </div>
 
         <div class="card my-3" style="max-width:100%">
