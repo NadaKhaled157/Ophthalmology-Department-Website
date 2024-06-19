@@ -22,4 +22,5 @@ urlpatterns = [
     #path('patient/', include('patientprofile.urls')), ##Patient App Name##
     path('doctor/', include('doctorprofile.urls', namespace='doctorprofile')),
     path('', include('common.urls')),
+    path('dashboard/', include('adminPage.urls')),
 ]
