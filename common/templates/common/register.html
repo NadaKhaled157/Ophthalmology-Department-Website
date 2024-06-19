@@ -36,7 +36,6 @@
                   </div>
                   <form action="common:registeration-page" method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
-                    {% comment %}ADD EXTRA INFO FROM PATIENT TABLE{% endcomment %}
                     <div class="custom-row d-flex mb-3">
                       <input type="text" class="form-control me-2" name="first_name" placeholder="First name" aria-label="First name" required />
                       <input type="text" class="form-control" name="last_name" placeholder="Last name" aria-label="Last name" required />
@@ -90,5 +89,5 @@
       </div>
     </div>
   </section>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  {% comment %} <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script> {% endcomment %}
 {% endblock %}
