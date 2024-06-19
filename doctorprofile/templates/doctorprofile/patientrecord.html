@@ -1,4 +1,9 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block page_title %}
+  Patient Records
+{% endblock %}
 {% block content %}
   {% include 'doctorprofile/navbar.html' with doctor_id=doctor_id %}
   <div class="container">

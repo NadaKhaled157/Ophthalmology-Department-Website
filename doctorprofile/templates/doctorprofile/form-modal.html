@@ -9,7 +9,7 @@
                 <h5 class="modal-title fs-5" id="exampleModalLabel{{ modal_id }}">Respond to Patient</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{% url 'doctorprofile:forms' %}?status=pending&doctor_id={{doctor_id}}" method="POST">
+            <form action="{% url 'doctorprofile:forms' %}?status=pending" method="POST">
                 {%csrf_token%}
             <div class="modal-body">
                 <div class="mb-3">
@@ -33,14 +33,12 @@
                     <div class="mb-3">
                         <label for="response" class="col-form-label"><strong>Edit Your Response:</strong></label>
                         <textarea class="form-control" id="response" name="response">{{form.4}}</textarea>
-                        {% comment %} <p>{{form.4}}</p> {% endcomment %}
                     </div>
-                
                 {%endif%}
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <input type="submit" class="btn btn-success" value="Send Response">
+                <input type="submit" class="btn btn-light" style="background-color:#3b7197; color:white; border-color: #3b7197;" value="Send Response">
             </div>
         </div>
             </form>

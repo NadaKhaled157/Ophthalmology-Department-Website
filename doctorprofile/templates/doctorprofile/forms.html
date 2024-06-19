@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
+
+{% block page_title %}
+  Patient Inquiries
+{% endblock %}
 {% block content %}
   {% include 'doctorprofile/navbar.html' with doctor_id=doctor_id %}
   <div class="container">
@@ -37,7 +41,7 @@
                         Edit Response
                       {% endif %}
                     </button>
-                    <form action="{% url 'doctorprofile:forms' %}" method="POST">
+                    <form action="{% url 'doctorprofile:forms' %}?status={{ form.5|lower }}" method="POST">
                       <input type="hidden" name="deleted_form" value="{{ form.0 }}" />
                       {% csrf_token %}
                       <input type="submit" class="btn btn-outline-danger mx-1" value="Delete" />

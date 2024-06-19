@@ -11,6 +11,9 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
 
 
+def welcome_page(request):
+    return render(request, 'common/welcome-page.html')
+
 # Create your views here.
 def index(request):
     # Clearing session and cookies

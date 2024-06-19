@@ -34,7 +34,7 @@
                   <div class="text-center mb-2">
                     <img src="{% static 'images/logo.jpg' %}" style="width: 185px;" alt="logo" />
                   </div>
-                  <form action="/" method="POST" enctype="multipart/form-data">
+                  <form action="common:registeration-page" method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     {% comment %}ADD EXTRA INFO FROM PATIENT TABLE{% endcomment %}
                     <div class="custom-row d-flex mb-3">

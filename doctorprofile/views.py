@@ -217,9 +217,9 @@ def appointments(request):
         if request.method == "POST":
             if deleted_app is not None:
                 cursor.execute("SELECT bid from appointment where aid = %s", [deleted_app])
-                result = cursor.fetchone()
-                if result:
-                    cancelled_bid = cursor.fetchone()[0]
+                cancelled_bid = cursor.fetchone()
+                # return HttpResponse(result)
+                if cancelled_bid:
                     cursor.execute("UPDATE billing set payment_status = 'Cancelled' WHERE bid = %s", [cancelled_bid])
                     cursor.execute("DELETE from appointment where aid = %s",[deleted_app])
         appointments = retrieve_appointments(doctor_id)
