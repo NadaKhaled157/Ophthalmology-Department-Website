@@ -62,10 +62,10 @@ def index(request):
         return render(request, "common/register.html")
 
 def authenticate_user(request):
-    not_logged_in = request.session.get('not_logged_in_alert', False)
+    not_logged_in = request.session.get('not_logged_in', False)
     if not_logged_in == True:
-        request.session['not_logged_in_alert'] = False
-        return render(request, "common/login.html", {'not_logged_in':not_logged_in})
+        request.session['not_logged_in'] = False
+        return render(request, "common/login.html", {'not_logged_in':True})
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
@@ -91,7 +91,7 @@ def authenticate_user(request):
                     return redirect(reverse('patientprofile:patient-page')+ f'?patient_id={user[0]}') ##Ensure patient app and view name match##
             else:
                 wrong_pass = "Wrong Password"
-                redirect('authenticate_user')
+                redirect('common:authenticate_user')
                 return render(request, "common/login.html",{'wrong_pass': True})
 
         else:

@@ -50,17 +50,28 @@ def doctor_profile(request):
             return HttpResponse("No doctors found in the database.")
 
 def forms(request):
-    did = request.GET.get('doctor_id') ##Get DR ID from session##
-    # did = request.session['logged_in_user']
+    # doctor_id = request.GET.get('doctor_id') 
+    # try:
+    #     doctor_requested = str(request.session['logged_in_user'])
+    # except:
+    #     request.session['not_logged_in_alert'] = True
+    #     return redirect('common:authenticate_user')
+    # # return HttpResponse(f"{did.type()}|{doctor_requested.type()}")
+    # if doctor_requested != did:
+    #     request.session['not_logged_in_alert'] = True
+    #     return redirect('common:authenticate_user')
+
+    doctor_requested = int(request.GET.get('doctor_id'))
     try:
-        doctor_requested = str(request.session['logged_in_user'])
+        # doctor_requested = request.session['logged_in_user']
+        doctor_id = request.session['logged_in_user']
     except:
-        request.session['not_logged_in_alert'] = True
+        request.session['not_logged_in'] = True
         return redirect('common:authenticate_user')
-    # return HttpResponse(f"{did.type()}|{doctor_requested.type()}")
-    if doctor_requested != did:
-        request.session['not_logged_in_alert'] = True
+    if doctor_requested != doctor_id:
+        request.session['not_logged_in'] = True
         return redirect('common:authenticate_user')
+
     status = request.GET.get('status')  # is this used?
     if request.method == 'POST':
         response = request.POST.get('response')
@@ -81,31 +92,43 @@ def forms(request):
                                 INNER JOIN form AS f ON p.pid = f.pid
                                 INNER JOIN doctor AS d ON d.did = f.did
                                 WHERE f.form_status = 'Pending' AND d.did = %s;
-                        """,[did])
+                        """,[doctor_id])
             else:
                 cursor.execute("""SELECT f.fnum, p.p_fname, p.p_lname, f.request, f.response, f.form_status
                                 FROM patient AS p
                                 INNER JOIN form AS f ON p.pid = f.pid
                                 INNER JOIN doctor AS d ON d.did = f.did
                                 WHERE f.form_status = 'Answered' AND d.did = %s;
-                        """,[did])
+                        """,[doctor_id])
             if cursor.description is not None:
                 form_data = cursor.fetchall()
-                return render(request,'doctorprofile/forms.html',{'forms':form_data,'doctor_id':did})
-    url = f'/doctor/forms/?status=pending&doctor_id={did}'
+                return render(request,'doctorprofile/forms.html',{'forms':form_data,'doctor_id':doctor_id})
+    url = f'/doctor/forms/?status=pending&doctor_id={doctor_id}'
     return redirect(url)
     # return render(request,'doctorprofile/forms.html',{'forms':form_data,'doctor_id':did})
 
 def edit_info(request):
-    doctor_id = int(request.GET.get('doctor_id'))
+    # doctor_id = int(request.GET.get('doctor_id'))
+    # try:
+    #     doctor_requested = request.session['logged_in_user']
+    # except:
+    #     request.session['not_logged_in_alert'] = True
+    #     return redirect('common:authenticate_user')
+    # if doctor_requested != doctor_id:
+    #     request.session['not_logged_in_alert'] = True
+    #     return redirect('common:authenticate_user')
+
+    doctor_requested = int(request.GET.get('doctor_id'))
     try:
-        doctor_requested = request.session['logged_in_user']
+        # doctor_requested = request.session['logged_in_user']
+        doctor_id = request.session['logged_in_user']
     except:
-        request.session['not_logged_in_alert'] = True
+        request.session['not_logged_in'] = True
         return redirect('common:authenticate_user')
     if doctor_requested != doctor_id:
-        request.session['not_logged_in_alert'] = True
+        request.session['not_logged_in'] = True
         return redirect('common:authenticate_user')
+
     if request.method == 'POST':
             doctor_id = request.POST.get('doctor_id')
             # Staff Data
@@ -150,7 +173,19 @@ def edit_info(request):
         
 
 def p_record(request):
-    doctor_id = request.GET.get('doctor_id')
+    # doctor_id = request.GET.get('doctor_id')
+
+    doctor_requested = int(request.GET.get('doctor_id'))
+    try:
+        # doctor_requested = request.session['logged_in_user']
+        doctor_id = request.session['logged_in_user']
+    except:
+        request.session['not_logged_in'] = True
+        return redirect('common:authenticate_user')
+    if doctor_requested != doctor_id:
+        request.session['not_logged_in'] = True
+        return redirect('common:authenticate_user')
+    
     with connection.cursor() as cursor:
         cursor.execute(
              """
@@ -194,17 +229,28 @@ def edit_record(request):
         return redirect(target_url)
     
 def appointments(request):
-    doctor_id = request.GET.get('doctor_id')
     deleted_app = request.POST.get('deleted_app')
-    doctor_id = int(request.GET.get('doctor_id'))
+    # doctor_id = int(request.GET.get('doctor_id'))
+    # try:
+    #     doctor_requested = request.session['logged_in_user']
+    # except:
+    #     request.session['not_logged_in_alert'] = True
+    #     return redirect('common:authenticate_user')
+    # if doctor_requested != doctor_id:
+    #     request.session['not_logged_in_alert'] = True
+    #     return redirect('common:authenticate_user')
+
+    doctor_requested = int(request.GET.get('doctor_id'))
     try:
-        doctor_requested = request.session['logged_in_user']
+        # doctor_requested = request.session['logged_in_user']
+        doctor_id = request.session['logged_in_user']
     except:
-        request.session['not_logged_in_alert'] = True
+        request.session['not_logged_in'] = True
         return redirect('common:authenticate_user')
     if doctor_requested != doctor_id:
-        request.session['not_logged_in_alert'] = True
+        request.session['not_logged_in'] = True
         return redirect('common:authenticate_user')
+    
     with connection.cursor() as cursor:
         if request.method == "POST":
             if deleted_app is not None:
