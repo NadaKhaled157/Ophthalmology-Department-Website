@@ -27,15 +27,15 @@
         <div class="col-sm-9">
             {% include 'adminPage/top.html' %}
             {% if person == 'patient' %}
-                {% include 'adminPage/patient_view.html' %}
+                {% include 'adminPage/view_patient.html' %}
             {% elif person == 'doctor' %}
-                {% include 'adminPage/doctor_view.html' %}
+                {% include 'adminPage/view_doc.html' %}
             {% elif person == 'nurse' %}
-                {% include 'adminPage/nurse_view.html' %}
+                {% include 'adminPage/view_nur.html' %}
             {% elif person == 'technician' %}
-                {% include 'adminPage/tech_view.html' %}
+                {% include 'adminPage/view_tech.html' %}
             {% elif person == 'appointment' %}
-                {% include 'adminPage/app_view.html' %}
+                {% include 'adminPage/view_app.html' %}
             {% endif %}
         </div>
     </div>

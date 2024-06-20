@@ -1,12 +1,35 @@
 from urllib import request
 from django.shortcuts import render, HttpResponse, redirect
 from django.db import connection
-from django.contrib import messages
+from django.urls import reverse
 
-# Create your views here.
+def login(request):
+    if request.method == 'POST':
+        user = request.POST.get('user')
+        password = request.POST.get('password')
+
+        with connection.cursor() as cursor:
+            cursor.execute("""SELECT username
+                           FROM admin""")
+            usernames = cursor.fetchall()
+        if any(user in tup for tup in usernames):
+            with connection.cursor() as cursor:
+                cursor.execute("""SELECT password
+                               FROM admin
+                               WHERE username = %s""",[user])
+                password_old = cursor.fetchone()
+            
+            if password == password_old[0]:
+                return redirect('admin_profile')
+            else:
+                wrong = 'Password is incorrect!' 
+                return render(request, 'adminPage/login.html', {'wrong':wrong})
+        else:
+            wrong = 'Username is not found!'
+            return render(request, 'adminPage/login.html', {'wrong':wrong})
+    return render(request, 'adminPage/login.html')
 
 def admin_profile(request):
-
     # Ordering and viewing the staff
     order = request.GET.get('group', 'eid')
     with connection.cursor() as cursor:
@@ -329,12 +352,48 @@ def edit_tech(request, id):
                                                         'tech':data})
 def available(request, id):
     with connection.cursor() as cursor:
-        cursor.execute("""SELECT s.fname, s.lname, a.day, a.shift_start, a.shift_end
+        cursor.execute("""SELECT a.id, a.day, a.shift_start, a.shift_end
                        FROM availability a JOIN doctor d ON a.did = d.did
-                       JOIN staff s ON s.eid = d.eid
-                       WHERE a.did = %s""", [id])
+                       WHERE a.did = %s
+                       ORDER BY id""", [id])
         time = cursor.fetchall()
-    return render(request, 'adminPage/available.html', {'time': time})
+
+        cursor.execute("""SELECT fname, lname
+                       FROM staff s JOIN doctor D ON s.eid = d.eid
+                       WHERE d.did = %s""", [id])
+        name = cursor.fetchone()
+    return render(request, 'adminPage/view_available.html', {'time': time,
+                                                             'name': name,
+                                                             'id': id})
+
+def edit_availability(request, id):
+    if request.method == 'POST':
+        aid = request.POST.get('id')
+        day = request.POST.get('day')
+        start = request.POST.get('start')
+        end = request.POST.get('end')
+
+        with connection.cursor() as cursor:
+            cursor.execute("""UPDATE availability 
+                                SET day = %s, shift_start = %s, shift_end = %s
+                                WHERE did = %s and id = %s""", [day, start, end, id, aid])
+            
+        return redirect(reverse('available', args=[id]))
+    return render(request, 'adminPage/view_available.html')
+
+def add_shift(request, id):
+    if request.method == 'POST':
+        day = request.POST.get('day')
+        start = request.POST.get('start')
+        end = request.POST.get('end')
+
+        with connection.cursor() as cursor:
+            cursor.execute("""INSERT INTO availability (day, shift_start, shift_end, did)
+                                VALUES (%s,%s,%s,%s)""", [day, start, end, id])
+
+        return redirect(reverse('available', args=[id]))
+    return render(request, 'adminPage/add_shift.html', {'id':id})
+
 
 def rmv_doc(request, id):
     with connection.cursor() as cursor:
