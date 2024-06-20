@@ -13,6 +13,7 @@ urlpatterns=[
     path('patientrecord/', views.p_record, name='patientrecord-page'),
     path('editrecord/', views.edit_record, name='edit-record'),
     path('appointments/', views.appointments, name='appointments-page'),
+    path('add-record/', views.add_record, name="add-record"),
 
     path('test/', views.test),
 ]
