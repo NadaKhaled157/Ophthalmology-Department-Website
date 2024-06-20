@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="accordion mt-4 ms-4" style="width:70%; height: 70%;" id="accordionExample">
+  <div class="accordion-item" style="position: relative; top: 10px; left: 10px; bottom: 100px;">
+      <h2 class="accordion-header" style="font-size: 24px; position: relative; top: 10px; bottom: 20px; left: 20px;"> <i>Name:</i> {{name}} </h2>
+      <h2 class="accordion-header" style="font-size: 24px; position: relative; top: 20px; bottom: 20px; left: 20px;"> <i>ID:</i> {{id}} </h2>
+      <h2 class="accordion-header" style="font-size: 24px; bottom: 20px;"> <i>
+        <button class="btn btn-primary m-3" style="position: relative; top: 10px; left: 800px; bottom: 20px;" type="submit"><a href="{% url 'patientprofile:edit' %}" style="text-decoration: none; color:white;" class='p-3'>Edit</a></button>
+      </i> </h2>
+  </div>
+  <div class="accordion-item" style="position: relative; top: 10px; left: 10px; bottom: 100px;">
+      <h2 class="accordion-header">
+          <button class="btn btn-primary m-3" style="position: relative; top: 20px; left: 300px; bottom: 10px;" type="submit"><a href="{% url 'patientprofile:appointment' %}" style="text-decoration: none; color:white;" class='p-3'>Make an appointment</a></button>
+      </h2>
+      <h2 class="accordion-header">
+        <button class="btn btn-primary m-3" style="position: relative; top: 10px; left: 350px; bottom: 10px;" type="submit"><a href="{% url 'patientprofile:history' %}" style="text-decoration: none; color:white;" class='p-3'>History</a></button>
+      </h2>
+      <h2 class="accordion-header">
+        <button class="btn btn-primary m-3" style="position: relative; top: 10px; left: 300px; bottom: 10px;" type="submit"><a href="{% url 'patientprofile:contact' %}" style="text-decoration: none; color:white;" class='p-3'>Contact your doctor</a></button>
+      </h2>
+  </div>
+</div>
+{% endblock %}

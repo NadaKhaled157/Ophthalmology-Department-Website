@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="d-flex flex-column">
+    <div class="card mx-auto mt-4 col-sm-6" style="width: 35rem;">
+        <div class="container d-flex justify-content-center">
+            <a href="#">
+                <img src="{% static 'images/hospital-logo.jpeg' %}" class="card-img-top mx-auto" alt="Hospital Logo" style="width:70%">
+            </a>
+        </div>
+        <div class="card-body">
+      <h2 class="text-center" style="color:rgb(21, 115, 71)"><strong>Edit Your Info</strong></h2><br>
+
+      <form action="{% url 'patientprofile:edit' %}" method="POST" enctype='multipart/form-data'>
+                {% csrf_token %}
+                <!-- Form fields here -->
+
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" name="email" placeholder="{{patient.8}}" value="{{patient.8}}" aria-label="email" aria-describedby="basic-addon1">
+        </div>
+        <div class="input-group mb-3">
+            <input type="number" class="form-control" name="phone_number" placeholder="{{patient.4}}" value="{{patient.4}}" aria-label="phone_number" aria-describedby="basic-addon1">
+        </div>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" name="address" placeholder="{{patient.6}}" value="{{patient.6}}" aria-label="address" aria-describedby="basic-addon1">
+        </div>
+        <div class="input-group mb-3">
+            <input type="password" class="form-control" name="password" placeholder="Password" aria-label="password" aria-describedby="basic-addon1">
+        </div>
+        <div class="mb-3">
+            <label for="formFile" class="form-label">Change Profile Photo</label>
+            <input class="form-control" type="file" id="formFile" name="img" value = "{{img_path}}">
+        </div>
+                <input type="submit" class="btn btn-success d-block mx-auto" style="width:100%;" value="Save Changes">
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

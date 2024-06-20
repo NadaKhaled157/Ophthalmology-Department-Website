@@ -59,6 +59,9 @@ h1{
     <div class="custom-row mb-3">
             <input type="number" class="form-control" name="number" placeholder="Phone Number" required>
         </div>
+      <div class="custom-row mb-3">
+                <input type="number" class="form-control" name="age" placeholder="Age" required>
+          </div>
 
 <fieldset class="custom-row mb-3">
    <label class="text">Gender</label>
@@ -83,7 +86,7 @@ h1{
 </div>
   <input type="submit" class="btn btn-success d-block mx-auto" style="width:100%;" value="Register">
         </form>
-        <h6 class="mt-2">Already have an account? <a href="{% url "login-page" %}">Login Now!</a></h6>
+        <p class="mt-2">Already have an account? <a href="{% url 'common:login' %}">Login Now!</a></p>
     </div>
 </div>
 </div>
