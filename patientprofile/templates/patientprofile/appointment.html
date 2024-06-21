@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+  {% include 'patientprofile/navbar.html' %}
+
+  <div class="container my-5">
+    <h1>Make an Appointment</h1>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header bg-primary text-white">
+            <h5>Appointment Type</h5>
+          </div>
+
+          <form action="{% url 'patientprofile:appointment' %}" method="POST">
+            {% csrf_token %}
+            <select class="form-select form-select-lg mb-3" aria-label="Large select example" name="appointment_type">
+              <option selected>Open this select menu</option>
+              <option value="examination">Examination</option>
+              <option value="follow_up">Follow-up</option>
+              <option value="surgery">Surgery</option>
+            </select>
+
+            <button class="btn btn-outline-success" type="submit">Submit</button>
+          </form>
+        </div>
+      </div>
+      <div class="col-md-6" id="choose-time-block" style="display: none;">
+        <div class="card">
+          <div class="card-header bg-primary text-white">
+            <h5>Choose a Time</h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--   <script>
+  // Show the "Choose a Time" section when an appointment type is selected
+  const appointmentTypeSelect = document.querySelector('select[name="appointment_type"]');
+  const chooseTimeBlock = document.getElementById('choose-time-block');
+
+  appointmentTypeSelect.addEventListener('change', () => {
+    const selectedValue = appointmentTypeSelect.value;
+
+    if (selectedValue === 'examination' || selectedValue === 'follow_up' || selectedValue === 'operation') {
+      chooseTimeBlock.style.display = 'block';
+    }
+    else {
+      chooseTimeBlock.style.display = 'none';
+    }
+  });
+</script>
+
+   -->
+{% endblock %}

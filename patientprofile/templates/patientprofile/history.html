@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{patient_name}}'s Medical History</h1>
+
+<style>
+    table {
+        border-collapse: collapse;
+    }
+
+    th, td {
+        border: 1px solid black;
+        padding: 8px;
+    }
+</style>
+
+<table>
+    <thead>
+        <tr>
+            <th>Date of Visit</th>
+            <th>Doctor</th>
+            <th>Reason for Visit</th>
+            <th>Treatment or Procedure</th>
+        </tr>
+    </thead>
+    <tbody>
+      {% for h in history%}
+        <tr>
+            <td>{{h.4}}</td>
+            <td>{{h.0}} {{h.1}}</td>
+            <td>{{h.2}}</td>
+            <td>{{h.3}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

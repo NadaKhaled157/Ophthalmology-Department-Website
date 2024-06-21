@@ -6,47 +6,62 @@
 {% endblock %}
 {% block content %}
   {% include 'doctorprofile/navbar.html' with doctor_id=doctor_id %}
+{% if patient_not_found %}
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">Patient not found.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+        {% endif %}
   <div class="container">
     <div class="card my-4">
-      <div class="card-header" style="background-color: #4a8db7; color:white;">Patient Health Records</div>
+      <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #4a8db7; color:white;">Patient Health Records
+        <a href="#"><button type="button" class="btn btn-light float-right" style="color:#3b7197; border-color: #3b7197;" data-bs-toggle="modal" data-bs-target="#exampleModal">Add New Record</button></a>
+      </div>
       <div class="card-body">
         <table class="table">
           <thead>
             <tr>
+              <th>ID</th>
               <th>Patient Name</th>
-              <th>Patient-ID</th>
+              <th>Type</th>
+              <th>Date</th>
+              <th>Time</th>
               <th>Diagnosis</th>
               <th>Treatment</th>
               <th>Dosage</th>
-              <th>Followup</th>
+              <th>Follow-Up</th>
               <th>Frequency</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
-            {% for patientrecord in patientrecord %}
+            {% for patientrecord in latest_patientrecords %}
               <tr>
                 <form method="POST" action="{% url 'doctorprofile:edit-record' %}?pid={{ patientrecord.1 }}">
                   {% csrf_token %}
-                  <td>{{ patientrecord.0 }}</td>
                   <td>{{ patientrecord.1 }}</td>
                   <td>
-                    <input class="text" placeholder="{{ patientrecord.2 }}" value="{{ patientrecord.2 }}" name="diagnosis" style="width:100px; border-color:rgba(0,0,0,0);" />
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#modal{{ patientrecord.1 }}" style="text-decoration:none; color:#3b7197; border:none; background-color:white;">{{ patientrecord.0 }}</button>
+                  </td>
+                  <td>{{ patientrecord.14 }}</td>
+                  <td>{{ patientrecord.15 }}</td>
+                  <td>{{ patientrecord.16 }}</td>
+                  <td>
+                    <input class="text" placeholder="{{ patientrecord.8 }}" value="{{ patientrecord.8 }}" name="diagnosis" style="width:100px; border-color:rgba(0,0,0,0);" />
                   </td>
                   <td>
-                    <input class="text" placeholder="{{ patientrecord.3 }}" value="{{ patientrecord.3 }}" name="treatment" style="width:150px; border-color:rgba(0,0,0,0);" />
+                    <input class="text" placeholder="{{ patientrecord.9 }}" value="{{ patientrecord.9 }}" name="treatment" style="width:150px; border-color:rgba(0,0,0,0);" />
                   </td>
                   <td>
-                    <input class="text" placeholder="{{ patientrecord.4 }}" value="{{ patientrecord.4 }}" name="dosage" style="width:100px; border-color:rgba(0,0,0,0);" />
+                    <input class="text" placeholder="{{ patientrecord.10 }}" value="{{ patientrecord.10 }}" name="dosage" style="width:100px; border-color:rgba(0,0,0,0);" />
                   </td>
                   <td>
-                    <input class="text" placeholder="{{ patientrecord.5 }}" value="{{ patientrecord.5 }}" name="follow_up" style="width:100px; border-color:rgba(0,0,0,0);" />
+                    <input class="text" placeholder="{{ patientrecord.11 }}" value="{{ patientrecord.11 }}" name="follow_up" style="width:100px; border-color:rgba(0,0,0,0);" />
                   </td>
                   <td>
-                    <input class="text" placeholder="{{ patientrecord.6 }}" value="{{ patientrecord.6 }}" name="frequency" style="width:100px; border-color:rgba(0,0,0,0);" />
+                    <input class="text" placeholder="{{ patientrecord.12 }}" value="{{ patientrecord.12 }}" name="frequency" style="width:100px; border-color:rgba(0,0,0,0);" />
                   </td>
                   <td>
-                    <input type="submit" class="btn btn-light d-block mx-auto" style="width:100%; color:#3b7197; border-color: #3b7197;" value="Edit" />
+                    <input type="submit" class="btn btn-light d-block mx-auto" style="width:100%; color:#3b7197; border-color: #3b7197;" value="Save Changes" />
                   </td>
                 </form>
               </tr>
@@ -56,4 +71,140 @@
       </div>
     </div>
   </div>
-{% endblock %}
+
+  <!-- ALL PATIENT RECORDS MODAL -->
+  {% for patientrecord in latest_patientrecords %}
+    <div class="modal fade" id="modal{{ patientrecord.1 }}" tabindex="-1" aria-labelledby="exampleModalLabel{{ patientrecord.1 }}" aria-hidden="true">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <div class="modal-header" style="background-color: #74bde0; color:white;">
+            <h1 class="modal-title fs-5" id="exampleModalLabel{{ patientrecord.1 }}"><strong>{{ patientrecord.0 }}'s Medical History</strong></h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="card d-flex flex-row justify-content-center mb-2">
+              <img src="{% static 'common/images/3.jpeg' %}" class="rounded-circle border border-dark mx-5 my-2" style="width: 150px; height: 150px; object-fit: cover;" alt="Patient Photo" />
+              {% comment %} <div class="d-flex flex-column p-3 mx-5">
+                <strong>Patient ID:</strong>{{ patientrecord.1 }}
+                <strong>Age:</strong>{{ patientrecord.5 }}
+                <strong>Sex:</strong>{{ patientrecord.6 }}
+              </div> {% endcomment %}
+              <div class="my-auto mx-3">
+                <table class="table">
+                  <tbody>
+                    <tr>
+                      <td><strong>Patient ID:</strong></td>
+                      <td>{{ patientrecord.1 }}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Age:</strong></td>
+                      <td>{{ patientrecord.5 }}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Sex:</strong></td>
+                      <td>{{ patientrecord.6 }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="my-auto mx-3">
+                <table class="table">
+                  <tbody>
+                    <tr>
+                      <td><strong>Email:</strong></td>
+                      <td>{{ patientrecord.7 }}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Phone Number:</strong></td>
+                      <td>{{ patientrecord.4 }}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Address:</strong></td>
+                      <td>{{ patientrecord.3 }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="card my-2">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Diagnosis</th>
+                    <th>Treatment</th>
+                    <th>Dosage</th>
+                    <th>Follow-Up</th>
+                    <th>Frequency</th>
+                  </tr>
+                </thead>
+            {% for patienthistory in all_patientrecords %}
+                  <tbody>
+                    {% if patienthistory.1 == patientrecord.1 %}
+                      <tr>
+                        <td>{{ patienthistory.14 }}</td>
+                        <td>{{ patienthistory.15 }}</td>
+                        <td>{{ patienthistory.16 }}</td>
+                        <td>{{ patienthistory.8 }}</td>
+                        <td>{{ patienthistory.9 }}</td>
+                        <td>{{ patienthistory.10 }}</td>
+                        <td>{{ patienthistory.11 }}</td>
+                        <td>{{ patienthistory.12 }}</td>
+                      </tr>
+                    {% endif %}
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+  <!--  -->
+
+<!-- ADD NEW PATIENT RECORD MODAL -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Add New Patient Record</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'doctorprofile:add-record' %}" method="POST">
+          {% csrf_token %}
+          <div class="custom-row mb-3">
+            <input type="text" class="form-control" name="pid" placeholder="Patient ID" required />
+          </div>
+          <div class="custom-row mb-3">
+            <input type="text" class="form-control" name="diagnosis" placeholder="Diagnosis" required />
+          </div>
+          <div class="custom-row mb-3">
+            <input type="text" class="form-control" name="treatment" placeholder="Treatment" required />
+          </div>
+          <div class="custom-row mb-3">
+            <input type="text" class="form-control" name="dosage" placeholder="Dosage" required />
+          </div>
+          <div class="custom-row mb-3">
+            <input type="text" class="form-control" name="follow_up" placeholder="Follow Up" required />
+          </div>
+          <div class="custom-row mb-3">
+            <input type="text" class="form-control" name="frequency" placeholder="Frequency" required />
+          </div>
+      </div>
+      <div class="modal-footer">
+        <input type="submit" class="btn btn-light d-block mx-auto" style="width:100%; color:#3b7197" value="Add Record">
+        {% comment %} <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-light" style="background-color:#3b7197; color:white; border-color: #3b7197;">Save changes</button> {% endcomment %}
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+{%endblock%}

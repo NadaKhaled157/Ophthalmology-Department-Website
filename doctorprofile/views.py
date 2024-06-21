@@ -13,6 +13,9 @@ from django.db import connection
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
 
+from PIL import Image
+import io
+
 # Create your views here.
 def doctor_profile(request):
     try:
@@ -167,23 +170,136 @@ def p_record(request):
         return redirect('common:authenticate_user')
     
     with connection.cursor() as cursor:
-        cursor.execute(
-             """
-            SELECT 
-            p.p_fname || ' ' || p.p_lname AS patient_name,
-            p.pid,
-            mh.diagnosis,
-            mh.treatment,
-            mh.dosage,
-            mh.followup,
-            mh.frequency
-        FROM medical_history mh
-        INNER JOIN patient p ON mh.pid = p.pid
-        WHERE p.did = %s;
+        # cursor.execute(
+        #      """
+        #     SELECT 
+        #     p.p_fname || ' ' || p.p_lname AS patient_name,
+        #     p.pid,
+        #     mh.diagnosis,
+        #     mh.treatment,
+        #     mh.dosage,
+        #     mh.followup,
+        #     mh.frequency
+        #     FROM medical_history mh
+        #     INNER JOIN patient p ON mh.pid = p.pid
+        #     WHERE p.did = %s
+        #     AND mh.mid = (SELECT MAX(mid) FROM medical_history where pid = p.pid);
+        # """, [doctor_id])
+        # latest_patientrecords = cursor.fetchall()
+
+        # cursor.execute("""
+        #     SELECT
+        #     p.p_fname || ' ' || p.p_lname AS patient_name,
+        #     p.pid, p.p_photo, p.phone_number, p.address, p.p_age, p.sex, p.email,
+        #     mh.diagnosis,
+        #     mh.treatment,
+        #     mh.dosage,
+        #     mh.followup,
+        #     mh.frequency
+        #     FROM medical_history mh
+        #     INNER JOIN patient p ON mh.pid = p.pid
+        #     WHERE p.did = %s
+        #     ORDER BY mh.mid DESC;
+        # """, [doctor_id])
+        # all_patientrecords= cursor.fetchall()
+
+        ##COMBINED QUERY##
+        cursor.execute("""
+            WITH latest_records AS (
+                SELECT
+                    p.p_fname || ' ' || p.p_lname AS patient_name,
+                    p.pid,
+                    p.p_photo,
+                    p.phone_number,
+                    p.address,
+                    p.p_age,
+                    p.sex,
+                    p.email,
+                    mh.diagnosis,
+                    mh.treatment,
+                    mh.dosage,
+                    mh.followup,
+                    mh.frequency,
+                    mh.mid,
+                    a.app_type,
+                    a.app_date,
+                    a.app_time
+                FROM medical_history mh
+                INNER JOIN patient p ON mh.pid = p.pid
+                JOIN appointment a on mh.aid = a.aid
+                WHERE p.did = %s
+            )
+            SELECT *
+            FROM latest_records
+            WHERE mid = (SELECT MAX(mid) FROM latest_records WHERE pid = latest_records.pid)
+
+            UNION ALL
+
+            SELECT *
+            FROM latest_records
+            WHERE mid != (SELECT MAX(mid) FROM latest_records WHERE pid = latest_records.pid)
+            ORDER BY mid DESC;
         """, [doctor_id])
-        patientrecord = cursor.fetchall()
-        print(patientrecord)
-    return render(request, 'doctorprofile/patientrecord.html', {'patientrecord': patientrecord,'doctor_id':doctor_id})
+        records = cursor.fetchall()
+        # Separate the latest records and all records
+    latest_patientrecords = []
+    all_patientrecords = []
+    seen_pids = set()
+    for record in records:
+        if record[1] not in seen_pids:
+            latest_patientrecords.append(record)
+            seen_pids.add(record[1])
+        all_patientrecords.append(record)
+        # encoded_path = all_patientrecords[1][2].tobytes()
+        # path= encoded_path.decode('utf-8')
+        # return HttpResponse(path)
+        patient_images=[]
+        # for i in range(len(all_patientrecords)):
+        #     print(all_patientrecords[i][2])
+        #     encoded_path = all_patientrecords[i][2].tobytes()
+        #     patient_images.append(encoded_path.decode('utf-8'))
+        # print(latest_patientrecords)
+        try:
+            if request.session['patient_notfound']:
+                patient_not_found= True
+        except:
+            patient_not_found = False
+    return render(request, 'doctorprofile/patientrecord.html', {'latest_patientrecords': latest_patientrecords, 'all_patientrecords':all_patientrecords, 'patient_not_found':patient_not_found, 'doctor_id':doctor_id})
+
+def add_record(request):
+    if request.method == 'POST':
+        pid = request.POST.get('pid')
+        diagnosis = request.POST.get('diagnosis')
+        treatment = request.POST.get('treatment')
+        dosage = request.POST.get('dosage')
+        follow_up = request.POST.get('follow_up')
+        frequency = request.POST.get('frequency')
+
+        # Fetch patient's first and last name from the patient table
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT p_fname, p_fname FROM patient WHERE pid = %s", [pid])
+            patient = cursor.fetchone()
+            if not patient:
+                # Handle the case where the patient is not found
+                request.session['patient_notfound'] = True
+                return redirect('doctorprofile:patientrecord-page')
+                # return render(request, 'doctorprofile/patientrecord.html', {'error': 'Patient not found.'})
+
+            first_name, last_name = patient
+
+            # Insert the new medical record
+            cursor.execute(
+                """
+                INSERT INTO medical_history (pid, diagnosis, treatment, dosage, followup, frequency)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                """,
+                [pid, diagnosis, treatment, dosage, follow_up, frequency]
+            )
+
+        # Redirect to the patient records page after successful addition
+        return redirect(reverse('doctorprofile:patientrecord-page'))
+
+    return render(request, 'doctorprofile/add_record.html')
 
 def edit_record(request):
     pid = request.GET.get('pid')
@@ -200,9 +316,9 @@ def edit_record(request):
                            SET diagnosis= %s , treatment=%s, dosage=%s, followup=%s,frequency=%s
                            WHERE pid = %s
                             """, [diagnosis,treatment,dosage,follow_up,frequency, pid])
-            cursor.execute("SELECT did FROM patient WHERE pid = %s",[pid])
-            did=cursor.fetchone()[0]
-        target_url = f'/doctor/patientrecord/?doctor_id={did[0]}'
+            # cursor.execute("SELECT did FROM patient WHERE pid = %s",[pid])
+            # did=cursor.fetchone()[0]
+        target_url = f'/doctor/patientrecord/'
         return redirect(target_url)
     
 def appointments(request):

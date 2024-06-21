@@ -1,0 +1,32 @@
+{% block content %}
+<h1>Contact Forms</h1>
+
+<style>
+    table {
+        border-collapse: collapse;
+    }
+
+    th, td {
+        border: 1px solid black;
+        padding: 8px;
+    }
+</style>
+
+<table>
+    <thead>
+        <tr>
+            <th>Request</th>
+            <th>Response</th>
+        </tr>
+    </thead>
+    <tbody>
+      {% for form in forms %}
+        <tr>
+            <td>{{form.0}}</td>
+            <td>{{form.1}}</td>
+
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

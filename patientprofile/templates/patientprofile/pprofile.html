@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+{%include 'patientprofile/navbar.html'%}
+<link rel="stylesheet"  href="{% static 'patientprofile/pprofile.css' %}">
+<div class="d-flex">
+  {%include 'patientprofile/left.html'%}
+  <div class='d-flex flex-column'></div>
+    {%include 'patientprofile/middle.html'%}
+  </div>
+</div>
+{% endblock %}

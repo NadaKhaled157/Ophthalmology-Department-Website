@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+{% include 'patientprofile/navbar.html' %}
+
+<div class="card-body">
+  <div class="accordion" id="accordionExample">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingFour">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+          Available Times
+        </button>
+      </h2>
+      <form action="{% url 'patientprofile:process_appointment'%}" method="POST">
+        {% csrf_token %}
+      <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample">
+        <div class="accordion-body">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+               <th>Doctor</th>
+               <th>Degree</th>
+                <th>Available Times</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if appointment_type == 'examination' %}
+                {% for availability in examination_availabilities %}
+                    {% if availability.0 and availability.2 and availability.3 %}
+                    <input type="hidden" id="app_type" name="appointment_type" value="examination">
+                  <tr>
+                    {% ifchanged %}
+                    <td>{{ availability.0 }}</td>
+                    <td>{{ availability.1 }}</td>
+                    <input type="hidden" id="doctor_id" name="did" value="{{ availability.5 }}">
+                    {% endifchanged %}
+                    <td>
+                      <div class="form-check">
+                          <input class="form-check-input" type="radio" name="Time" id="time" value="{{ availability.2 }} - {{ availability.3 }} - {{ availability.4 }}">
+                          <label class="form-check-label" for="time-{{ forloop.counter }}">
+                            {{ availability.2 }} - {{ availability.3 }} - {{ availability.4 }}
+                          </label>
+                        </div>
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% endfor %}
+              {% elif appointment_type == 'follow_up' %}
+                {% for availability in followup_availabilities %}
+                <input type="hidden" id="app_type" name="appointment_type" value="follow_up">
+                  <tr>
+                    {% ifchanged %}
+                    <td>{{availability.0}}</td>
+                    <td>{{availability.1}}</td>
+                    <input type="hidden" id="doctor_id" name="did" value="{{ availability.5 }}">
+                    {% endifchanged %}
+                    <td>
+                        <div class="form-check">
+                          <input class="form-check-input" type="radio" name="Time" id="time" value="{{followup_date}} * {{ availability.2 }} * {{ availability.3 }} * {{ availability.4 }}">
+                          <label class="form-check-label" for="time-{{ forloop.counter }}">
+                          {{followup_date}} * {{ availability.2 }} * {{ availability.3 }} * {{ availability.4 }}
+                          </label>
+                        </div>
+                    </td>
+                  </tr>
+                {% endfor %}
+              {% elif appointment_type == 'surgery' %}
+              {% for availability in operation_availabilities %}
+              <input type="hidden" id="app_type" name="appointment_type" value="surgery">
+                <tr>
+                  {% ifchanged %}
+                  <td>{{availability.0}}</td>
+                  <td>{{availability.1}}</td>
+                  <input type="hidden" id="doctor_id" name="did" value="{{ availability.5 }}">
+                  {% endifchanged %}
+                  <td>
+                      <div class="form-check">
+                        <input class="form-check-input" type="radio" name="Time" id="time" value="{{ availability.2 }} - {{ availability.3 }} - {{ availability.4 }}">
+                        <label class="form-check-label" for="time-{{ forloop.counter }}">
+                          {{ availability.2 }} - {{ availability.3 }} - {{ availability.4 }}
+                        </label>
+                      </div>
+                  </td>
+                </tr>
+              {% endfor %}
+
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="row justify-content-center mt-4">
+        <div class="col-md-6">
+          <button class="btn btn-primary btn-lg" style="width: 100%;" type="submit"> Submit </button>
+        </div>
+
+      </div>
+      </form>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
