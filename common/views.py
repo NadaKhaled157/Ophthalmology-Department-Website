@@ -68,8 +68,6 @@ def index(request):
             # return HttpResponse('''Password is incorrect.''')
     else:
         return render(request, "common/register.html")
-    else:
-        return render(request, "common/register.html")
 
 def authenticate_user(request):
     not_logged_in = request.session.get('not_logged_in', False)
@@ -107,7 +105,7 @@ def authenticate_user(request):
                     patient_photo= user[5].tobytes()
                     img_path=patient_photo.decode('utf-8')
                     request.session['img_path']=img_path
-                    return redirect('patientprofile:patient-page') ##Ensure patient app and view name match##
+                    return redirect('patientprofile:patient-profile') ##Ensure patient app and view name match##
             else:
                 wrong_pass = "Wrong Password"
                 redirect('common:authenticate_user')

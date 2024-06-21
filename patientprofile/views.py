@@ -56,11 +56,11 @@ def available_time(request, appointment_type):
             followup_availabilities = cursor.fetchall()
         return render(request, 'patientprofile/available_time.html', {"followup_availabilities": followup_availabilities,"appointment_type": "follow_up", "followup_date":followup})
 
-    elif appointment_type == 'operation':
+    elif appointment_type == 'surgery':
         with connection.cursor() as cursor:
             cursor.execute("SELECT s.fname, d.d_specialization, a.day, a.shift_start, a.shift_end, d.did FROM doctor d inner join availability a ON d.did = a.did inner join staff s on s.eid = d.eid WHERE d.d_specialization='Surgery'")
             operation_availabilities = cursor.fetchall()
-        return render(request, 'patientprofile/available_time.html', {"operation_availabilities": operation_availabilities, "appointment_type": "operation"})
+        return render(request, 'patientprofile/available_time.html', {"operation_availabilities": operation_availabilities, "appointment_type": "surgery"})
 
     return render(request, 'patientprofile/available_time.html')
 
@@ -71,7 +71,7 @@ def process_appointment(request):
         time= request.POST.get('Time')
         app_type=request.POST.get('appointment_type')
         # print(time)---> Monday - 8:30 a.m. - 10:30 a.m.
-        if app_type=='Examination' or app_type=='Surgery':
+        if app_type=='examination' or app_type=='surgery':
             day_name, start_time, _ = time.split('-')
             app_date= get_next_weekday(day_name)
             try:
@@ -86,16 +86,16 @@ def process_appointment(request):
                 cursor.execute("INSERT INTO appointment (app_date, app_time, app_type, pid, did) Values (%s, %s, %s, %s, %s)",
                                 [app_date, start_time, app_type, pid, did ])
 
-            return redirect('patientprofile:payment')
-        elif app_type=='Followup':
+            return redirect('patientprofile:payment',app_type=app_type, did=did, app_date=app_date, start_time=start_time)
+        elif app_type=='follow_up':
             followup_date, day_name, start_time, end_time = time.split('*')
             start_time_processed = start_time.strip().replace(' a.m.', ':00 AM').replace(' p.m.', ':00 PM')
             # Parse into a datetime object
             start_time = datetime.strptime(start_time_processed, '%I:%M %p').time().strftime('%H:%M')
             with connection.cursor() as cursor:
                 cursor.execute("INSERT INTO appointment (app_date, app_time, app_type, pid, did) Values (%s, %s, %s, %s, %s)",
-                                [followup_date, start_time, app_type, pid, did ])
-            return redirect('patientprofile:payment')
+                                [followup_date, start_time, app_type, pid, did])
+            return redirect('patientprofile:payment',app_type=app_type, did=did, app_date=followup_date, start_time=start_time)
     return HttpResponse("Waiting to process the appointment")
 
 def history(request):
@@ -128,8 +128,22 @@ def doctor_response(request):
     return render (request, 'patientprofile/doctor_response.html', {"forms": forms})
 
 
-def payment(request):
-      return render (request, 'patientprofile/payment.html')
+def payment(request,app_type,did, app_date, start_time):
+    p_name= request.session.get('name')
+    fees=""
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT d.d_specialization, s.fname from doctor d inner join staff s on d.eid=s.eid")
+        doc_name, d_specialization= cursor.fetchone()
+        if app_type=='examination':
+            if d_specialization=='General Practioner':fees=100
+            if d_specialization=='Consultant': fees=200
+        elif app_type=='follow_up':
+            if d_specialization=='General Practioner':fees=50
+            if d_specialization=='Consultant': fees=100
+        elif app_type=='surgery':
+            fees= "will be determined by the hospital soon"
+
+    return render (request, 'patientprofile/payment.html',{"doc_name": doc_name,"patient_name":p_name, "d_specialization": d_specialization,"app_date": app_date, "app_type": app_type, "start_time":start_time, "fees": fees})
 
 def success_request(request):
     return render (request, 'patientprofile/success_request.html')

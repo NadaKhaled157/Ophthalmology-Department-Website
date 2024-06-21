@@ -27,7 +27,7 @@
               {% if appointment_type == 'examination' %}
                 {% for availability in examination_availabilities %}
                     {% if availability.0 and availability.2 and availability.3 %}
-                    <input type="hidden" id="app_type" name="appointment_type" value="Examination">
+                    <input type="hidden" id="app_type" name="appointment_type" value="examination">
                   <tr>
                     {% ifchanged %}
                     <td>{{ availability.0 }}</td>
@@ -47,7 +47,7 @@
                 {% endfor %}
               {% elif appointment_type == 'follow_up' %}
                 {% for availability in followup_availabilities %}
-                <input type="hidden" id="app_type" name="appointment_type" value="Followup">
+                <input type="hidden" id="app_type" name="appointment_type" value="follow_up">
                   <tr>
                     {% ifchanged %}
                     <td>{{availability.0}}</td>
@@ -64,9 +64,9 @@
                     </td>
                   </tr>
                 {% endfor %}
-              {% elif appointment_type == 'operation' %}
+              {% elif appointment_type == 'surgery' %}
               {% for availability in operation_availabilities %}
-              <input type="hidden" id="app_type" name="appointment_type" value="Operation">
+              <input type="hidden" id="app_type" name="appointment_type" value="surgery">
                 <tr>
                   {% ifchanged %}
                   <td>{{availability.0}}</td>
@@ -93,9 +93,7 @@
         <div class="col-md-6">
           <button class="btn btn-primary btn-lg" style="width: 100%;" type="submit"> Submit </button>
         </div>
-        <!-- <div class="col-md-6">
-          <button class="btn btn-primary btn-lg" style="width: 100%;" type="submit"><a href="{% url 'patientprofile:payment' %}" style="text-decoration: none; color:white;" class='p-3'>Pay</a></button>
-        </div> -->
+
       </div>
       </form>
     </div>

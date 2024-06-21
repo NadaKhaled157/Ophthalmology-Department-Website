@@ -31,10 +31,10 @@
             <div class="row g-0">
               <div class="col-lg-6">
                 <div class="card-body p-md-4 mx-md-3">
-                  <div class="text-center mb-2">
+                  <div class="text-centered mb-2">
                     <img src="{% static 'images/logo.jpg' %}" style="width: 185px;" alt="logo" />
                   </div>
-                  <form action="common:registeration-page" method="POST" enctype="multipart/form-data">
+                  <form action="{% url 'common:registeration-page' %}" method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="custom-row d-flex mb-3">
                       <input type="text" class="form-control me-2" name="first_name" placeholder="First name" aria-label="First name" required />
@@ -57,11 +57,11 @@
                     <fieldset class="custom-row mb-2" style="display: flex; justify-content: center;">
                       <div class="form-check mx-auto" style="margin-right: 10px;">
                         <input class="form-check-input" type="radio" name="gender" id="male" value="option1" />
-                        <label class="form-check-label" for="Male">Male</label>
+                        <label class="form-check-label" for="male">Male</label>
                       </div>
                       <div class="form-check mx-auto">
                         <input class="form-check-input" type="radio" name="gender" id="female" value="option2" />
-                        <label class="form-check-label" for="Female">Female</label>
+                        <label class="form-check-label" for="female">Female</label>
                       </div>
                     </fieldset>
                     <div class="mb-3">
@@ -69,7 +69,7 @@
                       <input class="form-control" type="file" id="formFile" name="img" />
                     </div>
                     <div class="text-center pt-1 mb-1 pb-1">
-                      <input type="submit" data-mdb-button-init data-mdb-ripple-init class="btn shadow btn-block fa-lg gradient-custom-2 mb-3" style="width:100%; color:white;" value="SIGNUP" />
+                      <input type="submit" class="btn shadow btn-block fa-lg gradient-custom-2 mb-3" style="width:100%; color:white;" value="SIGNUP" />
                     </div>
                   </form>
                   <p>
@@ -89,5 +89,6 @@
       </div>
     </div>
   </section>
+
   {% comment %} <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script> {% endcomment %}
 {% endblock %}
