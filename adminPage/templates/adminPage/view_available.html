@@ -14,8 +14,8 @@
 
 <body>
     <div class="container">
-        <div class="navbar navbar-expand-lg navbar-dark">
-            <h4 class="text-center" align="center">Dr. {{name.0}} {{name.1}} availability</h4>
+        <div>
+            <h4 align="center" style="margin-top: 10px;">Dr. {{name.0}} {{name.1}} availability</h4>
         </div>
     </div>
     <table class="table">
@@ -54,7 +54,9 @@
             {% endfor %}
         </tbody>
     </table>
-    <a href="{% url 'add_shift' id %}" class="btn btn-primary" style="width: 8rem; font-weight: bold; font-size: large;">Add Shift</a>
-    <a href="{% url 'cancel' %}" class="btn btn-primary" style="width: 8rem; font-weight: bold; font-size: large;">Back</a>
+    <div align="center">
+        <a href="{% url 'add_shift' id %}" class="btn btn-primary" style="width: 10rem; font-weight: bold; font-size: large; background-color: #3b7197; border: 0px;">Add Shift</a>
+        <a href="{% url 'cancel' %}" class="btn btn-primary" style="width: 8rem; font-weight: bold; font-size: large; background-color: #b93b3b; border: 0px;">Back</a>
+    </div>
 </body>
 </html>

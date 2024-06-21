@@ -1,26 +1,5 @@
 <div class="container">
-    {% comment %}
-    <div class="row" align="center">
-        <h6 class="col-sm">Doctor</h6>
-        <div  class="col-sm">
-            <form method="get" action="{% url 'admin_profile' %}" id="actionForm">
-                {% csrf_token %}
-                <div class="form-group">
-                    <div class="row">
-                        <select class="form-control" name="group" onchange="document.getElementById('actionForm').submit();">
-                            <option value="">Sort by</option>
-                            <option value="eid">ID</option>
-                            <option value="salary">Salary</option>
-                            <option value="role">Name</option>
-                            <option value="d_spacialization">Specialization</option>
-                        </select>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-    {% endcomment %}
-    <h4 align="center">Doctors</h4>
+    <h4 align="center" style="margin-top: 10px;">Doctors</h4>
     <table class="table">
         <thead>
             <tr scope="col" align="center">
