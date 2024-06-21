@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title">Sent Successfully!</h5>
+    <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6>
+    <p class="card-text">Thanks for your request! Your doctor'll respond to you Soon.</p>
+    <a href="{% url 'patientprofile:patient-profile' %}" class="card-link">Back to your profile</a>
+  </div>
+</div>
+
+{% endblock%}
