@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_title %}
+  Add Patient Record
+{% endblock %}
+{% block content %}
+  <section class="h-100 gradient-form" style="background-color: #eee; min-height: 100vh;">
+    <div class="container py-5 h-100">
+      <div class="card rounded-3 text-black p-3">
+        <div class="card-body p-md-4 mx-md-3 d-flex flex-column align-items-center">
+          <div class="text-center">
+            <a href="{% url 'doctorprofile:doctor-page' %}?doctor_id={{ doctor_id }}"><img src="{% static 'images/logo.jpg' %}" style="width: 175px;" alt="logo" /></a>
+          </div>
+          <h3>MySufferingQL Hospital</h3>
+        </div>
+        <form action="{% url 'doctorprofile:add-record' %}" method="POST">
+          {% csrf_token %}
+          <div class="custom-row mb-3">
+            <input type="text" class="form-control" name="pid" placeholder="Patient ID" required />
+          </div>
+          <div class="custom-row mb-3">
+            <input type="text" class="form-control" name="diagnosis" placeholder="Diagnosis" required />
+          </div>
+          <div class="custom-row mb-3">
+            <input type="text" class="form-control" name="treatment" placeholder="Treatment" required />
+          </div>
+          <div class="custom-row mb-3">
+            <input type="text" class="form-control" name="dosage" placeholder="Dosage" required />
+          </div>
+          <div class="custom-row mb-3">
+            <input type="text" class="form-control" name="follow_up" placeholder="Follow Up" required />
+          </div>
+          <div class="custom-row mb-3">
+            <input type="text" class="form-control" name="frequency" placeholder="Frequency" required />
+          </div>
+          <div class="text-center pt-1 mb-1 pb-1">
+            <input type="submit" class="btn btn-light d-block mx-auto" style="width:100%; color:#3b7197" value="Add Record" />
+          </div>
+        </form>
+        {% if error %}
+          <div class="alert alert-danger mt-3">{{ error }}</div>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+{% endblock %}
