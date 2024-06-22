@@ -1,5 +1,15 @@
 {% include 'doctorprofile/navbar.html' with doctor_id=17%}
 <div class="container">
+    <form action="{% url 'doctorprofile:test' %}" method="POST" enctype='multipart/form-data'>
+        {% csrf_token %}
+    <div class="mb-3">
+        <label for="formFile" class="form-label">Choose a Profile Image</label>
+        <input class="form-control" type="file" id="formFile" name="img" />
+      </div>
+      <div class="text-center pt-1 mb-1 pb-1">
+        <input type="submit" class="btn btn-light d-block mx-auto" style="width:100%; color:#3b7197" value="Save Changes">
+      </div>
+    </form>
     <h1>Doctor Profile</h1>
 
     <!-- Doctor Info -->

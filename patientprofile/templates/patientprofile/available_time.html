@@ -1,9 +1,19 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-{% include 'patientprofile/navbar.html' %}
-
-<div class="card-body">
+  {% block css_style %}
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <!-- Font Awesome icons (free version) -->
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css" />
+    <!-- Core theme CSS (includes Bootstrap) -->
+    <link href="{% static 'common/styles.css' %}" rel="stylesheet" />
+    <style> .btn-light:hover:{ background-color:#a1e1fa !important; }</style>
+  {% endblock %}
+  {% include 'patientprofile/navbar.html' %}
+{% comment %} <div class="card-body">
   <div class="accordion" id="accordionExample">
     <div class="accordion-item">
       <h2 class="accordion-header" id="headingFour">
@@ -26,7 +36,7 @@
             </thead>
             <tbody>
               {% if appointment_type == 'examination' %}
-                {% for availability in examination_availabilities %}
+                 {% for availability in examination_availabilities %}
                     {% if availability.0 and availability.2 and availability.3 %}
                     <input type="hidden" id="app_type" name="appointment_type" value="examination">
                   <tr>
@@ -45,9 +55,7 @@
                       {% endif %}
                     </td>
                   </tr>
-                {% endfor %}
-                <input type="hidden" id="doctor_id" name="did" value="">
-
+                {% endfor %} 
               {% elif appointment_type == 'follow_up' %}
                 {% for availability in followup_availabilities %}
                 <input type="hidden" id="app_type" name="appointment_type" value="follow_up">
@@ -64,9 +72,7 @@
                         </div>
                     </td>
                   </tr>
-                {% endfor %}
-                <input type="hidden" id="doctor_id" name="did" value="">
-
+                {% endfor %} 
               {% elif appointment_type == 'surgery' %}
               {% for availability in operation_availabilities %}
               <input type="hidden" id="app_type" name="appointment_type" value="surgery">
@@ -85,7 +91,6 @@
                   </td>
                 </tr>
               {% endfor %}
-            <input type="hidden" id="doctor_id" name="did" value="">
               {% endif %}
             </tbody>
           </table>
@@ -95,29 +100,111 @@
         <div class="col-md-6">
           <button class="btn btn-primary btn-lg" style="width: 100%;" type="submit"> Submit </button>
         </div>
-
-        <div class="col-md-6">
-          <button class="btn btn-outline-success" type="submit"><a href="{% url 'patientprofile:appointment' %}" >Back to appointment</a></button>
-          </div>
       </div>
       </form>
     </div>
   </div>
+</div> {% endcomment %}
 
+<!--NEW FRONT-->
+  {% if appointment_type == 'examination' %}
+  <div class="text-center my-3"><h2>Book an appointment with one of the best doctors in the field</h2></div>
+  {%for doctor in doctors_data%}
+  <form action="{% url 'patientprofile:process_appointment'%}" method="POST">
+    {% csrf_token %}
+    <input type="hidden" id="app_type" name="appointment_type" value="examination">
+    <input type="hidden" id="doctor_id" name="did" value="{{ doctor.0 }}">
+  <div class="card mt-3 mx-auto" style="width: 90%;">
+    <div class="card-body d-flex flex-row">
+      <img src="../../../media/doctor1_TPpEFRP.jpeg" class="rounded-circle border border-dark mx-5 my-auto" style="width: 130px; height: 130px; object-fit: cover;" alt="Avatar">
+      <div class="my-auto">
+        <h5 class="card-title">{{doctor.1}}</h5>
+        <p class="card-text">{{doctor.2}}</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <ul class="list-group list-group-flush">
+        {%for shift in shifts%}
+          {%if shift.0 == doctor.0%}
+        <li class="list-group-item">
+          <input class="form-check-input" type="radio" name="Time" id="time" value="{{ shift.1 }} - {{ shift.2 }} - {{ shift.3 }}" data-doctor-id="{{ shift.0 }}" {% if not shift.5 %}disabled{% endif %}>
+          <label class="form-check-label" for="time-{{ forloop.counter }}">
+            <a style="color:#4a8db7">{{ shift.1 }} {{ shift.2 }}:</a> {{ shift.3 }} - {{ shift.4 }}
+          </label>
+        </li>
+        {%endif%}
+        {%endfor%} 
+      </ul>
+    </div>
+    <div class="card-footer">
+      <button class="btn btn-light btn-md" style="background-color:#74bde0; color:white; border-color: white; width:100%;" type="submit"> Book Appointment </button>
+    </div> 
+  </div>
+</form>
+{%endfor%}
+  
+{% elif appointment_type == 'follow_up' %}
+<div class="container">
+<div class="text-center my-5"><h2>Here you can find the date your doctor assigned for your follow-up appointment</h2></div>
+{% for availability in followup_availabilities %}
+<form action="{% url 'patientprofile:process_appointment'%}" method="POST">
+  {% csrf_token %}
+  <input type="hidden" id="app_type" name="appointment_type" value="follow_up">
+  <input type="hidden" id="doctor_id" name="did" value="{{ availability.5 }}">
+<div class="card mt-5 mx-auto" style="width: 70%;">
+  <div class="card-body d-flex flex-row justify-content-center">
+    <img src="../../../media/doctor1_TPpEFRP.jpeg" class="rounded-circle border border-dark mx-5 my-auto" style="width: 130px; height: 130px; object-fit: cover;" alt="Avatar">
+    <div class="my-auto">
+      <h5 class="card-title">{{availability.0}}</h5>
+      <p class="card-text">{{availability.1}}</p>
+    </div>
+  </div>
+  <ul class="list-group list-group-flush text-center">
+  <li class="list-group-item"> {{availability.2}} - {{followup_date}} <br> {{availability.3}} - {{availability.4}}<br>
+  </ul>
+  <div class="card-footer">
+    <button class="btn btn-light btn-md" style="background-color:#74bde0; color:white; border-color: white; width:100%;" type="submit"> Book Appointment </button>
+  </div>
 </div>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const radioButtons = document.querySelectorAll('.form-check-input[name="Time"]');
-    const doctorIdInput = document.getElementById('doctor_id');
+</form>
+{%endfor%}
+<div>
 
-    radioButtons.forEach(function(radioButton) {
-      radioButton.addEventListener('change', function() {
-        if (this.checked) {
-          const doctorId = this.getAttribute('data-doctor-id');
-          doctorIdInput.value = doctorId;
-        }
-      });
-    });
-  });
-</script>
+{% elif appointment_type == 'surgery' %}
+<div class="text-center my-3"><h2>Your eyesight is in good hands with our surgeons</h2></div>
+{%for doctor in doctors_data%}
+<form action="{% url 'patientprofile:process_appointment'%}" method="POST">
+  {% csrf_token %}
+  <input type="hidden" id="app_type" name="appointment_type" value="surgery">
+  <input type="hidden" id="doctor_id" name="did" value="{{ doctor.0 }}">
+<div class="card mt-3 mx-auto" style="width: 90%;">
+  <div class="card-body d-flex flex-row">
+    <img src="../../../media/doctor1_TPpEFRP.jpeg" class="rounded-circle border border-dark mx-5 my-auto" style="width: 130px; height: 130px; object-fit: cover;" alt="Avatar">
+    <div class="my-auto">
+      <h5 class="card-title">{{doctor.1}}</h5>
+      <p class="card-text">{{doctor.2}}</p>
+    </div>
+  </div>
+  <div class="card-body">
+    <ul class="list-group list-group-flush">
+      {%for shift in shifts%}
+        {%if shift.0 == doctor.0%}
+        <li class="list-group-item">
+          <input class="form-check-input" type="radio" name="Time" id="time" value="{{ shift.1 }} - {{ shift.2 }} - {{ shift.3 }}" data-doctor-id="{{ shift.0 }}" {% if not shift.5 %}disabled{% endif %}>
+          <label class="form-check-label" for="time-{{ forloop.counter }}">
+            <a style="color:#4a8db7">{{ shift.1 }} {{ shift.2 }}:</a> {{ shift.3 }} - {{ shift.4 }}
+          </label>
+        </li>
+        {%endif%}
+        {%endfor%} 
+    </ul>
+  </div>
+  <div class="card-footer">
+    <button class="btn btn-light btn-md" style="background-color:#74bde0; color:white; border-color: white; width:100%;" type="submit"> Book Appointment </button>
+  </div> 
+</div> 
+</form>
+{%endfor%}
+
+{% endif %}
 {% endblock %}

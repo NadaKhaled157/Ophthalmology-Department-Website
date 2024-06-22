@@ -1,63 +1,178 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
+  {% block css_style %}
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <!-- Font Awesome icons (free version) -->
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css" />
+    <!-- Core theme CSS (includes Bootstrap) -->
+    <link href="{% static 'common/styles.css' %}" rel="stylesheet" />
+    <style>
+      .btn-light:hover: {
+        background-color: #a1e1fa !important;
+      }
+    </style>
+  {% endblock %}
+  {% include 'patientprofile/navbar.html' %}
 
-<div class="container my-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card">
-        <div class="card-header bg-primary text-white">
-          <h5>Choose Payment Method</h5>
+  {% comment %} <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand" href="#">Payment</a>
+    </div>
+  </nav>
+
+  <div class="container my-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header bg-primary text-white">
+            <h5>Choose Payment Method</h5>
+          </div>
+          <div class="card-body">
+            <form>
+              <div class="form-group">
+                <label for="payment-method">Payment Method:</label>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="payment-method" id="cash" value="cash" />
+                  <label class="form-check-label" for="cash">Cash</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="payment-method" id="visa" value="visa" />
+                  <label class="form-check-label" for="visa">Visa</label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="doc_name">Patient: {{ patient_name }}</label>
+              </div>
+              <div class="form-group">
+                <label for="doc_name">Doctor: {{ doc_name }}</label>
+              </div>
+              <div class="form-group">
+                <label for="doc_name">Doctor Specialization: {{ d_specialization }}</label>
+              </div>
+              <div class="form-group">
+                <label for="doc_name">Appointment: {{ app_type }}</label>
+              </div>
+              <div class="form-group">
+                <label for="doc_name">Appointment date: {{ app_date }}</label>
+              </div>
+              <div class="form-group">
+                <label for="doc_name">Appointment Starts at: {{ start_time }}</label>
+              </div>
+              <!-- <label for="doc_name">Appointment Ends at: {{end_time}}</label> -->
+              <div class="form-group">
+                <label for="price">Billing fees: {{ fees }}</label>
+              </div>
+              <div class="text-end">
+                <button type="submit" class="btn btn-primary">Submit Payment</button>
+              </div>
+            </form>
+          </div>
         </div>
-        <div class="card-body">
-          <form action="{% url 'patientprofile:success_payment' %}" method="POST">
+      </div>
+    </div>
+  </div> {% endcomment %}
+
+  <!-- NEW FRONT -->
+  <div class="container my-5">
+    <div class="text-center my-4">
+      <h2>Final step to confirm your appointment</h2>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card my-auto">
+          <div class="card-header" style="background-color: #74bde0; color:white;">Choose Payment Method</div>
+          {% comment %} <div class="card-body">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                <strong>Patient:</strong> {{ patient_name }}
+              </li>
+              <li class="list-group-item">
+                <strong>Doctor:</strong> {{ doc_name }}
+              </li>
+              <li class="list-group-item">
+                <strong>Doctor Specialization:</strong> {{ d_specialization }}
+              </li>
+              <li class="list-group-item">
+                <strong>Appointment Type:</strong> {{ app_type }}
+              </li>
+              <li class="list-group-item">
+                <strong>Appointment Date:</strong> {{ app_date }}
+              </li>
+              <li class="list-group-item">
+                <strong>Appointment Time:</strong> {{ start_time }}
+              </li>
+            </ul>
+          </div> {% endcomment %}
+          <form>
             {% csrf_token %}
-            <div class="form-group">
-              <label for="payment-method">Payment Method:</label>
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="payment-method" id="cash" value="cash" />
-                <label class="form-check-label" for="cash">Cash</label>
+            <div class="card-body d-flex flex-row justify-content-center mb-2">
+              <div class="my-auto mx-3">
+                <table class="table">
+                  <tbody>
+                    <tr>
+                      <td>
+                        <strong>Patient :</strong>
+                      </td>
+                      <td>{{ patient_name }}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <strong>Doctor:</strong>
+                      </td>
+                      <td>{{ doc_name }}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <strong>Doctor Specialization</strong>
+                      </td>
+                      <td>{{ d_specialization }}</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="payment-method" id="visa" value="visa" />
-                <label class="form-check-label" for="visa">Visa</label>
+              <div class="my-auto mx-3">
+                <table class="table">
+                  <tbody>
+                    <tr>
+                      <td>
+                        <strong>Appointment Type</strong>
+                      </td>
+                      <td>{{ app_type }}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <strong>Appointment Date:</strong>
+                      </td>
+                      <td>{{ app_day }}{{ app_date }}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <strong>Appointment Time:</strong>
+                      </td>
+                      <td>{{ start_time }}</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
-            <div class="form-group">
-              <label for="doc_name">Patient: {{ patient_name }}</label>
+            <div class="form-group text-center mb-3">
+              <label for="payment-method"><strong>Payment Method:</strong></label>
+              <input class="form-check-input mx-3" type="radio" name="payment-method" id="cash" value="cash" />
+              <label class="form-check-label" for="cash">Cash</label>
+              <input class="form-check-input mx-3" type="radio" name="payment-method" id="visa" value="visa" />
+              <label class="form-check-labe" for="visa">Visa</label>
             </div>
-            <div class="form-group">
-              <label for="doc_name">Doctor: {{ doc_name }}</label>
-            </div>
-            <div class="form-group">
-              <label for="doc_name">Doctor Specialization: {{ d_specialization }}</label>
-            </div>
-            <div class="form-group">
-              <label for="doc_name">Appointment: {{ app_type }}</label>
-            </div>
-            <div class="form-group">
-              <label for="doc_name">Appointment date: {{ app_date }}</label>
-            </div>
-            <div class="form-group">
-              <label for="doc_name">Appointment Day: {{ app_day }}</label>
-            </div>
-            <div class="form-group">
-              <label for="doc_name">Appointment Starts at: {{ start_time }}</label>
-            </div>
-            <!-- <label for="doc_name">Appointment Ends at: {{end_time}}</label> -->
-            <div class="form-group">
-              <label for="price">Billing fees: {{ fees }}</label>
-              <input type="hidden" id="app_type" name="fees" value="{{fees}}">
-            </div>
-            <div class="text-end">
-              <button type="submit" class="btn btn-primary">Submit Payment</button>
+            <div class="card-footer">
+              <button class="btn btn-light btn-md" style="background-color:#74bde0; color:white; border-color: white; width:100%;" type="submit">Confirm Appointment</button>
             </div>
           </form>
         </div>
       </div>
     </div>
   </div>
-</div>
-
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}

@@ -1,9 +1,18 @@
 {% extends 'base.html' %}
 {% load static %}
+{% block css_style %}
+  <style>
+    .button-hover:hover {
+      background-color: #a1e1fa !important;
+      color: white !important;
+      border-color: #a1e1fa !important;
+    }
+  </style>
+{% endblock %}
 {% block content %}
   <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
-      <a class="navbar-brand" href="{% url 'doctorprofile:doctor-page' %}?doctor_id={{ doctor_id }}"><img src="{% static 'images/logo.jpg' %}" alt=".." width="45" height="45" class="d-inline-block align-text-top" /></a>
+      <a class="navbar-brand" href="{% url 'doctorprofile:doctor-page' %}"><img src="{% static 'images/hospital-logo.png' %}" alt=".." width="45" height="45" class="d-inline-block align-text-top" /></a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
@@ -20,7 +29,7 @@
             <a class="nav-link" href="{% url 'doctorprofile:forms' %}?status=pending">Patient Inquiries</a>
           </li>
         </ul>
-        <a href="{% url 'common:logout' %}"><button type="button" class="btn btn-light float-right" style="background-color:#3b7197; color:white; border-color: #3b7197;">Logout</button></a>
+        <a href="{% url 'common:logout' %}"><button type="button" class="btn btn-light button-logout float-right" style="background-color:#74bde0; color:white; border-color: #74bde0 !important;">Logout</button></a>
       </div>
     </div>
   </nav>
