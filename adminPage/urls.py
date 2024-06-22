@@ -19,4 +19,5 @@ urlpatterns=[
     path('edit_availability/<int:id>/', views.edit_availability, name = "edit_availability"),
     path('add_shift/<int:id>/', views.add_shift, name = "add_shift"),
     path('cancel_shift/<int:id>/', views.cancel_shift, name = "cancel_shift"),
+    path('cancel_edit/', views.cancel_edit, name = "cancel_edit"),
 ]

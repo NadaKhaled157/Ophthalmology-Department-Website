@@ -3,7 +3,6 @@ from urllib import request
 from django.shortcuts import render, HttpResponse, redirect
 from django.db import connection
 from django.urls import reverse
-
 from dateutil import parser
 
 def login(request):
@@ -474,6 +473,10 @@ def rmv_tech(request, id):
     return redirect('admin_profile')
 
 def cancel(request):
+    return redirect('role')
+
+
+def cancel_edit(request):
     return redirect('admin_profile')
 
 def cancel_shift(request, id):
