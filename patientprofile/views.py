@@ -138,9 +138,6 @@ def process_appointment(request): #after choosing appointment and available_time
                                 [app_date, start_time, app_type, pid, did ])
 
             return redirect('patientprofile:payment',app_type=app_type, did=did, app_date=app_date, start_time=start_time, app_day=app_day)
-
-
-
     return HttpResponse("Waiting to process the appointment")
 
 # def history(request):
