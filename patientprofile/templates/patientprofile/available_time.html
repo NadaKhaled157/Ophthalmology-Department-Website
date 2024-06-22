@@ -13,98 +13,6 @@
     <style> .btn-light:hover:{ background-color:#a1e1fa !important; }</style>
   {% endblock %}
   {% include 'patientprofile/navbar.html' %}
-{% comment %} <div class="card-body">
-  <div class="accordion" id="accordionExample">
-    <div class="accordion-item">
-      <h2 class="accordion-header" id="headingFour">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-          Available Times
-        </button>
-      </h2>
-      <form action="{% url 'patientprofile:process_appointment'%}" method="POST">
-        {% csrf_token %}
-      <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample">
-        <div class="accordion-body">
-          <table class="table table-striped">
-            <thead>
-              <tr>
-               <th>Doctor</th>
-               <th>Degree</th>
-               <th>DiD</th>
-                <th>Available Times</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% if appointment_type == 'examination' %}
-                 {% for availability in examination_availabilities %}
-                    {% if availability.0 and availability.2 and availability.3 %}
-                    <input type="hidden" id="app_type" name="appointment_type" value="examination">
-                  <tr>
-                    <td>{{ availability.0 }} {{ availability.1 }}</td>
-                    <td>{{ availability.2 }}</td>
-                    <!-- <td>{{ availability.7}}</td> -->
-                    <td>
-                      <div class="form-check">
-                        <input class="form-check-input" type="radio" name="Time" id="time" value="{{ availability.3}} * {{ availability.4 }} * {{ availability.5 }} * {{ availability.6 }}"
-                        data-doctor-id="{{ availability.7 }}"
-                        {% if not availability.8 %}disabled{% endif %}>
-                        <label class="form-check-label" for="time-{{ forloop.counter }}">
-                          {{ availability.3}} * {{ availability.4 }} * {{ availability.5 }} * {{ availability.6 }}
-                        </label>
-                        </div>
-                      {% endif %}
-                    </td>
-                  </tr>
-                {% endfor %} 
-              {% elif appointment_type == 'follow_up' %}
-                {% for availability in followup_availabilities %}
-                <input type="hidden" id="app_type" name="appointment_type" value="follow_up">
-                  <tr>
-                    <td>{{availability.0}} {{availability.1}}</td>
-                    <td>{{availability.2}}</td>
-                    <td>
-                        <div class="form-check">
-                          <input class="form-check-input" type="radio" name="Time" id="time" value="{{followup_date}} * {{ availability.3 }} * {{ availability.4 }} * {{ availability.5 }}"
-                           data-doctor-id="{{ availability.6 }}">
-                          <label class="form-check-label" for="time-{{ forloop.counter }}">
-                          {{followup_date}} - {{ availability.3 }} - {{ availability.4 }} - {{ availability.5 }}
-                          </label>
-                        </div>
-                    </td>
-                  </tr>
-                {% endfor %} 
-              {% elif appointment_type == 'surgery' %}
-              {% for availability in operation_availabilities %}
-              <input type="hidden" id="app_type" name="appointment_type" value="surgery">
-                <tr>
-                  <td>{{availability.0}} {{availability.1}}</td>
-                  <td>{{availability.2}}</td>
-                  <td>
-                      <div class="form-check">
-                        <input class="form-check-input" type="radio" name="Time" id="time" value="  {{ availability.3}} * {{ availability.4 }} * {{ availability.5 }} * {{ availability.6 }}"
-                        data-doctor-id="{{ availability.7 }}"
-                        {% if not availability.8 %}disabled{% endif %}>
-                        <label class="form-check-label" for="time-{{ forloop.counter }}">
-                          {{ availability.3}} * {{ availability.4 }} * {{ availability.5 }} * {{ availability.6 }}
-                        </label>
-                      </div>
-                  </td>
-                </tr>
-              {% endfor %}
-              {% endif %}
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <div class="row justify-content-center mt-4">
-        <div class="col-md-6">
-          <button class="btn btn-primary btn-lg" style="width: 100%;" type="submit"> Submit </button>
-        </div>
-      </div>
-      </form>
-    </div>
-  </div>
-</div> {% endcomment %}
 
 <!--NEW FRONT-->
   {% if appointment_type == 'examination' %}
@@ -114,7 +22,7 @@
     {% csrf_token %}
     <input type="hidden" id="app_type" name="appointment_type" value="examination">
     <input type="hidden" id="doctor_id" name="did" value="{{ doctor.0 }}">
-  <div class="card mt-3 mx-auto" style="width: 90%;">
+  <div class="card my-2 mx-auto" style="width: 90%;">
     <div class="card-body d-flex flex-row">
       <img src="../../../media/doctor1_TPpEFRP.jpeg" class="rounded-circle border border-dark mx-5 my-auto" style="width: 130px; height: 130px; object-fit: cover;" alt="Avatar">
       <div class="my-auto">
@@ -127,7 +35,7 @@
         {%for shift in shifts%}
           {%if shift.0 == doctor.0%}
         <li class="list-group-item">
-          <input class="form-check-input" type="radio" name="Time" id="time" value="{{ shift.1 }} - {{ shift.2 }} - {{ shift.3 }}" data-doctor-id="{{ shift.0 }}" {% if not shift.5 %}disabled{% endif %}>
+          <input class="form-check-input" type="radio" name="Time" id="time" value="{{ shift.2 }}*{{ shift.1 }}*{{ shift.3 }}*{{ shift.4 }}" data-doctor-id="{{ shift.0 }}" {% if not shift.5 %}disabled{% endif %}>
           <label class="form-check-label" for="time-{{ forloop.counter }}">
             <a style="color:#4a8db7">{{ shift.1 }} {{ shift.2 }}:</a> {{ shift.3 }} - {{ shift.4 }}
           </label>
@@ -177,7 +85,7 @@
   {% csrf_token %}
   <input type="hidden" id="app_type" name="appointment_type" value="surgery">
   <input type="hidden" id="doctor_id" name="did" value="{{ doctor.0 }}">
-<div class="card mt-3 mx-auto" style="width: 90%;">
+  <div class="card my-2 mx-auto" style="width: 90%;">
   <div class="card-body d-flex flex-row">
     <img src="../../../media/doctor1_TPpEFRP.jpeg" class="rounded-circle border border-dark mx-5 my-auto" style="width: 130px; height: 130px; object-fit: cover;" alt="Avatar">
     <div class="my-auto">
@@ -190,7 +98,7 @@
       {%for shift in shifts%}
         {%if shift.0 == doctor.0%}
         <li class="list-group-item">
-          <input class="form-check-input" type="radio" name="Time" id="time" value="{{ shift.1 }} - {{ shift.2 }} - {{ shift.3 }}" data-doctor-id="{{ shift.0 }}" {% if not shift.5 %}disabled{% endif %}>
+          <input class="form-check-input" type="radio" name="Time" id="time" value="{{ shift.2 }}*{{ shift.1 }}*{{ shift.3 }}*{{ shift.4 }}" data-doctor-id="{{ shift.0 }}" {% if not shift.5 %}disabled{% endif %}>
           <label class="form-check-label" for="time-{{ forloop.counter }}">
             <a style="color:#4a8db7">{{ shift.1 }} {{ shift.2 }}:</a> {{ shift.3 }} - {{ shift.4 }}
           </label>

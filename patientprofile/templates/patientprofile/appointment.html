@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
+{% block page_title %}
+  Booking
+{% endblock %}
 {% block content %}
   {% block css_style %}
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
@@ -59,15 +62,11 @@
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     {% if error_next_app %}
-    <div class="alert alert-danger" role="alert">
-    Your next appointment is {{next_app_status}} -- {{error_next_app}}
-    </div>
-{% elif examine%}
-    <div class="alert alert-danger" role="alert">
-    {{examine}}
-    </div>
-{%endif%}
-
+      <div class="alert alert-danger" role="alert">Your next appointment is {{ next_app_status }} -- {{ error_next_app }}</div>
+    {% elif examine %}
+      <div class="alert alert-danger" role="alert">{{ examine }}</div>
+    {% endif %}
+  {% endif %}
 
   {% comment %} <div class="container my-5">
     <h1>Make an Appointment</h1>

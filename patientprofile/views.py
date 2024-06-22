@@ -75,7 +75,23 @@ def processed_availability(availabilities):
             #print(f"count{count}")
         if count >3: available= False
         processed_availabilities.append((did,  day_name, next_date, shift_start, shift_end, available))
-        doctor.append((did, doctor_name, d_specialization))
+        # Initialize a flag to track whether the doctor is already in the list
+        doctor_added = False
+        # Check if the list is empty
+        if len(doctor) == 0:
+            doctor.append((did, doctor_name, d_specialization))
+            doctor_added = True
+        else:
+            # Iterate over existing doctors
+            for i in doctor:
+                if did == i[0]:
+                    # Doctor already exists, set the flag
+                    doctor_added = True
+                    break
+        # If the doctor hasn't been added, append them to the list
+        if not doctor_added:
+            doctor.append((did, doctor_name, d_specialization))
+
     return processed_availabilities, doctor
 
 def available_time(request, appointment_type):
@@ -91,7 +107,7 @@ def available_time(request, appointment_type):
                 """)
                 examination_availabilities = cursor.fetchall()
             processed_availabilities, doctor= processed_availability(examination_availabilities)
-
+            # return HttpResponse(doctor)
             return render(request, 'patientprofile/available_time.html', {'doctors_data':doctor,"shifts": processed_availabilities,"appointment_type": "examination"})
 
 
@@ -125,7 +141,7 @@ def process_appointment(request): #after choosing appointment and available_time
         print("did inside process_appointment ",did)
         app_type=request.POST.get('appointment_type')
         # print(time)---> (2020-06-22) - Monday - 8:30 a.m. - 10:30 a.m.
-        app_date , app_day, start_time, end_time = time.split('*')
+        app_day, app_date , start_time, end_time = time.split('*')
         if app_type=='examination':  #insert new did for patient
             with connection.cursor() as cursor:
                 cursor.execute("UPDATE patient SET did = %s WHERE pid = %s", [did, pid])
