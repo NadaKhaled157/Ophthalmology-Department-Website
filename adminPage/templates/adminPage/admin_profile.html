@@ -13,29 +13,23 @@
 </head>
 
 <body>
-    <div class="container">
-        <div class="navbar navbar-expand-lg navbar-dark">
-            <h4 class="text-center" align="center">Admin Dashboard</h4>
-        </div>
-    </div>
     <div class="row">
-        <div class="col-sm-3">
-            <div class="d-flex">
+        <div class="col-sm-2" style="background-color: #3b7197; height: 100vh;">
+            <div>
                 {% include 'adminPage/left.html' %}
             </div>
         </div>
-        <div class="col-sm-9">
-            {% include 'adminPage/top.html' %}
+        <div class="col-sm-10">
             {% if person == 'patient' %}
-                {% include 'adminPage/patient_view.html' %}
+                {% include 'adminPage/view_patient.html' %}
             {% elif person == 'doctor' %}
-                {% include 'adminPage/doctor_view.html' %}
+                {% include 'adminPage/view_doc.html' %}
             {% elif person == 'nurse' %}
-                {% include 'adminPage/nurse_view.html' %}
+                {% include 'adminPage/view_nur.html' %}
             {% elif person == 'technician' %}
-                {% include 'adminPage/tech_view.html' %}
+                {% include 'adminPage/view_tech.html' %}
             {% elif person == 'appointment' %}
-                {% include 'adminPage/app_view.html' %}
+                {% include 'adminPage/view_app.html' %}
             {% endif %}
         </div>
     </div>

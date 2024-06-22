@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <h1 class="mt-2 ms-3">{{patient_name}}'s Medical History</h1>
+  {% if history %}
+    <div class="card my-4">
+      {% comment %} <div class="card-header" style="background-color: #3b7197; color:white;"><h1>{{patient_name}}'s Medical History</h1></div> {% endcomment %}
+      <div class="card-body">
+        <table class="table">
+          <thead>
+             <tr>
+                <th>Date of Visit</th>
+                <th>Doctor</th>
+                <th>Reason for Visit</th>
+                <th>Treatment or Procedure</th>
+             </tr>
+          </thead>
+          <tbody>
+            {% for h in history%}
+              <tr>
+                  <td>{{h.3}}{{h.4}}</td>
+                  <td>{{h.0}} {{h.1}}</td>
+                  <td>{{h.2}}</td>
+                  <td></td>
+              </tr>
+              {% endfor %}
+          </tbody>  
+        </table>
+      </div>
+  {% else %}
+    <div class="card mt-5">
+      <div class="card-body">
+        <h4>You have no registered medical history.</h4>
+      </div>
+    </div>      
+  {% endif %}
+{% endblock %}

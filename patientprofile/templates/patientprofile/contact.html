@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+  {% block css_style %}
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <!-- Font Awesome icons (free version) -->
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css" />
+    <!-- Core theme CSS (includes Bootstrap) -->
+    <link href="{% static 'common/styles.css' %}" rel="stylesheet" />
+
+    <style>
+      .custom-card {
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.5);
+        border-radius: 10px;
+        background-color: #3b7197;
+      }
+      
+      .custom-card-body {
+        overflow-y: auto;
+      }
+      
+      .custom-link-button a {
+        color: white;
+        text-decoration: none;
+      }
+      
+      .btn {
+        border-color: #d9d9a6 !important;
+      }
+      
+      .button-hover:hover {
+        background-color: #d9d9a6 !important;
+        color: #3b7197 !important;
+        border-color: #d9d9a6 !important;
+      }
+    </style>
+  {% endblock %}
+  {% include 'patientprofile/navbar.html' %}
+  <div class="container my-3">
+    <div class="text-center mb-3">
+      <h2>Tell your doctor your concerns from the comfort of your home</h2>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="mb-3">
+          <div class="custom-card">
+            <div class="custom-card-body">
+              <div class="container">
+                <br />
+                <div class="text-center">
+                  <a href="{% url 'patientprofile:patient-profile' %}"><img src="{% static 'images/hospital-logo.png' %}" style="width: 300px;" alt="logo" /></a>
+                </div>
+                <form action="{% url 'patientprofile:contact' %}" method="post">
+                  {% csrf_token %}
+                  <div class="mb-3">
+                    <label for="doctor-name" class="form-label" style="color: white; font-weight: bold ;font-size: larger;">Doctor Name</label>
+                    <input type="text" class="form-control" id="doctor-name" name="doctor-name" value="{{ doctor_name }}" readonly />
+                  </div>
+                  <div class="mb-3">
+                    <label for="inquiry" class="form-label" style="color: white; font-weight: bold ;font-size: larger;">Inquiry</label>
+                    <textarea class="form-control" id="inquiry" name="inquiry" rows="3" required></textarea>
+                  </div>
+                  <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary button-hover m-1 mb-3" style="background-color: #FFFDE3; color:#3b7197 ; font-weight: bold; margin-right: 1rem;">Submit New Inquiry</button>
+                    <a href="{% url 'patientprofile:doctor_response' %}" class="btn btn-primary button-hover m-1 mb-3" style="background-color:#FFFDE3 ; color: #3b7197; font-weight: bold;">Track Old Inquiries</a>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

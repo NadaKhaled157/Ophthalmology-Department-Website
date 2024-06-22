@@ -11,10 +11,14 @@ from django.contrib.auth.hashers import make_password
 from django.core.files.storage import default_storage
 from django.db import connection
 from datetime import datetime
-from django.contrib.auth.decorators import login_required
+# from django.contrib.auth.decorators import login_required
+# from django.utils.crypto import get_random_string
+# import uuid
 
-from PIL import Image
-import io
+# import base64
+
+# from PIL import Image
+# import io
 
 # Create your views here.
 def doctor_profile(request):
@@ -111,6 +115,65 @@ def forms(request):
     url = f'/doctor/forms/?status=pending&doctor_id={doctor_id}'
     return redirect(url)
     # return render(request,'doctorprofile/forms.html',{'forms':form_data,'doctor_id':did})
+
+def visitor_form(request):
+    request.session['form_submitted'] = False
+    request.session['response'] = False
+    if request.method == "POST":
+        if request.POST.get("check_responses") == 'True':
+            form_code = request.POST.get('form_code')
+            # return HttpResponse(form_code)
+            with connection.cursor() as cursor:
+                # cursor.execute("""
+                # SELECT f.request,f.response,
+                # e.fname || ' ' || e.lname AS doctor_name,
+                # d.d_specialization, d.email
+                # FROM visitor_form f
+                # JOIN doctor d ON d.did = f.did
+                # JOIN staff e ON e.eid = d.eid
+                # WHERE f.form_code = %s
+                # """, [form_code])
+                cursor.execute("""
+                    SELECT
+                        f.request,
+                        f.response,
+                        CASE WHEN f.did IS NOT NULL
+                            THEN e.fname || ' ' || e.lname
+                            ELSE NULL
+                        END AS doctor_name,
+                        CASE WHEN f.did IS NOT NULL
+                            THEN d.d_specialization
+                            ELSE NULL
+                        END AS d_specialization,
+                        CASE WHEN f.did IS NOT NULL
+                            THEN d.email
+                            ELSE NULL
+                        END AS email
+                    FROM visitor_form f
+                    LEFT JOIN doctor d ON d.did = f.did
+                    LEFT JOIN staff e ON e.eid = d.eid
+                    WHERE f.form_code = %s
+                    """,[form_code])
+                retrieved_inquiry = cursor.fetchone()
+            request.session['response'] = True
+            request.session['retrieved_inquiry'] = retrieved_inquiry
+        else:
+            # return HttpResponse("HERE")
+            v_name = request.POST.get('v_name')
+            v_email = request.POST.get('v_email')
+            v_phone = request.POST.get('v_phone')
+            v_request = request.POST.get('v_request')
+            form_code = get_random_string(length=7)
+
+            with connection.cursor() as cursor:
+                cursor.execute("""
+                INSERT INTO visitor_form (v_name, v_email, phone_number, request, form_code)
+                VALUES(%s,%s,%s,%s,%s)
+                """,[v_name,v_email,v_phone,v_request,form_code])
+            request.session['form_code'] = form_code
+            request.session['form_submitted'] = True
+    return redirect ('common:welcome_page')
+    # return render(request, 'common/welcome-page.html', {'form_submitted':True})
 
 def edit_info(request):
     try:
@@ -253,20 +316,30 @@ def p_record(request):
         # encoded_path = all_patientrecords[1][2].tobytes()
         # path= encoded_path.decode('utf-8')
         # return HttpResponse(path)
-        patient_images=[]
-        # for i in range(len(all_patientrecords)):
-        #     print(all_patientrecords[i][2])
-        #     encoded_path = all_patientrecords[i][2].tobytes()
-        #     patient_images.append(encoded_path.decode('utf-8'))
-        # print(latest_patientrecords)
-        try:
-            if request.session['patient_notfound']:
-                patient_not_found= True
-        except:
+        patient_images={}
+    all_patientrecords = list(map(list, all_patientrecords))
+    patient_images = {i: all_patientrecords[i][2].tobytes().decode('utf-8') for i in range(len(all_patientrecords))}
+    # for i in range(len(all_patientrecords)):
+    #     #     print(all_patientrecords[i][2])
+    #     encoded_path = all_patientrecords[i][2].tobytes().decode('utf-8')
+    #     # all_patientrecords[i][2] = encoded_path.decode('utf-8')
+    #     patient_images.append(encoded_path.decode('utf-8'))
+    print(all_patientrecords)
+
+    try:
+        if request.session['patient_notfound']:
+            patient_not_found= True
+    except:
             patient_not_found = False
-    return render(request, 'doctorprofile/patientrecord.html', {'latest_patientrecords': latest_patientrecords, 'all_patientrecords':all_patientrecords, 'patient_not_found':patient_not_found, 'doctor_id':doctor_id})
+    return render(request, 'doctorprofile/patientrecord.html', {'latest_patientrecords': latest_patientrecords, 'all_patientrecords':all_patientrecords, 'patient_images':patient_images, 'patient_not_found':patient_not_found, 'doctor_id':doctor_id})
 
 def add_record(request):
+    try:
+        doctor_id = request.session['logged_in_user']
+    except:
+        request.session['not_logged_in'] = True
+        return redirect('common:authenticate_user')
+    
     if request.method == 'POST':
         pid = request.POST.get('pid')
         diagnosis = request.POST.get('diagnosis')
@@ -290,16 +363,14 @@ def add_record(request):
             # Insert the new medical record
             cursor.execute(
                 """
-                INSERT INTO medical_history (pid, diagnosis, treatment, dosage, followup, frequency)
-                VALUES (%s, %s, %s, %s, %s, %s)
+                INSERT INTO medical_history (pid, diagnosis, treatment, dosage, followup, frequency, did)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
                 """,
-                [pid, diagnosis, treatment, dosage, follow_up, frequency]
+                [pid, diagnosis, treatment, dosage, follow_up, frequency, doctor_id]
             )
-
         # Redirect to the patient records page after successful addition
-        return redirect(reverse('doctorprofile:patientrecord-page'))
-
-    return render(request, 'doctorprofile/add_record.html')
+        # return redirect('doctorprofile:patientrecord-page')
+    return redirect('doctorprofile:patientrecord-page')
 
 def edit_record(request):
     pid = request.GET.get('pid')
@@ -311,11 +382,13 @@ def edit_record(request):
         dosage = request.POST.get('dosage')
         follow_up = request.POST.get('follow_up')
         frequency = request.POST.get('frequency')
+        mid = request.POST.get('mid')
         with connection.cursor() as cursor:
             cursor.execute("""UPDATE medical_history
                            SET diagnosis= %s , treatment=%s, dosage=%s, followup=%s,frequency=%s
-                           WHERE pid = %s
-                            """, [diagnosis,treatment,dosage,follow_up,frequency, pid])
+                           WHERE pid = %s 
+                           AND mid = %s
+                            """, [diagnosis,treatment,dosage,follow_up,frequency, pid, mid])
             # cursor.execute("SELECT did FROM patient WHERE pid = %s",[pid])
             # did=cursor.fetchone()[0]
         target_url = f'/doctor/patientrecord/'
@@ -376,9 +449,78 @@ def retrieve_appointments(did):
     return appointments
 
 #I TEST SOME PRINTS HERE DO NOT DELETE
+import base64
+from django.core.files.storage import default_storage
 def test (request):
-    password = make_password('hiddenkey1')
-    hashed = 'pbkdf2_sha256$600000$OT9oWKU5A05bOsCaXM3ygP$cxtmxNljVX/6e3/OQPEY8L15g8pezf4Lwjil7al+gc0='
-    # return HttpResponse(password)
-    #return render(request, 'doctorprofile/test.html')
-    return HttpResponse(check_password(password, hashed))
+# Receiving the image from the form
+    # with connection.cursor() as cursor:
+    #     cursor.execute(
+    #         """
+    #         SELECT p_photo
+    #         FROM patient
+    #         WHERE pid=21
+    #     """)
+    #     doctor = cursor.fetchone()
+    #     if doctor:
+    #         # encoded_path = doctor[0].tobytes()
+    #         # img_path= encoded_path.decode('utf-8')
+    #         string = '\x89504e470d0a1a0a0000000d49484452'
+    #         encoded_path = base64.urlsafe_b64encode(doctor[0].encode('utf-8')).decode('utf-8')
+            
+    #         img_path = base64.urlsafe_b64decode(encoded_path).decode('utf-8')
+    #         return HttpResponse(f"""from database:{doctor[0]}
+    #                             || encodedpath: {encoded_path}
+    #                             || img_path: {img_path}""")
+    # img = request.FILES.get('img')
+    # if img:
+    #     img_name = img.name
+    #     img_path = default_storage.save(img_name, img)
+    #     print(img_path)
+    #     # encoded_path = base64.urlsafe_b64encode(img_path.encode('utf-8')).decode('utf-8')
+    #     encoded_path=img_path.tobytes()
+    #     print(encoded_path)
+
+    #     # img_path_decoded = base64.urlsafe_b64decode(encoded_path).decode('utf-8')
+    #     img_path_decoded = encoded_path.decode('utf-8')
+    #     print(img_path)
+    #     return HttpResponse(f"{encoded_path}|||{img_path}")
+    # return render(request, 'doctorprofile/test.html')
+
+
+    # Receiving the image from the form
+# Receiving the image from the form
+    img = request.FILES.get('img')
+    if img:
+        img_name = img.name
+        img_path = default_storage.save(img_name, img)
+        # Encode the image path to store in the database
+        encoded_path = base64.urlsafe_b64encode(img_path.encode('utf-8')).decode('utf-8')
+        # Save encoded_path to the database
+
+    with connection.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT p_photo
+            FROM patient
+            WHERE pid=21
+            """
+        )
+        doctor = cursor.fetchone()
+
+    # Assuming doctor is a row from the database and index 6 is the image path stored
+    encoded_path = doctor[0].tobytes().decode('utf-8')
+
+    # Decode the base64 string
+    img_path = base64.urlsafe_b64decode(encoded_path).decode('utf-8')
+
+    # Now you can use img_path to access the image
+    return HttpResponse(img_path)
+
+
+
+
+    # password = make_password('hiddenkey1')
+    # hashed = 'pbkdf2_sha256$600000$OT9oWKU5A05bOsCaXM3ygP$cxtmxNljVX/6e3/OQPEY8L15g8pezf4Lwjil7al+gc0='
+    # # return HttpResponse(password)
+    # #return render(request, 'doctorprofile/test.html')
+    # return HttpResponse(check_password(password, hashed))

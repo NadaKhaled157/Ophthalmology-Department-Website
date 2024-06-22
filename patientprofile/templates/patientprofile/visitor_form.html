@@ -1,0 +1,66 @@
+<section class="page-section" id="contact">
+      <div class="container">
+        <div class="text-center">
+          <h2 class="section-heading text-uppercase">Contact Us</h2>
+          <h3 class="section-subheading text-white">Send your inquiry and one of our best doctors will get back to you.</h3>
+        </div>
+        <!-- * * * * * * * * * * * * * * * -->
+        <!-- * * SB Forms Contact Form * * -->
+        <!-- * * * * * * * * * * * * * * * -->
+        <!-- This form is pre-integrated with SB Forms. -->
+        <!-- To make this form functional, sign up at -->
+        <!-- https://startbootstrap.com/solution/contact-forms -->
+        <!-- to get an API token! -->
+        <form action="{% url 'doctorprofile:visitor-form' %}" method="POST" id="contactForm">
+          {% csrf_token %}
+          <input type="hidden" name="check_responses" value="False" />
+          <div class="row align-items-stretch mb-5">
+            <div class="col-md-6">
+              <div class="form-group">
+                <!-- Name input -->
+                <input class="form-control" name="v_name" id="name" type="text" placeholder="Your Name *" data-sb-validations="required" required />
+                <div class="invalid-feedback" data-sb-feedback="name:required">A name is required.</div>
+              </div>
+              <div class="form-group">
+                <!-- Email address input -->
+                <input class="form-control" name="v_email" id="email" type="email" placeholder="Your Email *" data-sb-validations="required,email" required />
+                <div class="invalid-feedback" data-sb-feedback="email:required">An email is required.</div>
+                <div class="invalid-feedback" data-sb-feedback="email:email">Email is not valid.</div>
+              </div>
+              <div class="form-group mb-md-0">
+                <!-- Phone number input -->
+                <input class="form-control" name="v_phone" id="phone" type="tel" placeholder="Your Phone *" data-sb-validations="required" required />
+                <div class="invalid-feedback" data-sb-feedback="phone:required">A phone number is required.</div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group form-group-textarea mb-md-0">
+                <!-- Message input -->
+                <textarea class="form-control" name="v_request" id="message" placeholder="Your Message *" data-sb-validations="required" required></textarea>
+                <div class="invalid-feedback" data-sb-feedback="message:required">A message is required.</div>
+              </div>
+            </div>
+          </div>
+          <!-- Submit success message -->
+          {% comment %} <div class="d-none" id="submitSuccessMessage">
+            <div class="text-center text-white mb-3">
+              <div class="fw-bolder">Form submission successful!</div>Your Form ID is: {{ formID }}
+              <br />
+              <a href="#">Click here to check</a>
+            </div>
+          </div> {% endcomment %}
+          <!-- Submit error message -->
+          <!--  -->
+          {% comment %} <div class="d-none" id="submitErrorMessage">
+            <div class="text-center text-danger mb-3">Error sending message!</div>
+          </div> {% endcomment %}
+          <!-- Submit Button -->
+          <div class="text-center">
+            <button class="btn btn-light btn-xl text-uppercase" style="color:#3b7197; border-color: #3b7197;" id="submitButton" type="submit">Send Message</button>
+          </div>
+          <div class="text-center">
+            <a href="#" style="color:white;" data-bs-toggle="modal" data-bs-target="#exampleModal">Track Previous Inquiry</a>
+          </div>
+        </form>
+      </div>
+    </section>

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block css_style %}
+  {% comment %} <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+  <!-- Font Awesome icons (free version) -->
+  <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+  <!-- Google fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css" />
+  <!-- Core theme CSS (includes Bootstrap) -->
+  <link href="{% static 'common/styles.css' %}" rel="stylesheet" /> {% endcomment %}
+  <style>
+    .button-logout:hover {
+      background-color: #a1e1fa !important;
+      color: white !important;
+      border-color: #a1e1fa !important;
+    }
+  </style>
+{% endblock %}
+{% block content %}
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{% url 'patientprofile:patient-profile' %}"><img src="{% static 'images/hospital-logo.png' %}" alt=".." width="45" height="45" class="d-inline-block align-text-top" /></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{% url 'patientprofile:patient-profile' %}">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'patientprofile:appointment' %}">Book Appointment</a>
+          </li>
+          {% comment %} <li class="nav-item">
+            <a class="nav-link" href="{% url 'doctorprofile:patientrecord-page' %}">Medical History</a>
+          </li> {% endcomment %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'patientprofile:contact' %}">Contact Doctor</a>
+          </li>
+        </ul>
+        <a href="{% url 'common:logout' %}"><button type="button" class="btn btn-light button-logout float-right" style="background-color:#74bde0; color:white; border-color: #74bde0 !important;">Logout</button></a>
+      </div>
+    </div>
+  </nav>
+{% endblock %}
