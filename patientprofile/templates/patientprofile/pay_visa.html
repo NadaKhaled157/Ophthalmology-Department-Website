@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .card {
+            margin-top: 50px;
+        }
+        .card-header {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+    </style>
+</head>
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Visa Payment</h5>
+                </div>
+                <div class="card-body">
+                  <form action="{% url 'patientprofile:success_payment_visa' %}" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="fees" value="{{ fees }}">
+                        <div class="form-group">
+                            <label for="cardNumber">Card Number</label>
+                            <input type="text" class="form-control" id="cardNumber" name="cardNumber" placeholder="Enter your Visa card number" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="expiryDate">Expiry Date</label>
+                                <input type="text" class="form-control" id="expiryDate" name="expiryDate" placeholder="MM/YY" required>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="cvv">CVV</label>
+                                <input type="text" class="form-control" id="cvv" name="cvv" placeholder="CVV" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="cardHolderName">Card Holder Name</label>
+                            <input type="text" class="form-control" id="cardHolderName" name="cardHolderName" placeholder="Enter the name on your card" required>
+                        </div>
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-primary btn-block">Submit Payment</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

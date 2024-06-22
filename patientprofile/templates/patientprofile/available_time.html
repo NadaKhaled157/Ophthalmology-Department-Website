@@ -30,6 +30,7 @@
               <tr>
                <th>Doctor</th>
                <th>Degree</th>
+               <th>DiD</th>
                 <th>Available Times</th>
               </tr>
             </thead>
@@ -39,17 +40,17 @@
                     {% if availability.0 and availability.2 and availability.3 %}
                     <input type="hidden" id="app_type" name="appointment_type" value="examination">
                   <tr>
-                    {% ifchanged %}
-                    <td>{{ availability.0 }}</td>
-                    <td>{{ availability.1 }}</td>
-                    <input type="hidden" id="doctor_id" name="did" value="{{ availability.5 }}">
-                    {% endifchanged %}
+                    <td>{{ availability.0 }} {{ availability.1 }}</td>
+                    <td>{{ availability.2 }}</td>
+                    <!-- <td>{{ availability.7}}</td> -->
                     <td>
                       <div class="form-check">
-                          <input class="form-check-input" type="radio" name="Time" id="time" value="{{ availability.2 }} - {{ availability.3 }} - {{ availability.4 }}">
-                          <label class="form-check-label" for="time-{{ forloop.counter }}">
-                            {{ availability.2 }} - {{ availability.3 }} - {{ availability.4 }}
-                          </label>
+                        <input class="form-check-input" type="radio" name="Time" id="time" value="{{ availability.3}} * {{ availability.4 }} * {{ availability.5 }} * {{ availability.6 }}"
+                        data-doctor-id="{{ availability.7 }}"
+                        {% if not availability.8 %}disabled{% endif %}>
+                        <label class="form-check-label" for="time-{{ forloop.counter }}">
+                          {{ availability.3}} * {{ availability.4 }} * {{ availability.5 }} * {{ availability.6 }}
+                        </label>
                         </div>
                       {% endif %}
                     </td>
@@ -59,16 +60,14 @@
                 {% for availability in followup_availabilities %}
                 <input type="hidden" id="app_type" name="appointment_type" value="follow_up">
                   <tr>
-                    {% ifchanged %}
-                    <td>{{availability.0}}</td>
-                    <td>{{availability.1}}</td>
-                    <input type="hidden" id="doctor_id" name="did" value="{{ availability.5 }}">
-                    {% endifchanged %}
+                    <td>{{availability.0}} {{availability.1}}</td>
+                    <td>{{availability.2}}</td>
                     <td>
                         <div class="form-check">
-                          <input class="form-check-input" type="radio" name="Time" id="time" value="{{followup_date}} * {{ availability.2 }} * {{ availability.3 }} * {{ availability.4 }}">
+                          <input class="form-check-input" type="radio" name="Time" id="time" value="{{followup_date}} * {{ availability.3 }} * {{ availability.4 }} * {{ availability.5 }}"
+                           data-doctor-id="{{ availability.6 }}">
                           <label class="form-check-label" for="time-{{ forloop.counter }}">
-                          {{followup_date}} * {{ availability.2 }} * {{ availability.3 }} * {{ availability.4 }}
+                          {{followup_date}} - {{ availability.3 }} - {{ availability.4 }} - {{ availability.5 }}
                           </label>
                         </div>
                     </td>
@@ -78,16 +77,15 @@
               {% for availability in operation_availabilities %}
               <input type="hidden" id="app_type" name="appointment_type" value="surgery">
                 <tr>
-                  {% ifchanged %}
-                  <td>{{availability.0}}</td>
-                  <td>{{availability.1}}</td>
-                  <input type="hidden" id="doctor_id" name="did" value="{{ availability.5 }}">
-                  {% endifchanged %}
+                  <td>{{availability.0}} {{availability.1}}</td>
+                  <td>{{availability.2}}</td>
                   <td>
                       <div class="form-check">
-                        <input class="form-check-input" type="radio" name="Time" id="time" value="{{ availability.2 }} - {{ availability.3 }} - {{ availability.4 }}">
+                        <input class="form-check-input" type="radio" name="Time" id="time" value="  {{ availability.3}} * {{ availability.4 }} * {{ availability.5 }} * {{ availability.6 }}"
+                        data-doctor-id="{{ availability.7 }}"
+                        {% if not availability.8 %}disabled{% endif %}>
                         <label class="form-check-label" for="time-{{ forloop.counter }}">
-                          {{ availability.2 }} - {{ availability.3 }} - {{ availability.4 }}
+                          {{ availability.3}} * {{ availability.4 }} * {{ availability.5 }} * {{ availability.6 }}
                         </label>
                       </div>
                   </td>
@@ -128,12 +126,14 @@
       <ul class="list-group list-group-flush">
         {%for shift in shifts%}
           {%if shift.0 == doctor.0%}
-        <li class="list-group-item"><input class="form-check-input" type="radio" name="Time" id="time" value="{{ shift.1 }} - {{ shift.2 }} - {{ shift.3 }}">
+        <li class="list-group-item">
+          <input class="form-check-input" type="radio" name="Time" id="time" value="{{ shift.1 }} - {{ shift.2 }} - {{ shift.3 }}" data-doctor-id="{{ shift.0 }}" {% if not shift.5 %}disabled{% endif %}>
           <label class="form-check-label" for="time-{{ forloop.counter }}">
-            <a style="color:#4a8db7">{{ shift.1 }}:</a> {{ shift.2 }} - {{ shift.3 }}
-          </label></li>
-          {%endif%}
-          {%endfor%} 
+            <a style="color:#4a8db7">{{ shift.1 }} {{ shift.2 }}:</a> {{ shift.3 }} - {{ shift.4 }}
+          </label>
+        </li>
+        {%endif%}
+        {%endfor%} 
       </ul>
     </div>
     <div class="card-footer">
@@ -189,10 +189,12 @@
     <ul class="list-group list-group-flush">
       {%for shift in shifts%}
         {%if shift.0 == doctor.0%}
-      <li class="list-group-item"><input class="form-check-input" type="radio" name="Time" id="time" value="{{ shift.1 }} - {{ shift.2 }} - {{ shift.3 }}">
-        <label class="form-check-label" for="time-{{ forloop.counter }}">
-          <a style="color:#4a8db7">{{ shift.1 }}:</a> {{ shift.2 }} - {{ shift.3 }}
-        </label></li>
+        <li class="list-group-item">
+          <input class="form-check-input" type="radio" name="Time" id="time" value="{{ shift.1 }} - {{ shift.2 }} - {{ shift.3 }}" data-doctor-id="{{ shift.0 }}" {% if not shift.5 %}disabled{% endif %}>
+          <label class="form-check-label" for="time-{{ forloop.counter }}">
+            <a style="color:#4a8db7">{{ shift.1 }} {{ shift.2 }}:</a> {{ shift.3 }} - {{ shift.4 }}
+          </label>
+        </li>
         {%endif%}
         {%endfor%} 
     </ul>

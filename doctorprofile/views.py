@@ -11,14 +11,14 @@ from django.contrib.auth.hashers import make_password
 from django.core.files.storage import default_storage
 from django.db import connection
 from datetime import datetime
-from django.contrib.auth.decorators import login_required
-from django.utils.crypto import get_random_string
-import uuid
+# from django.contrib.auth.decorators import login_required
+# from django.utils.crypto import get_random_string
+# import uuid
 
-import base64
+# import base64
 
-from PIL import Image
-import io
+# from PIL import Image
+# import io
 
 # Create your views here.
 def doctor_profile(request):
