@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container" style="margin-top: 10%;">
+        <div class="card mx-auto mt-4 col-sm-6" style="width: 30rem;">
+            <div class="card-header" style="background-color: #3b7197; color: white;">
+                <h4 style="font-weight: bold; margin-top: 5px;" align="center">Department Administration</h4>
+            </div>
+            <div class="card-body">
+                <form action="{% url 'login' %}" method="POST">
+                    {%csrf_token%}
+                    {% if wrong %}
+                    <div class="custom-row mb-3">
+                        <label style="color: red; font-weight: bold; text-align: center;">*{{wrong}}</label>
+                    </div>
+                    {% endif %}
+                    <div class="custom-row mb-3">
+                        <label style="font-weight: bold; margin-bottom: 5px;">Username:</label>
+                        <input type="text" class="form-control" placeholder="Username" name="user" required>
+                    </div>
+                    <div class="custom-row mb-3">
+                        <label style="font-weight: bold; margin-bottom: 5px;">Password:</label>
+                        <input type="password" class="form-control" placeholder="Password" name="password" required>
+                    </div>
+                    <input type="submit" class="btn btn-light d-block mx-auto" style="width:70px; background-color:#3b7197; color: white; text-align: center; font-weight: bold;" value="Login" />
+                </form>    
+            </div>
+        </div>
+    </div>
+</body>
+</html>
