@@ -1,7 +1,10 @@
+from datetime import datetime
 from urllib import request
 from django.shortcuts import render, HttpResponse, redirect
 from django.db import connection
 from django.urls import reverse
+
+from dateutil import parser
 
 def login(request):
     if request.method == 'POST':
@@ -355,7 +358,15 @@ def available(request, id):
         cursor.execute("""SELECT a.id, a.day, a.shift_start, a.shift_end
                        FROM availability a JOIN doctor d ON a.did = d.did
                        WHERE a.did = %s
-                       ORDER BY id""", [id])
+                       ORDER BY CASE 
+                                WHEN day = 'Saturday' THEN 1
+                                WHEN day = 'Sunday' THEN 2
+                                WHEN day = 'Monday' THEN 3
+                                WHEN day = 'Tuesday' THEN 4
+                                WHEN day = 'Wednesday' THEN 5
+                                WHEN day = 'Thursday' THEN 6
+                                WHEN day = 'Friday' THEN 7
+                                END, shift_start""", [id])
         time = cursor.fetchall()
 
         cursor.execute("""SELECT fname, lname
@@ -373,6 +384,14 @@ def edit_availability(request, id):
         start = request.POST.get('start')
         end = request.POST.get('end')
 
+        if start == 'noon':
+            start = '12 p.m.'
+        if end == 'noon':
+            end = '12 p.m.'
+        
+        start = parser.parse(start).strftime("%H:%M:%S")
+        end = parser.parse(end).strftime("%H:%M:%S")
+
         with connection.cursor() as cursor:
             cursor.execute("""UPDATE availability 
                                 SET day = %s, shift_start = %s, shift_end = %s
@@ -387,6 +406,14 @@ def add_shift(request, id):
         start = request.POST.get('start')
         end = request.POST.get('end')
 
+        if start == 'noon':
+            start = '12 p.m.'
+        if end == 'noon':
+            end = '12 p.m.'
+
+        start = parser.parse(start).strftime("%H:%M:%S")
+        end = parser.parse(end).strftime("%H:%M:%S")
+        
         with connection.cursor() as cursor:
             cursor.execute("""INSERT INTO availability (day, shift_start, shift_end, did)
                                 VALUES (%s,%s,%s,%s)""", [day, start, end, id])
@@ -448,3 +475,6 @@ def rmv_tech(request, id):
 
 def cancel(request):
     return redirect('admin_profile')
+
+def cancel_shift(request, id):
+    return redirect(reverse('available', args=[id]))
