@@ -113,7 +113,7 @@ def available_time(request, appointment_type):
             cursor.execute("SELECT s.fname || ' ' || s.lname AS doctor_name,d.d_specialization, a.day, a.shift_start, a.shift_end, d.did FROM doctor d inner join availability a ON d.did = a.did inner join staff s on s.eid = d.eid WHERE d.d_specialization='surgery'")
             operation_availabilities = cursor.fetchall()
         processed_availabilities, doctor= processed_availability(operation_availabilities)
-        return render(request, 'patientprofile/available_time.html', {"shifts": processed_availabilities,'doctors_data':doctor "appointment_type": "surgery"})
+        return render(request, 'patientprofile/available_time.html', {"shifts": processed_availabilities,'doctors_data':doctor, "appointment_type": "surgery"})
 
     return render(request, 'patientprofile/available_time.html')
 
