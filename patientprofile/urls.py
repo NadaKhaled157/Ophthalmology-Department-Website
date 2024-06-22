@@ -14,7 +14,7 @@ path("available_time/<str:appointment_type>/", views.available_time, name="avail
 path("success_request", views.success_request, name="success_request"),
 path("process_appointment", views.process_appointment, name="process_appointment"),
 path("success_payment", views.success_payment, name="success_payment"),
-path("pay_visa/<int:fees>", views.pay_visa, name="pay_visa"),
+path("pay_visa/<int:fees>/<int:aid>", views.pay_visa, name="pay_visa"),
 path("success_payment_visa", views.success_payment_visa, name="success_payment_visa"),
 
 ]

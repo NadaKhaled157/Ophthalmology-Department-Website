@@ -1,66 +1,90 @@
-<section class="page-section" id="contact">
-      <div class="container">
-        <div class="text-center">
-          <h2 class="section-heading text-uppercase">Contact Us</h2>
-          <h3 class="section-subheading text-white">Send your inquiry and one of our best doctors will get back to you.</h3>
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+  {% block css_style %}
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <!-- Font Awesome icons (free version) -->
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css" />
+    <!-- Core theme CSS (includes Bootstrap) -->
+    <link href="{% static 'common/styles.css' %}" rel="stylesheet" />
+
+    <style>
+      .custom-card {
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.5);
+        border-radius: 10px;
+        background-color: #3b7197;
+      }
+
+      .custom-card-body {
+        overflow-y: auto;
+      }
+
+      .custom-link-button a {
+        color: white;
+        text-decoration: none;
+      }
+
+      .btn {
+        border-color: #d9d9a6 !important;
+      }
+
+      .button-hover:hover {
+        background-color: #d9d9a6 !important;
+        color: #3b7197 !important;
+        border-color: #d9d9a6 !important;
+      }
+    </style>
+  {% endblock %}
+  {% include 'patientprofile/navbar.html' %}
+  <div class="container my-3">
+    <div class="text-center mb-3">
+      <h2>Send your inquiry and one of our best doctors will get back to you.</h2>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="mb-3">
+          <div class="custom-card">
+            <div class="custom-card-body">
+              <div class="container">
+                <br />
+                <div class="text-center">
+                  <a href="{% url 'patientprofile:patient-profile' %}"><img src="{% static 'images/hospital-logo.png' %}" style="width: 300px;" alt="logo" /></a>
+                </div>
+                 <form action="{% url 'doctorprofile:visitor-form' %}" method="POST" id="contactForm">
+                  {% csrf_token %}
+                  <input type="hidden" name="check_responses" value="False" />
+                  <div class="mb-3">
+                    <label for="patient-name" class="form-label" style="color: white; font-weight: bold ;font-size: larger;">Your Name</label>
+                    <input type="text" class="form-control" id="name" name="v_name" value="{{ p_name }}" readonly />
+                  </div>
+                  <div class="mb-3">
+                    <label for="patient-name" class="form-label" style="color: white; font-weight: bold ;font-size: larger;">Your Email</label>
+                    <input type="text" class="form-control" id="email" name="v_email" value="{{ p_email }}" readonly  />
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="patient-name" class="form-label" style="color: white; font-weight: bold ;font-size: larger;">Your Phone Number</label>
+                    <input type="text" class="form-control" id="phone" name="v_phone" value="{{ phone_number }}" readonly  />
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="inquiry" class="form-label" style="color: white; font-weight: bold ;font-size: larger;">Inquiry</label>
+                    <textarea class="form-control" id="message" name="v_request" rows="3" required></textarea>
+                  </div>
+
+                  <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary button-hover m-1 mb-3" style="background-color: #FFFDE3; color:#3b7197 ; font-weight: bold; margin-right: 1rem;">Submit New Inquiry</button>
+                    <a href="#" class="btn btn-primary button-hover m-1 mb-3" style="background-color:#FFFDE3 ; color: #3b7197; font-weight: bold;">Track Old Inquiries</a>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
         </div>
-        <!-- * * * * * * * * * * * * * * * -->
-        <!-- * * SB Forms Contact Form * * -->
-        <!-- * * * * * * * * * * * * * * * -->
-        <!-- This form is pre-integrated with SB Forms. -->
-        <!-- To make this form functional, sign up at -->
-        <!-- https://startbootstrap.com/solution/contact-forms -->
-        <!-- to get an API token! -->
-        <form action="{% url 'doctorprofile:visitor-form' %}" method="POST" id="contactForm">
-          {% csrf_token %}
-          <input type="hidden" name="check_responses" value="False" />
-          <div class="row align-items-stretch mb-5">
-            <div class="col-md-6">
-              <div class="form-group">
-                <!-- Name input -->
-                <input class="form-control" name="v_name" id="name" type="text" placeholder="Your Name *" data-sb-validations="required" required />
-                <div class="invalid-feedback" data-sb-feedback="name:required">A name is required.</div>
-              </div>
-              <div class="form-group">
-                <!-- Email address input -->
-                <input class="form-control" name="v_email" id="email" type="email" placeholder="Your Email *" data-sb-validations="required,email" required />
-                <div class="invalid-feedback" data-sb-feedback="email:required">An email is required.</div>
-                <div class="invalid-feedback" data-sb-feedback="email:email">Email is not valid.</div>
-              </div>
-              <div class="form-group mb-md-0">
-                <!-- Phone number input -->
-                <input class="form-control" name="v_phone" id="phone" type="tel" placeholder="Your Phone *" data-sb-validations="required" required />
-                <div class="invalid-feedback" data-sb-feedback="phone:required">A phone number is required.</div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group form-group-textarea mb-md-0">
-                <!-- Message input -->
-                <textarea class="form-control" name="v_request" id="message" placeholder="Your Message *" data-sb-validations="required" required></textarea>
-                <div class="invalid-feedback" data-sb-feedback="message:required">A message is required.</div>
-              </div>
-            </div>
-          </div>
-          <!-- Submit success message -->
-          {% comment %} <div class="d-none" id="submitSuccessMessage">
-            <div class="text-center text-white mb-3">
-              <div class="fw-bolder">Form submission successful!</div>Your Form ID is: {{ formID }}
-              <br />
-              <a href="#">Click here to check</a>
-            </div>
-          </div> {% endcomment %}
-          <!-- Submit error message -->
-          <!--  -->
-          {% comment %} <div class="d-none" id="submitErrorMessage">
-            <div class="text-center text-danger mb-3">Error sending message!</div>
-          </div> {% endcomment %}
-          <!-- Submit Button -->
-          <div class="text-center">
-            <button class="btn btn-light btn-xl text-uppercase" style="color:#3b7197; border-color: #3b7197;" id="submitButton" type="submit">Send Message</button>
-          </div>
-          <div class="text-center">
-            <a href="#" style="color:white;" data-bs-toggle="modal" data-bs-target="#exampleModal">Track Previous Inquiry</a>
-          </div>
-        </form>
       </div>
-    </section>
+    </div>
+  </div>
+{% endblock %}

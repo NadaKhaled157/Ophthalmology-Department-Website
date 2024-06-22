@@ -14,7 +14,7 @@
       .service-option-input {
         display: none;
       }
-      
+
       .service-option {
         cursor: pointer;
         opacity: 0.5;
@@ -22,7 +22,7 @@
         padding-bottom: 30px;
         transition: opacity 0.3s ease;
       }
-      
+
       .service-option:before {
         content: '';
         display: inline-block;
@@ -37,11 +37,11 @@
         background-color: #fff;
         transition: background-color 0.3s ease, border-color 0.3s ease;
       }
-      
+
       .service-option.active {
         opacity: 1;
       }
-      
+
       .service-option.active:before {
         border-color: rgba(0, 0, 0, 0);
         background-color: rgba(0, 0, 0, 0);
@@ -53,20 +53,20 @@
     </style>
   {% endblock %}
   {% include 'patientprofile/navbar.html' %}
-  {% if no_app_type %}
+    {% if no_app_type %}
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
       Please Choose Appointment Type.
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-    {% if error_next_app %}
+    {% elif error_next_app %}
     <div class="alert alert-danger" role="alert">
     Your next appointment is {{next_app_status}} -- {{error_next_app}}
     </div>
-{% elif examine%}
+   {% elif examine%}
     <div class="alert alert-danger" role="alert">
     {{examine}}
     </div>
-{%endif%}
+   {%endif%}
 
 
   {% comment %} <div class="container my-5">
@@ -157,4 +157,5 @@
       })
     })
   </script>
+
 {% endblock %}

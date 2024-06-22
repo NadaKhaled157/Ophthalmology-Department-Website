@@ -10,50 +10,51 @@
 {% endblock %}
 
 {% block content %}
-
-<div class="d-flex flex-column">
-    <div class="card mx-auto mt-4 col-sm-6" style="width: 35rem;">
-        <div class="container d-flex justify-content-center">
-            <a href="#">
-                <img src="{% static 'images/hospital-logo.jpeg' %}" class="card-img-top mx-auto" alt="Hospital Logo" style="width:70%">
-            </a>
-        </div>
-        <div class="card-body">
-      <h2 class="text-center" style="color:rgb(21, 115, 71)"><strong>Edit Your Info</strong></h2><br>
-{% if nomatch %}
-<div class="alert alert-danger" role="alert">
-Passwords didn't match.
-</div>
+<section class="h-100 gradient-form" style="background-color: #eee; min-height: 100vh;">
+    {% if nomatch %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        Passwords didn't match.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
 {%endif%}
-      <form action="{% url 'patientprofile:edit' %}" method="POST" enctype='multipart/form-data'>
-                {% csrf_token %}
-                <!-- Form fields here -->
-        <div class="custom-row d-flex mb-3">
-          <input type="text" class="form-control me-2" name="fname" placeholder="{{patient.0}}" value="{{patient.0}}" aria-label="fname" aria-describedby="basic-addon1">
-          <input type="text" class="form-control" name="lname" placeholder="{{patient.1}}" value="{{patient.1}}" aria-label="lname" aria-describedby="basic-addon1">
-        </div>
-        <div class="input-group mb-3">
-            <input type="text" class="form-control" name="email" placeholder="{{patient.8}}" value="{{patient.8}}" aria-label="email" aria-describedby="basic-addon1">
-        </div>
-        <div class="input-group mb-3">
-            <input type="number" class="form-control" name="phone_number" placeholder="{{patient.4}}" value="{{patient.4}}" aria-label="phone_number" aria-describedby="basic-addon1">
-        </div>
-        <div class="input-group mb-3">
-            <input type="text" class="form-control" name="address" placeholder="{{patient.6}}" value="{{patient.6}}" aria-label="address" aria-describedby="basic-addon1">
-        </div>
-        <div class="input-group mb-3">
-            <input type="password" class="form-control" name="password" placeholder="Password" aria-label="password" aria-describedby="basic-addon1" required>
-        </div>
-        <div class="input-group mb-3">
-            <input type="password" class="form-control" name="confirm-password" placeholder="Confirm-Password" aria-label="password" aria-describedby="basic-addon1" required>
-        </div>
-        <div class="mb-3">
-            <label for="formFile" class="form-label">Change Profile Photo</label>
-            <input class="form-control" type="file" id="formFile" name="img" value = "{{img_path}}">
-        </div>
-                <input type="submit" class="btn btn-success d-block mx-auto" style="width:100%;" value="Save Changes">
-            </form>
+    <div class="container py-5 h-100">
+        <div class="card rounded-3 text-black p-3">
+            <div class="card-body p-md-4 mx-md-3 d-flex flex-column align-items-center">
+                <div class="text-center">
+                    <a href="{% url 'patientprofile:patient-profile' %}?pid={{ pid }}">
+                        <img src="{% static 'images/hospital-logo.png' %}" style="width: 175px;" alt="logo" />
+                    </a>
+                </div>
+                <h3>MySufferingQL Hospital</h3>
+            </div>
+            <form action="{% url 'patientprofile:edit' %}" method="POST" enctype='multipart/form-data'>
+                        {% csrf_token %}
+                        <div class="custom-row d-flex mb-3">
+                            <input type="text" class="form-control me-2" name="fname" placeholder="{{patient.0}}" value="{{patient.0}}" aria-label="fname" aria-describedby="basic-addon1">
+                            <input type="text" class="form-control" name="lname" placeholder="{{patient.1}}" value="{{patient.1}}" aria-label="lname" aria-describedby="basic-addon1">
+                        </div>
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" name="email" placeholder="{{patient.8}}" value="{{patient.8}}" aria-label="email" aria-describedby="basic-addon1">
+                        </div>
+                        <div class="custom-row d-flex mb-3">
+                            <input type="password" class="form-control me-2" name="password" placeholder="Password" required />
+                            <input type="password" class="form-control" name="confirm-password" placeholder="Confirm Password" required />
+                        </div>
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" name="address" placeholder="{{patient.6}}" value="{{patient.6}}" aria-label="address" aria-describedby="basic-addon1">
+                        </div>
+                        <div class="custom-row d-flex mb-3">
+                            <input type="number" class="form-control me-2" name="p_age" placeholder="Age"  value="{{patient.2}}"  />
+                            <input type="number" class="form-control" name="phone_number" placeholder="{{patient.4}}" value="{{patient.4}}" aria-label="phone_number" aria-describedby="basic-addon1">
+                        </div>
+                        <div class="mb-3">
+                            <label for="formFile" class="form-label">Choose a Profile Image</label>
+                            <input class="form-control" type="file" id="formFile" name="img" />
+                        </div>
+                        <div class="text-center pt-1 mb-1 pb-1">
+                            <input type="submit" class="btn btn-light d-block mx-auto" style="width:100%; color:#3b7197" value="Save Changes">
+                        </div>
+                </form>
         </div>
     </div>
-</div>
 {% endblock %}

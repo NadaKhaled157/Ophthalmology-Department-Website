@@ -12,7 +12,7 @@ from django.core.files.storage import default_storage
 from django.db import connection
 from datetime import datetime
 # from django.contrib.auth.decorators import login_required
-# from django.utils.crypto import get_random_string
+from django.utils.crypto import get_random_string
 # import uuid
 
 # import base64
@@ -29,12 +29,12 @@ def doctor_profile(request):
         return redirect('common:authenticate_user')
     doctor, img_path = retrieve_doctor(doctor_id)
     if doctor:
-        doctor_id = doctor[3] 
+        doctor_id = doctor[3]
             # Fetch the availability for the doctor
         with connection.cursor() as cursor:
             cursor.execute("""
                 SELECT day, shift_start,shift_end
-                FROM availability 
+                FROM availability
                 WHERE did = %s
             """, [doctor_id])
             availability = cursor.fetchall()
@@ -52,7 +52,7 @@ def doctor_profile(request):
             return HttpResponse("No doctors found in the database.")
 
 def forms(request):
-    # doctor_id = request.GET.get('doctor_id') 
+    # doctor_id = request.GET.get('doctor_id')
     # try:
     #     doctor_requested = str(request.session['logged_in_user'])
     # except:
@@ -86,7 +86,7 @@ def forms(request):
         response = request.POST.get('response')
         form_num= request.POST.get('modal_id')
         # clicked_answered= request.POST.get('answered_forms')
-        
+
         with connection.cursor() as cursor:
             del_fnum = request.POST.get('deleted_form')
             if del_fnum is not None:  #deleting form
@@ -223,7 +223,7 @@ def edit_info(request):
     else:
         doctor_data, img_path = retrieve_doctor(doctor_id)
         return render(request, 'doctorprofile/edit-info.html', {'doctor_id': doctor_id, 'doctor':doctor_data, 'img_path':img_path})
-        
+
 
 def p_record(request):
     try:
@@ -231,11 +231,11 @@ def p_record(request):
     except:
         request.session['not_logged_in'] = True
         return redirect('common:authenticate_user')
-    
+
     with connection.cursor() as cursor:
         # cursor.execute(
         #      """
-        #     SELECT 
+        #     SELECT
         #     p.p_fname || ' ' || p.p_lname AS patient_name,
         #     p.pid,
         #     mh.diagnosis,
@@ -339,7 +339,7 @@ def add_record(request):
     except:
         request.session['not_logged_in'] = True
         return redirect('common:authenticate_user')
-    
+
     if request.method == 'POST':
         pid = request.POST.get('pid')
         diagnosis = request.POST.get('diagnosis')
@@ -386,14 +386,14 @@ def edit_record(request):
         with connection.cursor() as cursor:
             cursor.execute("""UPDATE medical_history
                            SET diagnosis= %s , treatment=%s, dosage=%s, followup=%s,frequency=%s
-                           WHERE pid = %s 
+                           WHERE pid = %s
                            AND mid = %s
                             """, [diagnosis,treatment,dosage,follow_up,frequency, pid, mid])
             # cursor.execute("SELECT did FROM patient WHERE pid = %s",[pid])
             # did=cursor.fetchone()[0]
         target_url = f'/doctor/patientrecord/'
         return redirect(target_url)
-    
+
 def appointments(request):
     deleted_app = request.POST.get('deleted_app')
     try:
@@ -401,7 +401,7 @@ def appointments(request):
     except:
         request.session['not_logged_in'] = True
         return redirect('common:authenticate_user')
-    
+
     with connection.cursor() as cursor:
         if request.method == "POST":
             if deleted_app is not None:
@@ -419,9 +419,9 @@ def retrieve_doctor(did):
         cursor.execute(
             """
             SELECT s.eid, s.fname,s.lname, d.did, d.d_specialization, d.email, d.d_photo, s.address, d.password, d.d_phone
-            FROM staff s 
-            JOIN doctor d ON s.eid = d.eid 
-            WHERE s.role = 'Doctor' 
+            FROM staff s
+            JOIN doctor d ON s.eid = d.eid
+            WHERE s.role = 'Doctor'
             AND d.did = %s
         """, [did])
         doctor = cursor.fetchone()
@@ -437,7 +437,7 @@ def retrieve_appointments(did):
     with connection.cursor() as cursor:
         cursor.execute(
             """
-            SELECT 
+            SELECT
             a.aid, p.p_fname, p.p_lname, a.app_date, a.app_time, a.app_type, a.rnum
             FROM appointment a
             JOIN patient p ON a.pid = p.pid
@@ -466,7 +466,7 @@ def test (request):
     #         # img_path= encoded_path.decode('utf-8')
     #         string = '\x89504e470d0a1a0a0000000d49484452'
     #         encoded_path = base64.urlsafe_b64encode(doctor[0].encode('utf-8')).decode('utf-8')
-            
+
     #         img_path = base64.urlsafe_b64decode(encoded_path).decode('utf-8')
     #         return HttpResponse(f"""from database:{doctor[0]}
     #                             || encodedpath: {encoded_path}

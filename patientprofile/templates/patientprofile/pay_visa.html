@@ -1,59 +1,80 @@
 {% extends 'base.html' %}
 {% load static %}
 
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .card {
-            margin-top: 50px;
-        }
-        .card-header {
-            background-color: #007bff;
-            color: white;
-        }
-        .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
-        }
-    </style>
-</head>
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h5>Visa Payment</h5>
+<style>
+  body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background-color: #f8f9fa;
+  }
+
+  .custom-card {
+      width: 80vw;
+      height: 80vh;
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.5);
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: #3b7197;
+  }
+
+  .custom-card-body {
+      width: 80%;
+      height: 80%;
+      overflow-y: auto;
+      color: white;
+  }
+
+    .custom-link-button a {
+      color: white;
+      text-decoration: none;
+    }
+
+    .button-hover:hover {
+      background-color: #d9d9a6 !important;
+      color: #3b7197 !important;
+    }
+</style>
+
+<div class="custom-card">
+    <div class="custom-card-body">
+        <div class="container">
+            <br>
+            <h1 class="mx-auto my-2 text-center" style="color: #d9d9a6; font-weight: bold;">Visa Payment</h1>
+            <br><br>
+            <form action="{% url 'patientprofile:success_payment_visa' %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="fees" value="{{ fees }}">
+                <input type="hidden" name="aid" value="{{ aid }}">
+
+                <div class="form-group">
+                    <label for="cardNumber" style="color: white;">Card Number</label>
+                    <input type="text" class="form-control" id="cardNumber" name="cardNumber" placeholder="Enter your Visa card number" required>
                 </div>
-                <div class="card-body">
-                  <form action="{% url 'patientprofile:success_payment_visa' %}" method="POST">
-                        {% csrf_token %}
-                        <input type="hidden" name="fees" value="{{ fees }}">
-                        <div class="form-group">
-                            <label for="cardNumber">Card Number</label>
-                            <input type="text" class="form-control" id="cardNumber" name="cardNumber" placeholder="Enter your Visa card number" required>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label for="expiryDate">Expiry Date</label>
-                                <input type="text" class="form-control" id="expiryDate" name="expiryDate" placeholder="MM/YY" required>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="cvv">CVV</label>
-                                <input type="text" class="form-control" id="cvv" name="cvv" placeholder="CVV" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="cardHolderName">Card Holder Name</label>
-                            <input type="text" class="form-control" id="cardHolderName" name="cardHolderName" placeholder="Enter the name on your card" required>
-                        </div>
-                        <div class="text-end">
-                            <button type="submit" class="btn btn-primary btn-block">Submit Payment</button>
-                        </div>
-                    </form>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="expiryDate" style="color: white;">Expiry Date</label>
+                        <input type="text" class="form-control" id="expiryDate" name="expiryDate" placeholder="MM/YY" required>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="cvv" style="color: white;">CVV</label>
+                        <input type="text" class="form-control" id="cvv" name="cvv" placeholder="CVV" required>
+                    </div>
                 </div>
-            </div>
+                <div class="form-group">
+                    <label for="cardHolderName" style="color: white;">Card Holder Name</label>
+                    <input type="text" class="form-control" id="cardHolderName" name="cardHolderName" placeholder="Enter the name on your card" required>
+                </div>
+                <div class="text-end">
+                    <button type="submit" class="btn btn-primary button-hover" style="background-color:#FFFDE3 ; color: #3b7197; font-weight: bold;">Submit Payment</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

@@ -107,8 +107,10 @@
               </li>
             </ul>
           </div> {% endcomment %}
-          <form>
+          <form action= "{% url 'patientprofile:success_payment' %}" method="post">
             {% csrf_token %}
+            <input type="hidden" id="fees" name="fees" value="{{ fees }}">
+            <input type="hidden" id="aid" name="aid" value="{{ aid }}">
             <div class="card-body d-flex flex-row justify-content-center mb-2">
               <div class="my-auto mx-3">
                 <table class="table">
@@ -154,6 +156,12 @@
                         <strong>Appointment Time:</strong>
                       </td>
                       <td>{{ start_time }}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <strong>Billing Fees:</strong>
+                      </td>
+                      <td>{{ fees }}</td>
                     </tr>
                   </tbody>
                 </table>

@@ -2,7 +2,7 @@
 
 {% block content %}
 
-    <h1 class="mt-2 ms-3">{{patient_name}}'s Medical History</h1>
+    <h1 class="mt-2 ms-3">{{name}}'s Medical History</h1>
   {% if history %}
     <div class="card my-4">
       {% comment %} <div class="card-header" style="background-color: #3b7197; color:white;"><h1>{{patient_name}}'s Medical History</h1></div> {% endcomment %}
@@ -19,13 +19,13 @@
           <tbody>
             {% for h in history%}
               <tr>
-                  <td>{{h.3}}{{h.4}}</td>
+                  <td>{{h.4}}</td>
                   <td>{{h.0}} {{h.1}}</td>
-                  <td>{{h.2}}</td>
-                  <td></td>
+                  <td>{{h.3}}</td>
+                  <td>{{h.7}}</td>
               </tr>
               {% endfor %}
-          </tbody>  
+          </tbody>
         </table>
       </div>
   {% else %}
@@ -33,6 +33,6 @@
       <div class="card-body">
         <h4>You have no registered medical history.</h4>
       </div>
-    </div>      
+    </div>
   {% endif %}
 {% endblock %}
