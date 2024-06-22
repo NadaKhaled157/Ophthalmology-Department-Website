@@ -58,7 +58,16 @@
       Please Choose Appointment Type.
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-  {% endif %}
+    {% if error_next_app %}
+    <div class="alert alert-danger" role="alert">
+    Your next appointment is {{next_app_status}} -- {{error_next_app}}
+    </div>
+{% elif examine%}
+    <div class="alert alert-danger" role="alert">
+    {{examine}}
+    </div>
+{%endif%}
+
 
   {% comment %} <div class="container my-5">
     <h1>Make an Appointment</h1>
