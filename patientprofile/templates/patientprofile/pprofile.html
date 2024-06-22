@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block page_title %}
-  Patient's's Profile
+  Patient's Profile
 {% endblock %}
 {% block css_style %}
   <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
@@ -46,13 +46,28 @@
               <a href="{% url 'patientprofile:edit' %}"><button type="button" class="btn btn-light mx-auto mb-5" style="color:#4a8db7; border-color: #4a8db7 !important;">Edit Info</button></a>
             </div>
           </div>
+          {% comment %} <div class="dropdown pb-4">
+            <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+              <img src="/media/{{ photo }}" alt=".." width="35" height="35" class="rounded-circle" />
+              <span class="d-none d-sm-inline mx-2">{{ name }}</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+              <li>
+                <a class="dropdown-item" href="{% url 'doctorprofile:edit-info' %}">Edit Profile</a>
+              </li>
+              <li>
+                <hr class="dropdown-divider" />
+              </li>
+              <li>
+                <a class="dropdown-item" href="{% url 'common:logout' %}">Log out</a>
+              </li>
+            </ul>
+          </div>
+          {% endcomment %}
         </div>
       </div>
       <div class="col py-3">
-        <div class="card d-flex flex-column justify-content-center align-items-center">
-          {% comment %} <div class="container-fluid">
-            <a href="{% url 'patientprofile:edit' %}"><button type="button" class="btn btn-light float-right" style="background-color:#3b7197; color:white; border-color: #3b7197; margin-left: 90%; padding: 10px 20px; font-size: 20px; font-weight: bold;">Edit info</button></a>
-          </div> {% endcomment %}
+        {% comment %} <div class="card d-flex flex-column justify-content-center align-items-center">
           <div class="d-flex flex-row align-items-center">
             <img src="/media/{{ photo }}" class="rounded-circle border border-dark mx-auto my-2" style="width: 200px; height: 200px; object-fit: cover;" alt="Profile Image" />
           </div>
@@ -60,6 +75,27 @@
             <div class="mx-lg-5">
               <h3 class="mt-3" style="font-family: 'Times New Roman', Times, serif;"><i>Name:</i> {{ name }}</h3>
               <h3 class="mt-3" style="font-family: 'Times New Roman', Times, serif;"><i>ID:</i> {{ id }}</h3>
+            </div>
+          </div>
+        </div> {% endcomment %}
+        <div class="col py-3">
+          <div class="card d-flex flex-row justify-content-center">
+            <img src="/media/{{ photo }}" class="rounded-circle border border-dark mx-5 my-3" style="width: 150px; height: 150px; object-fit: cover;" alt="Profile Image" />
+            <div class="mx-lg-5">
+              <h3 class="mt-3">{{ doctor.1 }} {{ doctor.2 }}</h3>
+              <p class="mx-auto" style="text-align:center;">{{ doctor.4 }}</p>
+              <p>
+                <strong>Email:</strong>
+                {{ doctor.5 }}
+              </p>
+              <p>
+                <strong>Address:</strong>
+                {{ doctor.7 }}
+              </p>
+              <p>
+                <strong>Phone Number:</strong>
+                {{ doctor.9 }}
+              </p>
             </div>
           </div>
         </div>
