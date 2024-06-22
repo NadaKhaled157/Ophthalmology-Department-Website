@@ -14,6 +14,7 @@ urlpatterns=[
     path('editrecord/', views.edit_record, name='edit-record'),
     path('appointments/', views.appointments, name='appointments-page'),
     path('add-record/', views.add_record, name="add-record"),
+    path('visitor_form/', views.visitor_form, name="visitor-form"),
 
-    path('test/', views.test),
+    path('test/', views.test,name='test'),
 ]

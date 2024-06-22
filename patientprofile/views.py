@@ -14,35 +14,67 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta, MO, TU, WE, TH, FR, SA, SU
 
 # Create your views here.
-def pprofile (request):
-      patient_id= request.session.get('id')
-      patient_name= request.session.get('name')
-      with connection.cursor() as cursor:
-          cursor.execute("SELECT p_photo from patient where pid = %s", [patient_id])
-          photo=cursor.fetchone()
-          p_img = photo[0].tobytes()
-          img_path = p_img.decode('utf-8')
-
-
-      return render(request, 'patientprofile/pprofile.html', {
-            "id": patient_id,
-            "name": patient_name,
-            "photo": img_path })
+def pprofile(request):
+    pid = request.session.get('id')
+    patient_name = request.session.get('name')
+    
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT s.fname || ' ' || s.lname as patient_name, m.diagnosis, m.treatment, m.followup from medical_history m inner join doctor d ON m.did = d.did inner join staff s ON d.eid= s.eid where pid = %s", [pid])
+        history = cursor.fetchall()
+    
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT p_photo from patient where pid = %s", [pid])
+        photo = cursor.fetchone()
+        p_img = photo[0].tobytes() # type: ignore
+        img_path = p_img.decode('utf-8')
+    
+    context = {
+        'name': patient_name,
+        'id': pid,
+        'photo': img_path,
+        'history': history,
+        'patient_name': patient_name
+    }
+    
+    return render(request, 'patientprofile/pprofile.html', context)
 
 def appointment(request):
+    try:
+        error = request.session['no_app_type']
+    except:
+        error = False
     print(request.method)
     if request.method == 'POST':
         appointment_type = request.POST.get('appointment_type')
         return redirect('patientprofile:available_time', appointment_type= appointment_type)
-    return render(request, 'patientprofile/appointment.html')
+    return render(request, 'patientprofile/appointment.html',{"no_app_type":error})
 
 def available_time(request, appointment_type):
     pid= request.session.get('id')
     if appointment_type == 'examination':
         with connection.cursor() as cursor:
-            cursor.execute("SELECT s.fname, d.d_specialization, a.day, a.shift_start, a.shift_end, d.did from doctor d inner join availability a ON d.did = a.did inner join staff s on s.eid = d.eid")
+            cursor.execute("SELECT s.fname || ' ' || s.lname as doctor_name, d.d_specialization, a.day, a.shift_start, a.shift_end, d.did from doctor d inner join availability a ON d.did = a.did inner join staff s on s.eid = d.eid")
             examination_availabilities = cursor.fetchall()
-        return render(request, 'patientprofile/available_time.html', {"examination_availabilities": examination_availabilities, "appointment_type": "examination"})
+            cursor.execute("""
+                SELECT
+                d.did,
+                s.fname || ' ' || s.lname AS doctor_name,
+                d.d_specialization
+                FROM doctor d
+                JOIN staff s on s.eid = d.eid
+                """)
+            doctors_data = cursor.fetchall()
+            cursor.execute("""
+                SELECT 
+                d.did, a.day, a.shift_start, a.shift_end
+                FROM availability a 
+                JOIN doctor d ON d.did = a.did
+                """)
+            shifts = cursor.fetchall()
+            #print (examination_availabilities)
+            print(doctors_data)
+            print(shifts)
+        return render(request, 'patientprofile/available_time.html', {"examination_availabilities": examination_availabilities, 'doctors_data':doctors_data,'shifts':shifts, "appointment_type": "examination"})
 
     elif appointment_type == 'follow_up':
         with connection.cursor() as cursor:
@@ -52,15 +84,39 @@ def available_time(request, appointment_type):
             day_of_week = followup_date.strftime('%A')  # Get day of the week as a string (e.g., 'Monday')
 
         with connection.cursor() as cursor:
-            cursor.execute("SELECT s.fname, d.d_specialization, a.day ,a.shift_start, a.shift_end, d.did FROM doctor d inner join availability a ON d.did = a.did inner join staff s on s.eid = d.eid WHERE (a.did = (SELECT did FROM patient WHERE pid = %s)) and (a.day= %s) ", [pid, day_of_week])
+            cursor.execute("SELECT s.fname || ' ' || s.lname AS doctor_name, d.d_specialization, a.day ,a.shift_start, a.shift_end, d.did FROM doctor d inner join availability a ON d.did = a.did inner join staff s on s.eid = d.eid WHERE (a.did = (SELECT did FROM patient WHERE pid = %s)) and (a.day= %s) ", [pid, day_of_week])
             followup_availabilities = cursor.fetchall()
+            print(followup_availabilities)
         return render(request, 'patientprofile/available_time.html', {"followup_availabilities": followup_availabilities,"appointment_type": "follow_up", "followup_date":followup})
 
     elif appointment_type == 'surgery':
         with connection.cursor() as cursor:
-            cursor.execute("SELECT s.fname, d.d_specialization, a.day, a.shift_start, a.shift_end, d.did FROM doctor d inner join availability a ON d.did = a.did inner join staff s on s.eid = d.eid WHERE d.d_specialization='Surgery'")
+            cursor.execute("SELECT s.fname || ' ' || s.lname AS doctor_name, d.d_specialization, a.day, a.shift_start, a.shift_end, d.did FROM doctor d inner join availability a ON d.did = a.did inner join staff s on s.eid = d.eid WHERE d.d_specialization='Surgery'")
             operation_availabilities = cursor.fetchall()
-        return render(request, 'patientprofile/available_time.html', {"operation_availabilities": operation_availabilities, "appointment_type": "surgery"})
+            cursor.execute("""
+                SELECT
+                d.did,
+                s.fname || ' ' || s.lname AS doctor_name,
+                d.d_specialization
+                FROM doctor d
+                JOIN staff s on s.eid = d.eid
+                WHERE d.d_specialization='Surgery'
+                """)
+            doctors_data = cursor.fetchall()
+            cursor.execute("""
+                SELECT 
+                d.did, a.day, a.shift_start, a.shift_end
+                FROM availability a 
+                JOIN doctor d ON d.did = a.did
+                WHERE a.did in (SELECT did FROM doctor WHERE d_specialization ='Surgery')
+                """)
+            shifts = cursor.fetchall()
+            print(doctors_data)
+            print(shifts)
+        return render(request, 'patientprofile/available_time.html', {"operation_availabilities": operation_availabilities, 'doctors_data':doctors_data,'shifts':shifts, "appointment_type": "surgery"})
+    else:
+        request.session['no_app_type']=True
+        return redirect('patientprofile:appointment')
 
     return render(request, 'patientprofile/available_time.html')
 
@@ -123,7 +179,7 @@ def contact(request):
 def doctor_response(request):
     pid = request.session.get('id')
     with connection.cursor() as cursor:
-        cursor.execute("SELECT request, response from form where pid = %s",[pid])
+        cursor.execute("SELECT request, response, fnum from form where pid = %s",[pid])
         forms= cursor.fetchall()
     return render (request, 'patientprofile/doctor_response.html', {"forms": forms})
 
@@ -172,7 +228,7 @@ def edit(request):
                 [email, hashed_password, address, phone_number, img_path, pid]
             )
 
-        target_url = f'/patient/pprofile?patient_id={pid}'
+        target_url = f'/patient/pprofile'
         return redirect(target_url)
     else:
         return render(request, 'patientprofile/edit.html', {"patient": patient, "img_path": img_path})

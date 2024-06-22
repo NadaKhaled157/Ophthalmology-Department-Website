@@ -31,8 +31,8 @@
             <div class="row g-0">
               <div class="col-lg-6">
                 <div class="card-body p-md-4 mx-md-3">
-                  <div class="text-centered mb-2">
-                    <img src="{% static 'images/logo.jpg' %}" style="width: 185px;" alt="logo" />
+                  <div class="text-center mb-2">
+                    <a href="/"><img src="{% static 'images/logo.jpg' %}" style="width: 185px;" alt="logo" /></a>
                   </div>
                   <form action="{% url 'common:registeration-page' %}" method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
