@@ -4,6 +4,7 @@ from django.shortcuts import render, HttpResponse, redirect
 from django.db import connection
 from django.urls import reverse
 from dateutil import parser
+from django.contrib.auth.hashers import make_password
 
 def login(request):
     if request.method == 'POST':
@@ -110,16 +111,18 @@ def admin_profile(request):
 
 def patient_view(order):
     with connection.cursor() as cursor:
-        cursor.execute("""SELECT p.pid, p_fname, p_lname, phone_number, p_age, s.fname, s.lname, diagnosis
-                       FROM patient p JOIN staff s ON p.did = s.eid
-                       LEFT JOIN medical_history m ON p.pid = m.pid
+        cursor.execute("""SELECT p.pid, p_fname, p_lname, phone_number, p_age, s.fname, s.lname, count(mid)
+                       FROM patient p JOIN doctor d ON p.did = d.did
+                       JOIN staff s ON s.eid = d.eid
+                       LEFT JOIN medical_history m ON m.pid = p.pid
+                       GROUP BY p.pid, s.eid
                        ORDER BY """ + order)
         patients = cursor.fetchall()
     return patients
 
 def doctor_view(order):
     with connection.cursor() as cursor:
-        cursor.execute("""SELECT d.did, fname, lname, age, d_specialization, d.email, s.salary
+        cursor.execute("""SELECT d_photo, d.did, fname, lname, age, d_specialization, d.email, s.salary
                        FROM doctor d LEFT JOIN staff s ON d.eid = s.eid
                        ORDER BY """ + order)
         doctors = cursor.fetchall()
@@ -176,8 +179,10 @@ def add_doc(request):
         gender = request.POST.get('gender')
         age = request.POST.get('age')
         salary = request.POST.get('salary')
-        special = request.POST.get('speicalization')
-    
+        special = request.POST.get('special')
+        
+        password = make_password(password)
+
         with connection.cursor() as cursor:
             # Inserting new dr to staff table
             cursor.execute("""INSERT INTO staff (role, fname, lname, sex, age, salary, address)
@@ -205,7 +210,7 @@ def add_nur(request):
         age = request.POST.get('age')
         salary = request.POST.get('salary')
         did = request.POST.get('did')
-        special = request.POST.get('speicalization')
+        special = request.POST.get('special')
 
         with connection.cursor() as cursor:
             # Inserting new nurse to staff table

@@ -42,7 +42,13 @@
                         </div>
                     </div>
                     <div class="custom-row mb-3">
-                        <input type="text" class="form-control" name="speicalization" placeholder="Spetialization" required>
+                        <select class="form-control" name="special">
+                            <option value="" disabled selected>Select a specialization</option>
+                            <option value="General">General</option>
+                            <option value="Practitioner">Practitioner</option>
+                            <option value="Consultant">Consultant</option>
+                            <option value="Surgeon">Surgeon</option>
+                        </select>
                     </div>
                     <div class="custom-row mb-3">
                         <input type="text" class="form-control" name="did" placeholder="Doctor ID" required>
