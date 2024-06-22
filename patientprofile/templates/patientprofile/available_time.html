@@ -20,6 +20,7 @@
               <tr>
                <th>Doctor</th>
                <th>Degree</th>
+               <th>DiD</th>
                 <th>Available Times</th>
               </tr>
             </thead>
@@ -27,63 +28,64 @@
               {% if appointment_type == 'examination' %}
                 {% for availability in examination_availabilities %}
                     {% if availability.0 and availability.2 and availability.3 %}
-                    <input type="hidden" id="app_type" name="appointment_type" value="Examination">
+                    <input type="hidden" id="app_type" name="appointment_type" value="examination">
                   <tr>
-                    {% ifchanged %}
-                    <td>{{ availability.0 }}</td>
-                    <td>{{ availability.1 }}</td>
-                    <input type="hidden" id="doctor_id" name="did" value="{{ availability.5 }}">
-                    {% endifchanged %}
+                    <td>{{ availability.0 }} {{ availability.1 }}</td>
+                    <td>{{ availability.2 }}</td>
+                    <!-- <td>{{ availability.7}}</td> -->
                     <td>
                       <div class="form-check">
-                          <input class="form-check-input" type="radio" name="Time" id="time" value="{{ availability.2 }} - {{ availability.3 }} - {{ availability.4 }}">
-                          <label class="form-check-label" for="time-{{ forloop.counter }}">
-                            {{ availability.2 }} - {{ availability.3 }} - {{ availability.4 }}
-                          </label>
+                        <input class="form-check-input" type="radio" name="Time" id="time" value="{{ availability.3}} * {{ availability.4 }} * {{ availability.5 }} * {{ availability.6 }}"
+                        data-doctor-id="{{ availability.7 }}"
+                        {% if not availability.8 %}disabled{% endif %}>
+                        <label class="form-check-label" for="time-{{ forloop.counter }}">
+                          {{ availability.3}} * {{ availability.4 }} * {{ availability.5 }} * {{ availability.6 }}
+                        </label>
                         </div>
                       {% endif %}
                     </td>
                   </tr>
                 {% endfor %}
+                <input type="hidden" id="doctor_id" name="did" value="">
+
               {% elif appointment_type == 'follow_up' %}
                 {% for availability in followup_availabilities %}
-                <input type="hidden" id="app_type" name="appointment_type" value="Followup">
+                <input type="hidden" id="app_type" name="appointment_type" value="follow_up">
                   <tr>
-                    {% ifchanged %}
-                    <td>{{availability.0}}</td>
-                    <td>{{availability.1}}</td>
-                    <input type="hidden" id="doctor_id" name="did" value="{{ availability.5 }}">
-                    {% endifchanged %}
+                    <td>{{availability.0}} {{availability.1}}</td>
+                    <td>{{availability.2}}</td>
                     <td>
                         <div class="form-check">
-                          <input class="form-check-input" type="radio" name="Time" id="time" value="{{followup_date}} * {{ availability.2 }} * {{ availability.3 }} * {{ availability.4 }}">
+                          <input class="form-check-input" type="radio" name="Time" id="time" value="{{followup_date}} * {{ availability.3 }} * {{ availability.4 }} * {{ availability.5 }}"
+                           data-doctor-id="{{ availability.6 }}">
                           <label class="form-check-label" for="time-{{ forloop.counter }}">
-                          {{followup_date}} * {{ availability.2 }} * {{ availability.3 }} * {{ availability.4 }}
+                          {{followup_date}} - {{ availability.3 }} - {{ availability.4 }} - {{ availability.5 }}
                           </label>
                         </div>
                     </td>
                   </tr>
                 {% endfor %}
-              {% elif appointment_type == 'operation' %}
+                <input type="hidden" id="doctor_id" name="did" value="">
+
+              {% elif appointment_type == 'surgery' %}
               {% for availability in operation_availabilities %}
-              <input type="hidden" id="app_type" name="appointment_type" value="Operation">
+              <input type="hidden" id="app_type" name="appointment_type" value="surgery">
                 <tr>
-                  {% ifchanged %}
-                  <td>{{availability.0}}</td>
-                  <td>{{availability.1}}</td>
-                  <input type="hidden" id="doctor_id" name="did" value="{{ availability.5 }}">
-                  {% endifchanged %}
+                  <td>{{availability.0}} {{availability.1}}</td>
+                  <td>{{availability.2}}</td>
                   <td>
                       <div class="form-check">
-                        <input class="form-check-input" type="radio" name="Time" id="time" value="{{ availability.2 }} - {{ availability.3 }} - {{ availability.4 }}">
+                        <input class="form-check-input" type="radio" name="Time" id="time" value="  {{ availability.3}} * {{ availability.4 }} * {{ availability.5 }} * {{ availability.6 }}"
+                        data-doctor-id="{{ availability.7 }}"
+                        {% if not availability.8 %}disabled{% endif %}>
                         <label class="form-check-label" for="time-{{ forloop.counter }}">
-                          {{ availability.2 }} - {{ availability.3 }} - {{ availability.4 }}
+                          {{ availability.3}} * {{ availability.4 }} * {{ availability.5 }} * {{ availability.6 }}
                         </label>
                       </div>
                   </td>
                 </tr>
               {% endfor %}
-
+            <input type="hidden" id="doctor_id" name="did" value="">
               {% endif %}
             </tbody>
           </table>
@@ -93,13 +95,29 @@
         <div class="col-md-6">
           <button class="btn btn-primary btn-lg" style="width: 100%;" type="submit"> Submit </button>
         </div>
-        <!-- <div class="col-md-6">
-          <button class="btn btn-primary btn-lg" style="width: 100%;" type="submit"><a href="{% url 'patientprofile:payment' %}" style="text-decoration: none; color:white;" class='p-3'>Pay</a></button>
-        </div> -->
+
+        <div class="col-md-6">
+          <button class="btn btn-outline-success" type="submit"><a href="{% url 'patientprofile:appointment' %}" >Back to appointment</a></button>
+          </div>
       </div>
       </form>
     </div>
   </div>
 
 </div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const radioButtons = document.querySelectorAll('.form-check-input[name="Time"]');
+    const doctorIdInput = document.getElementById('doctor_id');
+
+    radioButtons.forEach(function(radioButton) {
+      radioButton.addEventListener('change', function() {
+        if (this.checked) {
+          const doctorId = this.getAttribute('data-doctor-id');
+          doctorIdInput.value = doctorId;
+        }
+      });
+    });
+  });
+</script>
 {% endblock %}

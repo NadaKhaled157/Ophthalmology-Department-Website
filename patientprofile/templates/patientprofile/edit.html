@@ -11,11 +11,18 @@
         </div>
         <div class="card-body">
       <h2 class="text-center" style="color:rgb(21, 115, 71)"><strong>Edit Your Info</strong></h2><br>
-
+{% if nomatch %}
+<div class="alert alert-danger" role="alert">
+Passwords didn't match.
+</div>
+{%endif%}
       <form action="{% url 'patientprofile:edit' %}" method="POST" enctype='multipart/form-data'>
                 {% csrf_token %}
                 <!-- Form fields here -->
-
+        <div class="custom-row d-flex mb-3">
+          <input type="text" class="form-control me-2" name="fname" placeholder="{{patient.0}}" value="{{patient.0}}" aria-label="fname" aria-describedby="basic-addon1">
+          <input type="text" class="form-control" name="lname" placeholder="{{patient.1}}" value="{{patient.1}}" aria-label="lname" aria-describedby="basic-addon1">
+        </div>
         <div class="input-group mb-3">
             <input type="text" class="form-control" name="email" placeholder="{{patient.8}}" value="{{patient.8}}" aria-label="email" aria-describedby="basic-addon1">
         </div>
@@ -26,7 +33,10 @@
             <input type="text" class="form-control" name="address" placeholder="{{patient.6}}" value="{{patient.6}}" aria-label="address" aria-describedby="basic-addon1">
         </div>
         <div class="input-group mb-3">
-            <input type="password" class="form-control" name="password" placeholder="Password" aria-label="password" aria-describedby="basic-addon1">
+            <input type="password" class="form-control" name="password" placeholder="Password" aria-label="password" aria-describedby="basic-addon1" required>
+        </div>
+        <div class="input-group mb-3">
+            <input type="password" class="form-control" name="confirm-password" placeholder="Confirm-Password" aria-label="password" aria-describedby="basic-addon1" required>
         </div>
         <div class="mb-3">
             <label for="formFile" class="form-label">Change Profile Photo</label>

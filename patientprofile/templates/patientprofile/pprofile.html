@@ -1,12 +1,49 @@
 {% extends 'base.html' %}
 {% load static %}
+{% block page_title %}
+  Patient's Profile
+{% endblock %}
 {% block content %}
-{%include 'patientprofile/navbar.html'%}
-<link rel="stylesheet"  href="{% static 'patientprofile/pprofile.css' %}">
-<div class="d-flex">
-  {%include 'patientprofile/left.html'%}
-  <div class='d-flex flex-column'></div>
-    {%include 'patientprofile/middle.html'%}
+{% include 'patientprofile/navbar.html'%}
+  <div class="container-fluid">
+    <div class="row flex-nowrap">
+      <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0" style="background-color: #74bde0; font-weight: bold; font-size: larger;">
+        <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
+          <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none"><span class="fs-5 d-none d-sm-inline">Menu</span></a>
+          <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+            <li class="nav-item">
+              <a href="{% url 'patientprofile:patient-profile' %}" class="nav-link align-middle px-0" style="color:white;"><i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Home</span></a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'patientprofile:appointment' %}" class="nav-link align-middle px-0" style="color:white;"><i class="fs-4"></i> <span class="ms-1 d-none d-sm-inline">Make an appointment</span></a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'patientprofile:contact' %}" class="nav-link align-middle px-0" style="color:white;"><i class="fs-4"></i> <span class="ms-1 d-none d-sm-inline">Contact your doctor</span></a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="col py-3">
+        <div class="card d-flex flex-column justify-content-center align-items-center">
+          <div class="container-fluid"><a href="{% url 'patientprofile:edit' %}"><button type="button" class="btn btn-light float-right" style="background-color:#3b7197; color:white; border-color: #3b7197; margin-left: 90%; padding: 10px 20px; font-size: 20px; font-weight: bold;">Edit info</button></a></div>
+          <!-- <div class="d-flex flex-row align-items-center">
+            <img src="{/media/{{photo}}}" class="rounded-circle border border-dark mx-5" style="width: 200px; height: 200px; object-fit: cover;" alt="Profile Image" />
+          </div> -->
+
+          <div class="card mt-4 mx-3" style="width: 18rem;">
+              <img src="/media/{{photo}}" class="card-img-top" alt="Profile Image">
+          </div>
+
+          <div class="d-flex flex-row align-items-center">
+            <div class="mx-lg-5">
+              <h3 class="mt-3" style="font-family: 'Times New Roman', Times, serif;"><i>Name:</i> {{name}}</h3>
+              <h3 class="mt-3" style="font-family: 'Times New Roman', Times, serif;"><i>ID:</i> {{id}}</h3>
+            </div>
+          </div>
+
+        </div>
+        {% include 'patientprofile/history.html'%}
+      </div>
+    </div>
   </div>
-</div>
 {% endblock %}

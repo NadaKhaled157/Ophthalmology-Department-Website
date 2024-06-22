@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.db import connection
+from django.db import connection
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.hashers import make_password
 from django.urls import reverse
@@ -7,10 +8,12 @@ from django.shortcuts import render
 from django.contrib.auth.hashers import make_password
 from django.core.files.storage import default_storage
 from django.db import connection
-from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect, Http404
 
 
+
+def welcome_page(request):
+    return render(request, 'common/welcome-page.html')
 
 # Create your views here.
 def index(request):
@@ -66,41 +69,61 @@ def index(request):
     else:
         return render(request, "common/register.html")
 
-def login(request):
-     return render(request, "common/login.html")
-
 def authenticate_user(request):
-    # Clearing session and cookies
-    request.session.flush()
-    request.session.modified = True
-
+    not_logged_in = request.session.get('not_logged_in', False)
+    if not_logged_in == True:
+        request.session['not_logged_in'] = False
+        return render(request, "common/login.html", {'not_logged_in':True})
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
         role = request.POST.get('role')
         if role == None: return render(request, "common/login.html",{'no_role': True})
-        with connection.cursor() as cursor:
+        with connection.cursor() as cursor:        
             cursor.execute(f"SELECT * FROM {role} WHERE email = %s", [email])
             user = cursor.fetchone()
         if user:
-            hashed_password = user[9]
-
+            ##Add if condition of radio button (is user a patient or doctor?)##
+            ##and get password index from the different tables to validate password##
+            if role == "doctor":
+                hashed_password = user[4]
+            elif role =='patient':
+                hashed_password = user[9]
+                
+            ##
             if check_password(password, hashed_password):
-                request.session['id']=user[3] ##What is this??##
-                request.session['name']= user[0]
-                patient_photo= user[5].tobytes()
-                img_path=patient_photo.decode('utf-8')
-                request.session['img_path']=img_path
+            # if (password==hashed_password):
+                 ##What is this??##
+                # request.session['id']= user[2]
                 if role == "doctor":
-                    return redirect(reverse('doctorprofile:doctor-page')+ f'?doctor_id={user[0]}') #user[0] is did
+                    request.session['id']=[user[0]]
+                    request.session['logged_in_user'] = user[0]
+                    return redirect('doctorprofile:doctor-page') #user[0] is did
                 if role == "patient":
-                    return redirect(reverse('patientprofile:patient-profile')+ f'?patient_id={user[3]}') ##pid
-
+                    request.session['id']=user[3]
+                    request.session['name']= user[0]
+                    patient_photo= user[5].tobytes()
+                    img_path=patient_photo.decode('utf-8')
+                    request.session['img_path']=img_path
+                    return redirect('patientprofile:patient-profile') ##Ensure patient app and view name match##
             else:
                 wrong_pass = "Wrong Password"
+                redirect('common:authenticate_user')
+                return render(request, "common/login.html",{'wrong_pass': True})
                 redirect('common:authenticate_user')
                 return render(request, "common/login.html",{'wrong_pass': True})
 
         else:
             wrong_email = "This user does not exist"
             return render(request, "common/login.html",{'wrong_email': True})
+    return render(request, "common/login.html")
+
+
+
+
+#Not implemented yet
+def logout(request):
+    request.session.flush()
+    #Make it go to homepage
+    return redirect('common:authenticate_user')
+
