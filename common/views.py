@@ -13,7 +13,20 @@ from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 
 
 def welcome_page(request):
-    return render(request, 'common/welcome-page.html')
+    try:
+        form_submitted = request.session['form_submitted']
+        form_code = request.session['form_code']
+        response = request.session['response']
+    except:
+        form_submitted = False
+        form_code = None
+        response = False
+    if response:
+        inquiry = request.session['retrieved_inquiry']
+        return render(request, 'common/welcome-page.html',{'form_submitted':form_submitted,'form_code':form_code,'inquiry':inquiry,'response':True})
+    # except:
+        # return render(request, 'common/welcome-page.html',{'form_submitted':False,'response':None})
+    return render(request, 'common/welcome-page.html',{'form_submitted':form_submitted,'form_code':form_code, 'response':None})
 
 # Create your views here.
 def index(request):
@@ -125,5 +138,5 @@ def authenticate_user(request):
 def logout(request):
     request.session.flush()
     #Make it go to homepage
-    return redirect('common:authenticate_user')
+    return redirect('common:welcome_page')
 

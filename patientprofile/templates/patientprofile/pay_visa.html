@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block page_title %}
+  Visa Payment
+{% endblock %}
+{% block content %}
+{% block css_style %}
+
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <!-- Font Awesome icons (free version) -->
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css" />
+    <!-- Core theme CSS (includes Bootstrap) -->
+    <link href="{% static 'common/styles.css' %}" rel="stylesheet" />
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+      }
+
+      .custom-card {
+        width: 80vw;
+        height: 80vh;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.5);
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: #74bde0;
+      }
+
+      .custom-card-body {
+        width: 80%;
+        height: 80%;
+        overflow-y: auto;
+      }
+    </style>
+
+  {% endblock %}
+
+  <div class="custom-card">
+
+
+    <div class="custom-card-body">
+      <div class="container">
+        <br />
+        <h1 class="mx-auto my-2 text-center" style="color: #FFFDE3; font-weight: bold;">Visa Payment</h1>
+        <br /><br />
+        <form action="{% url 'patientprofile:success_payment_visa' %}" method="POST">
+          {% csrf_token %}
+          <input type="hidden" name="fees" value="{{ fees }}" />
+          <input type="hidden" name="aid" value="{{ aid }}" />
+
+          <div class="form-group">
+            <label for="cardNumber" style="color: white;">Card Number</label>
+            <input type="text" class="form-control" id="cardNumber" name="cardNumber" placeholder="Enter your Visa card number" required />
+          </div>
+          <div class="form-group">
+            <div class="form-group col-md-6">
+              <label for="expiryDate" style="color: white;">Expiry Date</label>
+              <input type="text" class="form-control" id="expiryDate" name="expiryDate" placeholder="MM/YY" required />
+            </div>
+            <div class="form-group col-md-6">
+              <label for="cvv" style="color: white;">CVV</label>
+              <input type="text" class="form-control" id="cvv" name="cvv" placeholder="CVV" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="cardHolderName" style="color: white;">Card Holder Name</label>
+            <input type="text" class="form-control" id="cardHolderName" name="cardHolderName" placeholder="Enter the name on your card" required />
+          </div>
+          <div class="text-end">
+            <button type="submit" class="btn btn-primary button-hover" style="background-color:#FFFDE3 ; color: #3b7197; font-weight: bold;">Submit Payment</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

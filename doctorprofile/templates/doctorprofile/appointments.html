@@ -19,7 +19,8 @@
               <th>Time</th>
               <th>Type</th>
               <th>Room Number</th>
-              <th></th> <!-- Empty header for the delete button -->
+              <th>Appointment Status</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -31,12 +32,20 @@
                 <td>{{ appointment.4 }}</td>
                 <td>{{ appointment.5 }}</td>
                 <td>{{ appointment.6 }}</td>
+                <td>{{ appointment.7 }}</td>
                 <td>
-                  <form action="{% url 'doctorprofile:appointments-page' %}" method="POST">
-                    <input type="hidden" name="deleted_app" value="{{ appointment.0 }}" />
-                    {% csrf_token %}
-                    <input type="submit" class="btn btn-danger mx-1" value="Cancel Appointment" />
-                  </form>
+                  <div class="d-flex">
+                    <form action="{% url 'doctorprofile:appointments-page' %}" method="POST">
+                      <input type="hidden" name="completed_app" value="{{ appointment.0 }}" />
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-light mx-1" style="color:#3b7197; border-color: #3b7197;">Mark as Completed</button>
+                    </form>
+                    <form action="{% url 'doctorprofile:appointments-page' %}" method="POST">
+                      <input type="hidden" name="canceled_app" value="{{ appointment.0 }}" />
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-outline-danger mx-1">Cancel Appointment</button>
+                    </form>
+                  </div>
                 </td>
               </tr>
             {% endfor %}

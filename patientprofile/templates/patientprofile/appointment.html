@@ -1,9 +1,79 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-  {% include 'patientprofile/navbar.html' %}
+  {% block css_style %}
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <!-- Font Awesome icons (free version) -->
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css" />
+    <!-- Core theme CSS (includes Bootstrap) -->
+    <link href="{% static 'common/styles.css' %}" rel="stylesheet" />
+    <style>
+      .service-option-input {
+        display: none;
+      }
 
-  <div class="container my-5">
+      .service-option {
+        cursor: pointer;
+        opacity: 0.5;
+        position: relative;
+        padding-bottom: 30px;
+        transition: opacity 0.3s ease;
+      }
+
+      .service-option:before {
+        content: '';
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: none;
+        border-radius: 50%;
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #fff;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+      }
+
+      .service-option.active {
+        opacity: 1;
+      }
+
+      .service-option.active:before {
+        border-color: rgba(0, 0, 0, 0);
+        background-color: rgba(0, 0, 0, 0);
+      }
+      .icon-color {
+        --bs-text-opacity: 1;
+        color: #74bde0 !important;
+      }
+    </style>
+  {% endblock %}
+  {% include 'patientprofile/navbar.html' %}
+    {% if no_app_type %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      Please Choose Appointment Type.
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% elif error_next_app %}
+    <div class="alert alert-danger" role="alert">
+    Your next appointment is {{next_app_status}} -- {{error_next_app}}
+    </div>
+   {% elif examine%}
+    <div class="alert alert-danger" role="alert">
+    {{examine}}
+    </div>
+    {% elif expired%}
+     <div class="alert alert-danger" role="alert">
+     {{expired}}
+     </div>
+   {%endif%}
+
+
+  {% comment %} <div class="container my-5">
     <h1>Make an Appointment</h1>
     <div class="row">
       <div class="col-md-6">
@@ -33,23 +103,63 @@
         </div>
       </div>
     </div>
-  </div>
-  <!--   <script>
-  // Show the "Choose a Time" section when an appointment type is selected
-  const appointmentTypeSelect = document.querySelector('select[name="appointment_type"]');
-  const chooseTimeBlock = document.getElementById('choose-time-block');
+  </div> {% endcomment %}
 
-  appointmentTypeSelect.addEventListener('change', () => {
-    const selectedValue = appointmentTypeSelect.value;
+  <section class="page-section" id="services">
+    <div class="container">
+      <div class="text-center">
+        <h2 class="section-heading text-uppercase mt-3 mb-5">Choose Appointment Type</h2>
+        <br /><br />
+      </div>
+      <form action="{% url 'patientprofile:appointment' %}" method="POST">
+        {% csrf_token %}
+        <div class="row text-center mb-4">
+          <div class="col-md-4">
+            <label class="service-option">
+              <input type="radio" name="appointment_type" value="examination" class="service-option-input" />
+              <span class="fa-stack fa-4x">
+                <i class="fas fa-circle fa-stack-2x icon-color"></i>
+                <i class="fas fa-medkit fa-stack-1x fa-inverse"></i>
+              </span>
+              <h4 class="my-3">Examination</h4>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="service-option">
+              <input type="radio" name="appointment_type" value="follow_up" class="service-option-input" />
+              <span class="fa-stack fa-4x">
+                <i class="fas fa-circle fa-stack-2x icon-color"></i>
+                <i class="fas fa-heartbeat fa-stack-1x fa-inverse"></i>
+              </span>
+              <h4 class="my-3">Follow-Up</h4>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="service-option">
+              <input type="radio" name="appointment_type" value="surgery" class="service-option-input" />
+              <span class="fa-stack fa-4x">
+                <i class="fas fa-circle fa-stack-2x icon-color"></i>
+                <i class="fas fa-ambulance fa-stack-1x fa-inverse"></i>
+              </span>
+              <h4 class="my-3">Surgery</h4>
+            </label>
+          </div>
+        </div>
+        <div class="d-block">
+          <button class="btn btn-light mt-5" style="color:#74bde0; border-color: #74bde0; width:100%;" type="submit">Continue</button>
+        </div>
+      </form>
+    </div>
+  </section>
+  <script>
+    document.querySelectorAll('.service-option-input').forEach((input) => {
+      input.addEventListener('change', function () {
+        document.querySelectorAll('.service-option').forEach((option) => {
+          option.classList.remove('active')
+        })
+        this.closest('.service-option').classList.add('active')
+      })
+    })
+  </script>
 
-    if (selectedValue === 'examination' || selectedValue === 'follow_up' || selectedValue === 'operation') {
-      chooseTimeBlock.style.display = 'block';
-    }
-    else {
-      chooseTimeBlock.style.display = 'none';
-    }
-  });
-</script>
-
-   -->
 {% endblock %}

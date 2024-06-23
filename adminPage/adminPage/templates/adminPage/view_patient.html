@@ -1,0 +1,27 @@
+<div class="container">
+    <h4 align="center" style="margin-top: 10px;">Patients</h4>
+    <table class="table">
+        <thead>
+            <tr scope="col" align="center">
+                <th>ID</th>
+                <th>Patient Name</th>
+                <th>Age</th>
+                <th>Phone</th>
+                <th>Doctor</th>
+                <th>Visits</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for patient in viewed %}
+            <tr scope="row" align="center">
+                <td>{{patient.0}}</td>
+                <td>{{patient.1}} {{patient.2}}</td>
+                <td>{{patient.4}}</td>
+                <td>{{patient.3}}</td>
+                <td>{{patient.5}} {{patient.6}}</td>
+                <td>{{patient.7}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

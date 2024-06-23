@@ -1,0 +1,33 @@
+<div class="container">
+    <h4 align="center" style="margin-top: 10px;">Appointments</h4>
+    <table class="table">
+        <thead>
+            <tr scope="col" align="center">
+                <th>ID</th>
+                <th>Patient</th>
+                <th>Doctor</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Room number</th>
+                <th>Purpose</th>
+                <th>Payment</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for app in viewed %}
+            <tr scope="row" align="center">
+                <td>{{app.0}}</td>
+                <td>{{app.1}} {{app.2}}</td>
+                <td>{{app.3}} {{app.4}}</td>
+                <td>{{app.5}}</td>
+                <td>{{app.6}}</td>
+                <td>{{app.7}}</td>
+                <td>{{app.8}}</td>
+                <td>{{app.9}}</td>
+                <td>{{app.10}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

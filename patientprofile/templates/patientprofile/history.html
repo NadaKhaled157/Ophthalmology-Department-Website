@@ -1,37 +1,51 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>{{patient_name}}'s Medical History</h1>
 
-<style>
-    table {
-        border-collapse: collapse;
-    }
+    <h1 class="mt-2 ms-3">{{name}}'s Medical History</h1>
+  {% if history %}
+    <div class="card my-4">
+      <div class="card-body">
+        <table class="table">
+          <thead>
+             <tr>
+                <th>Doctor</th>
+                <th>Appointment Date</th>
+                <th>Appoitnment Time</th>
+                <th>Diagnosis</th>
+                <th>Treatment</th>
+                <th>Follow up</th>
+                <th>Dosage</th>
+                <th>Frequency</th>
 
-    th, td {
-        border: 1px solid black;
-        padding: 8px;
-    }
-</style>
 
-<table>
-    <thead>
-        <tr>
-            <th>Date of Visit</th>
-            <th>Doctor</th>
-            <th>Reason for Visit</th>
-            <th>Treatment or Procedure</th>
-        </tr>
-    </thead>
-    <tbody>
-      {% for h in history%}
-        <tr>
-            <td>{{h.4}}</td>
-            <td>{{h.0}} {{h.1}}</td>
-            <td>{{h.2}}</td>
-            <td>{{h.3}}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+             </tr>
+          </thead>
+          <tbody>
+            {% for h in history%}
+              <tr>
+                  <td>{{h.0}} {{h.1}}</td>
+                  <td>{{h.7}}</td>
+                  <td>{{h.8}}</td>
+
+                  <td>{{h.2}}</td>
+                  <td>{{h.3}}</td>
+                  <td>{{h.4}}</td>
+                  <td>{{h.5}}</td>
+                  <td>{{h.6}}</td>
+
+
+
+              </tr>
+              {% endfor %}
+          </tbody>
+        </table>
+      </div>
+  {% else %}
+    <div class="card mt-5">
+      <div class="card-body">
+        <h4>You have no registered medical history.</h4>
+      </div>
+    </div>
+  {% endif %}
 {% endblock %}
