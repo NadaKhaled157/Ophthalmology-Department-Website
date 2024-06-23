@@ -41,7 +41,12 @@
                         <input type="number" class="form-control" name="age" value={{doc.4}} placeholder="Age" required>
                     </div>
                     <div class="custom-row mb-3">
-                        <input type="text" class="form-control" name="speicalization" value={{doc.5}} placeholder="Speicalization" required>
+                        <select class="form-control" name="special">
+                            <option value="" disabled selected>Select a specialization</option>
+                            <option value="General">General Practitioner</option>
+                            <option value="Consultant">Consultant</option>
+                            <option value="Surgeon">Surgeon</option>
+                        </select>
                     </div>
                     <div class="custom-row mb-3">
                         <input type="text" class="form-control" name="salary" value={{doc.6}} placeholder="Salary" required>

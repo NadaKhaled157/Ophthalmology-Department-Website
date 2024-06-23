@@ -73,8 +73,15 @@ def admin_profile(request):
 
     # Getting Appointments number
         cursor.execute("""SELECT count(*)
-                       FROM appointment""")
+                       FROM appointment
+                       WHERE bid IS NOT NULL""")
         app = cursor.fetchone()
+
+    # Getting total income 
+        cursor.execute("""SELECT sum(amount)
+                       FROM billing
+                       WHERE payment_status = 'Paid' """)
+        amount = cursor.fetchone()
 
     if request.method == 'POST':
         view = request.POST.get('view')
@@ -106,6 +113,7 @@ def admin_profile(request):
                                                             'tech':tech,
                                                             'staffn':staff,
                                                             'app':app,
+                                                            'amount': amount,
                                                             'viewed': viewed,
                                                             'person':view})
 
@@ -131,12 +139,12 @@ def doctor_view(order):
 def nurse_view(order):
     with connection.cursor() as cursor:
         cursor.execute("""SELECT t1.nid, t1.fname, t1.lname, t1.age, t1.salary, t1.n_specialization, t2.fname, t2.lname
-                       FROM (SELECT nid, did, n_specialization, age, fname, lname, salary
+                       FROM (SELECT n.eid, nid, did, n_specialization, age, fname, lname, salary
                             FROM nurse n JOIN staff s ON n.eid = s.eid) AS t1
                        JOIN (SELECT did, fname, lname
                             FROM doctor d JOIN staff s ON d.eid = s.eid) AS t2
                        ON t1.did = t2.did 
-                       ORDER BY """ + order)
+                       ORDER BY t1.eid""")
         nurses = cursor.fetchall()
     return nurses
 
@@ -154,9 +162,9 @@ def tech_view(order):
 
 def app_view():
     with connection.cursor() as cursor:
-        cursor.execute("""SELECT t3.aid, t3.p_fname, t3.p_lname, t3.fname, t3.lname, t3.app_date, t3.app_time, t3.rnum, t3.app_type, b.amount
-                        FROM (SELECT t1.aid, t1.app_date, t1.app_time, t1.app_type, t1.bid, t1.rnum, t1.p_fname, t1.p_lname, t2.fname, t2.lname
-                            FROM (SELECT aid, app_date, app_time, app_type, bid, a.did, rnum, p_fname, p_lname
+        cursor.execute("""SELECT t3.aid, t3.p_fname, t3.p_lname, t3.fname, t3.lname, t3.app_date, t3.app_time, t3.rnum, t3.app_type, b.amount, t3.appointment_status
+                        FROM (SELECT t1.aid, t1.app_date, t1.app_time, t1.app_type, t1.bid, t1.rnum, t1.p_fname, t1.p_lname, t1.appointment_status, t2.fname, t2.lname
+                            FROM (SELECT aid, app_date, app_time, app_type, bid, a.did, rnum, appointment_status, p_fname, p_lname
                                 FROM appointment a JOIN patient p ON a.pid = p.pid) AS t1
                             JOIN (SELECT fname, lname, did
                                 FROM doctor d JOIN staff s ON d.eid = s.eid) AS t2
@@ -272,7 +280,7 @@ def edit_doc(request, id):
         age = request.POST.get('age')
         phone = request.POST.get('phone')
         salary = request.POST.get('salary')
-        special = request.POST.get('speicalization')
+        special = request.POST.get('special')
         email = request.POST.get('email')
         password = request.POST.get('password')
 
@@ -296,7 +304,7 @@ def edit_nur(request, id):
     # Getting nurse data
     with connection.cursor() as cursor:
         cursor.execute("""SELECT n.eid, fname, lname, address, s.age, n_specialization, n.did, salary
-                       From nurse n JOIN staff s ON n.eid = s.eid
+                       FROM nurse n JOIN staff s ON n.eid = s.eid
                        WHERE nid = %s""", [id])
         data = cursor.fetchone()
         
@@ -307,7 +315,7 @@ def edit_nur(request, id):
         age = request.POST.get('age')
         salary = request.POST.get('salary')
         did = request.POST.get('did')
-        special = request.POST.get('speicalization')
+        special = request.POST.get('special')
 
         with connection.cursor() as cursor:
             # Updating nurse in staff table
@@ -425,6 +433,17 @@ def add_shift(request, id):
         return redirect(reverse('available', args=[id]))
     return render(request, 'adminPage/add_shift.html', {'id':id})
 
+def delet_shift(request, id):
+    with connection.cursor() as cursor:
+        cursor.execute("""SELECT did
+                       FROM availability
+                       WHERE id = %s""", [id])
+        did = cursor.fetchone()[0]
+
+        cursor.execute("""DELETE FROM availability
+                       WHERE id = %s""", [id])
+        
+    return redirect(reverse('available', args=[did]))
 
 def rmv_doc(request, id):
     with connection.cursor() as cursor:
@@ -448,7 +467,7 @@ def rmv_nur(request, id):
         # Selecting nurse eid
         cursor.execute("""SELECT eid
                        FROM nurse
-                       WHERE did = %s""", [id])
+                       WHERE nid = %s""", [id])
         eid = cursor.fetchone()
 
         # Deleting nurse from nurse table
@@ -486,3 +505,31 @@ def cancel_edit(request):
 
 def cancel_shift(request, id):
     return redirect(reverse('available', args=[id]))
+
+# def add_nurses(request):
+#     with connection.cursor() as cursor:
+#         cursor.execute("""INSERT INTO technician (eid, did) VALUES
+# (76, 52),
+# (77, 53),
+# (60, 54),
+# (59, 55),
+# (58, 56),
+# (51, 57),
+# (48, 58),
+# (92, 59),
+# (46, 60),
+# (45, 61),
+# (31, 52),
+# (61, 53),
+# (62, 54),
+# (17, 55),
+# (88, 56),
+# (89, 57),
+# (91, 58),
+# (73, 59),
+# (74, 60),
+# (75, 61),
+# (90, 52);
+
+# """)
+#         return redirect('admin_profile')

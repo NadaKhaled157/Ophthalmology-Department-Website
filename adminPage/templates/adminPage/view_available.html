@@ -49,8 +49,13 @@
                         <td>
                             <input class="text" value="{{ doc.3 }}" name="end" placeholder="End Shift" style="width:100px; border-color:rgba(0,0,0,0); text-align: center;" />
                         </td>
-                        <td>
-                            <input type="submit" class="btn btn-light d-block mx-auto" style="width:80%; color:#3b7197; border-color: #3b7197; text-align: center;" value="Save" />
+                        <td class="row">
+                            <div class="col-sm-6">
+                                <input type="submit" class="btn btn-light d-block mx-auto" style="width:50%; color:#3b7197; border-color: #3b7197; text-align: center;" value="Save" />
+                            </div>
+                            <div class="col-sm-6" style="text-align: center;">
+                                <a href="{% url 'delet_shift' doc.0 %}" class="link-dark"><i class="fa-solid fa-trash fs-5"></i></a>
+                            </div>
                         </td>
                     </form>
                 </tr>
@@ -59,7 +64,7 @@
     </table>
     <div align="center">
         <a href="{% url 'add_shift' id %}" class="btn btn-primary" style="width: 10rem; font-weight: bold; font-size: large; background-color: #4A8DB7; border: 0px;">Add Shift</a>
-        <a href="{% url 'cancel' %}" class="btn btn-primary" style="width: 8rem; font-weight: bold; font-size: large; background-color: #b93b3b; border: 0px;">Back</a>
+        <a href="{% url 'cancel_edit' %}" class="btn btn-primary" style="width: 8rem; font-weight: bold; font-size: large; background-color: #b93b3b; border: 0px;">Back</a>
     </div>
 </body>
 </html>

@@ -18,7 +18,7 @@
             </div>
             <div class="card-body">
                 <form action="{% url 'edit_nur' nid %}" method="POST">
-                    {%csrf_token%}
+s                    {%csrf_token%}
                     <div class="custom-row mb-3">
                         <input type="text" class="form-control" name="first_name"  value={{nur.1}} placeholder="First Name" required>
                     </div>
@@ -32,7 +32,12 @@
                         <input type="number" class="form-control" name="age" value={{nur.4}} placeholder="Age" required>
                     </div>
                     <div class="custom-row mb-3">
-                        <input type="text" class="form-control" name="speicalization" value={{nur.5}} placeholder="Speicalization" required>
+                        <select class="form-control" name="special">
+                            <option value="" disabled selected>Select a specialization</option>
+                            <option value="General">General Practitioner</option>
+                            <option value="Consultant">Consultant</option>
+                            <option value="Surgeon">Surgeon</option>
+                        </select>
                     </div>
                     <div class="custom-row mb-3">
                         <input type="text" class="form-control" name="did" value={{nur.6}} placeholder="Dr. ID" required>

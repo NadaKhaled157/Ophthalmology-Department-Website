@@ -20,4 +20,6 @@ urlpatterns=[
     path('add_shift/<int:id>/', views.add_shift, name = "add_shift"),
     path('cancel_shift/<int:id>/', views.cancel_shift, name = "cancel_shift"),
     path('cancel_edit/', views.cancel_edit, name = "cancel_edit"),
+    path('delet/<int:id>?', views.delet_shift, name = "delet_shift"),
+
 ]
