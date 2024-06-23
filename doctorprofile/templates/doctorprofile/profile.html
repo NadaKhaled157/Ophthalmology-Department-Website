@@ -4,12 +4,28 @@
 {% block page_title %}
   Doctor's Profile
 {% endblock %}
-
+{% block css_style %}
+  <style>
+    /* Style the scrollbar for Chrome, Edge, and Safari */
+    .card-body::-webkit-scrollbar {
+      width: 10px;
+    }
+    
+    .card-body::-webkit-scrollbar-thumb {
+      background: #4a8db7; /* Scrollbar color */
+      border-radius: 5px;
+    }
+    
+    .card-body::-webkit-scrollbar-track {
+      background: #f0f0f0; /* Scrollbar track color */
+    }
+  </style>
+{% endblock %}
 {% block content %}
   {% comment %}--------------SIDE NAV ---------------{% endcomment %}
   <div class="container-fluid">
     <div class="row flex-nowrap">
-      <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0" style="background-color: #74bde0;">
+      <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0" style="background-color: #74bde0; font-weight: bold; font-size: medium;">
         <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
           <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none"><span class="fs-5 d-none d-sm-inline">Menu</span></a>
           <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
@@ -31,19 +47,22 @@
                 <li>
                   <a href="{% url 'doctorprofile:forms' %}?status=answered" class="nav-link px-0" style="color:white;"><span class="d-none d-sm-inline">• Answered Inquiries</span></a>
                 </li>
+                <li class="nav-item">
+                  <a href="{% url 'doctorprofile:guest_forms' %}" class="nav-link align-middle px-0" style="color:white;"><i class="fs-4"></i> <span class="ms-1 d-none d-sm-inline">Guests Inquiries</span></a>
+                </li>
               </ul>
             </li>
           </ul>
           <hr />
           <div class="dropdown pb-4">
             <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-              <img src="/media/{{ img_path }}" alt="hugenerd" width="40" height="40" class="rounded-circle" />
-              <span class="d-none d-sm-inline mx-1">Dr. {{ doctor.1 }}</span>
+              <img src="/media/{{ img_path }}" alt=".." width="35" height="35" class="rounded-circle" />
+              <span class="d-none d-sm-inline mx-2">Dr. {{ doctor.1 }}</span>
             </a>
             <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-              <li>
+              {% comment %} <li>
                 <a class="dropdown-item" href="#">Admin Request?</a>
-              </li>
+              </li> {% endcomment %}
               <li>
                 <a class="dropdown-item" href="{% url 'doctorprofile:edit-info' %}">Edit Profile</a>
               </li>
@@ -57,7 +76,7 @@
           </div>
         </div>
       </div>
-      {% comment %}--------------SIDE NAV ---------------{% endcomment %}
+      {% comment %}-------------- END SIDE NAV ---------------{% endcomment %}
       <div class="col py-3">
         <div class="card d-flex flex-row justify-content-center">
           <img src="/media/{{ img_path }}" class="rounded-circle border border-dark mx-5 my-auto" style="width: 150px; height: 150px; object-fit: cover;" alt="Profile Image" />
@@ -79,27 +98,19 @@
           </div>
         </div>
 
-        <div class="card my-3" style="max-width:100%">
+        <div class="card my-3">
+          <div class="card-header" style="background-color: #4a8db7; color:white;">Work Schedule</div>
+          <div class="d-flex flex-row justify-content-center" style="overflow-x: auto;">
+            {% for shift in shifts %}
+              <div class="card m-2 p-1" style="text-align: center;">
+                <strong>{{ shift.0 }}</strong>{{ shift.1 }} - {{ shift.2 }}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="card" style="max-width:100%">
           <div class="card-header" style="background-color: #3b7197; color:white;">Appointments</div>
           <div class="card-body" style="overflow-y: auto; max-height: 280px;">
-            <style>
-              /* Style the scrollbar for Chrome, Edge, and Safari */
-              .card-body::-webkit-scrollbar {
-                width: 10px;
-              }
-              
-              .card-body::-webkit-scrollbar-thumb {
-                background: #4a8db7; /* Scrollbar color */
-                border-radius: 5px;
-              }
-              
-              .card-body::-webkit-scrollbar-track {
-                background: #f0f0f0; /* Scrollbar track color */
-              }
-            </style>
-            <!-- Your content here -->
-
-            <!-- Set a max height and enable vertical scrolling -->
             <table class="table">
               <thead>
                 <tr>
@@ -124,16 +135,6 @@
                 {% endfor %}
               </tbody>
             </table>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-header" style="background-color: #4a8db7; color:white;">Work Schedule</div>
-          <div class="d-flex flex-row justify-content-center" style="overflow-x: auto;">
-            {% for shift in shifts %}
-              <div class="card m-2 p-1" style="text-align: center;">
-                <strong>{{ shift.0 }}</strong>{{ shift.1 }} - {{ shift.2 }}
-              </div>
-            {% endfor %}
           </div>
         </div>
       </div>

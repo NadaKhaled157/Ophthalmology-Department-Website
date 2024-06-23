@@ -61,6 +61,7 @@
                     <input class="text" placeholder="{{ patientrecord.12 }}" value="{{ patientrecord.12 }}" name="frequency" style="width:100px; border-color:rgba(0,0,0,0);" />
                   </td>
                   <td>
+                    <input type="hidden" name="mid" value="{{patientrecord.13}}">
                     <input type="submit" class="btn btn-light d-block mx-auto" style="width:100%; color:#3b7197; border-color: #3b7197;" value="Save Changes" />
                   </td>
                 </form>
@@ -83,12 +84,14 @@
           </div>
           <div class="modal-body">
             <div class="card d-flex flex-row justify-content-center mb-2">
-              <img src="{% static 'common/images/3.jpeg' %}" class="rounded-circle border border-dark mx-5 my-2" style="width: 150px; height: 150px; object-fit: cover;" alt="Patient Photo" />
-              {% comment %} <div class="d-flex flex-column p-3 mx-5">
-                <strong>Patient ID:</strong>{{ patientrecord.1 }}
-                <strong>Age:</strong>{{ patientrecord.5 }}
-                <strong>Sex:</strong>{{ patientrecord.6 }}
-              </div> {% endcomment %}
+              {% comment %} {%for pid,path in paths_with_ids%} {% endcomment %}
+              
+              {%for record in paths_with_ids%}
+              
+              {%if patientrecord.1 == record.0%}
+              <img src="/media/{{ record.1 }}" class="rounded-circle border border-dark mx-5 my-2" style="width: 150px; height: 150px; object-fit: cover;" alt="Patient Photo" />
+              {%endif%}
+              {%endfor%}
               <div class="my-auto mx-3">
                 <table class="table">
                   <tbody>
@@ -116,11 +119,11 @@
                     </tr>
                     <tr>
                       <td><strong>Phone Number:</strong></td>
-                      <td>{{ patientrecord.4 }}</td>
+                      <td>{{ patientrecord.3 }}</td>
                     </tr>
                     <tr>
                       <td><strong>Address:</strong></td>
-                      <td>{{ patientrecord.3 }}</td>
+                      <td>{{ patientrecord.4 }}</td>
                     </tr>
                   </tbody>
                 </table>
