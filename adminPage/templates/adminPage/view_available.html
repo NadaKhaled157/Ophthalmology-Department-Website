@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time availability</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />   
+</head>
+
+<body>
+    <div>
+        {% include 'adminPage/nav.html' %}
+    </div>
+    <div class="container">
+        <div>
+            <h4 align="center" style="margin-top: 10px;">Dr. {{name.0}} {{name.1}} availability</h4>
+        </div>
+    </div>
+    <table class="table">
+        <thead>
+            <tr align="center">
+                <th>Shift ID</th>
+                <th>Day</th>
+                <th>Start shift</th>
+                <th>End shift</th>
+                <th>Edit</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for doc in time %}
+                <tr align="center">
+                    <form method="POST" action="{% url 'edit_availability' id %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="id" value="{{ doc.0 }}"/>
+                        <td>
+                            {{ doc.0 }}
+                        </td>
+                        <td>
+                            <input class="text" value="{{ doc.1 }}" name="day" placeholder="Day" style="width:100px; border-color:rgba(0,0,0,0); text-align: center;" />
+                        </td>
+                        <td>
+                            <input class="text" value="{{ doc.2 }}" name="start" placeholder="Start Shift" style="width:100px; border-color:rgba(0,0,0,0); text-align: center;" />
+                        </td>
+                        <td>
+                            <input class="text" value="{{ doc.3 }}" name="end" placeholder="End Shift" style="width:100px; border-color:rgba(0,0,0,0); text-align: center;" />
+                        </td>
+                        <td class="row">
+                            <div class="col-sm-6">
+                                <input type="submit" class="btn btn-light d-block mx-auto" style="width:50%; color:#3b7197; border-color: #3b7197; text-align: center;" value="Save" />
+                            </div>
+                            <div class="col-sm-6" style="text-align: center;">
+                                <a href="{% url 'delet_shift' doc.0 %}" class="link-dark"><i class="fa-solid fa-trash fs-5"></i></a>
+                            </div>
+                        </td>
+                    </form>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div align="center">
+        <a href="{% url 'add_shift' id %}" class="btn btn-primary" style="width: 10rem; font-weight: bold; font-size: large; background-color: #4A8DB7; border: 0px;">Add Shift</a>
+        <a href="{% url 'cancel_edit' %}" class="btn btn-primary" style="width: 8rem; font-weight: bold; font-size: large; background-color: #b93b3b; border: 0px;">Back</a>
+    </div>
+</body>
+</html>
