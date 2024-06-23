@@ -13,7 +13,7 @@ from django.db import connection
 from datetime import datetime
 from pathlib import Path
 # from django.contrib.auth.decorators import login_required
-# from django.utils.crypto import get_random_string
+from django.utils.crypto import get_random_string
 # import uuid
 
 # import base64
@@ -357,40 +357,47 @@ def p_record(request):
 def add_record(request):
     try:
         doctor_id = request.session['logged_in_user']
-    except:
+    except KeyError:
         request.session['not_logged_in'] = True
         return redirect('common:authenticate_user')
-    
+
     if request.method == 'POST':
         pid = request.POST.get('pid')
         diagnosis = request.POST.get('diagnosis')
         treatment = request.POST.get('treatment')
         dosage = request.POST.get('dosage')
+        next_app_status = request.POST.get('next_app_status')
         follow_up = request.POST.get('follow_up')
         frequency = request.POST.get('frequency')
 
         # Fetch patient's first and last name from the patient table
         with connection.cursor() as cursor:
-            cursor.execute("SELECT p_fname, p_fname FROM patient WHERE pid = %s", [pid])
+            cursor.execute("SELECT p_fname, p_lname FROM patient WHERE pid = %s", [pid])
             patient = cursor.fetchone()
             if not patient:
                 # Handle the case where the patient is not found
                 request.session['patient_notfound'] = True
                 return redirect('doctorprofile:patientrecord-page')
-                # return render(request, 'doctorprofile/patientrecord.html', {'error': 'Patient not found.'})
 
             first_name, last_name = patient
+            cursor.execute("""SELECT MAX(aid)
+                              FROM appointment
+                              WHERE appointment_status = 'Completed'
+                              AND pid = %s
+                           """, [pid])
+            aid_tuple = cursor.fetchone()
+            aid = aid_tuple[0] if aid_tuple else None
 
             # Insert the new medical record
             cursor.execute(
                 """
-                INSERT INTO medical_history (pid, diagnosis, treatment, dosage, followup, frequency, did)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                INSERT INTO medical_history (pid, diagnosis, treatment, dosage, followup, frequency, did, aid, next_app_status)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """,
-                [pid, diagnosis, treatment, dosage, follow_up, frequency, doctor_id]
+                [pid, diagnosis, treatment, dosage, follow_up, frequency, doctor_id, aid, next_app_status]
             )
-        # Redirect to the patient records page after successful addition
-        # return redirect('doctorprofile:patientrecord-page')
+
+    # Redirect to the patient records page after successful addition
     return redirect('doctorprofile:patientrecord-page')
 
 def edit_record(request):

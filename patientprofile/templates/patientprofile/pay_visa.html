@@ -4,8 +4,7 @@
   Visa Payment
 {% endblock %}
 {% block content %}
-{% block css_style %}
-
+  {% block css_style %}
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
     <!-- Font Awesome icons (free version) -->
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
@@ -22,7 +21,7 @@
         min-height: 100vh;
         margin: 0;
       }
-
+      
       .custom-card {
         width: 80vw;
         height: 80vh;
@@ -34,19 +33,16 @@
         align-items: center;
         background-color: #74bde0;
       }
-
+      
       .custom-card-body {
         width: 80%;
         height: 80%;
         overflow-y: auto;
       }
     </style>
-
   {% endblock %}
 
   <div class="custom-card">
-
-
     <div class="custom-card-body">
       <div class="container">
         <br />
@@ -76,7 +72,7 @@
             <input type="text" class="form-control" id="cardHolderName" name="cardHolderName" placeholder="Enter the name on your card" required />
           </div>
           <div class="text-end">
-            <button type="submit" class="btn btn-primary button-hover" style="background-color:#FFFDE3 ; color: #3b7197; font-weight: bold;">Submit Payment</button>
+            <button type="submit" class="btn btn-primary button-hover m-4" style="background-color:#FFFDE3 ; color: #3b7197; font-weight: bold;">Submit Payment</button>
           </div>
         </form>
       </div>

@@ -57,23 +57,24 @@ def appointment(request):
 
         if appointment_type=='examination':
             return redirect('patientprofile:available_time', appointment_type= appointment_type)
-        try:
-            with connection.cursor() as cursor:
-                cursor.execute("SELECT next_app_status FROM medical_history WHERE pid=%s ORDER BY mid DESC", [pid])
-                next_app_status= cursor.fetchone()[0] #latest "next_appointment"
-            if next_app_status==appointment_type:
-                if appointment_type=='follow_up':
-                    with connection.cursor() as cursor:
-                        cursor.execute("SELECT followup FROM medical_history WHERE pid=%s ORDER BY mid DESC", [pid])
-                        followup_date= cursor.fetchone()[0]
-                    if is_future_date(followup_date): return redirect('patientprofile:available_time', appointment_type= appointment_type)
-                    else: return render(request,'patientprofile/appointment.html', {"expired":"Your followup date is expired! Examine Again or contact your doctor!"})
-                else:
-                    return redirect('patientprofile:available_time', appointment_type= appointment_type)
+
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT next_app_status FROM medical_history WHERE pid=%s ORDER BY mid DESC", [pid])
+            next_app_status= cursor.fetchone()[0] #latest "next_appointment"
+        if next_app_status==appointment_type:
+            if appointment_type=='follow_up':
+                with connection.cursor() as cursor:
+                    cursor.execute("SELECT followup FROM medical_history WHERE pid=%s ORDER BY mid DESC", [pid])
+                    followup_date= cursor.fetchone()[0]
+                if is_future_date(followup_date): return redirect('patientprofile:available_time', appointment_type= appointment_type)
+                else: return render(request,'patientprofile/appointment.html', {"expired":"Your followup date is expired! Examine Again or contact your doctor!"})
             else:
-                return render(request, 'patientprofile/appointment.html', {"next_app_status": next_app_status,"error_next_app": "If you think this happen by mistake, please contact your doctor. Thanks!" })
-        except: #this means next_app_status is Null, that happen for new patients
+                return redirect('patientprofile:available_time', appointment_type= appointment_type)
+        elif not next_app_status: #this means next_app_status is Null, that happen for new patients
             return render(request, 'patientprofile/appointment.html', {"examine": "Sorry! You have to examine first." })
+        else:
+            return render(request, 'patientprofile/appointment.html', {"next_app_status": next_app_status,"error_next_app": "If you think this happen by mistake, please contact your doctor. Thanks!" })
+
     return render(request, 'patientprofile/appointment.html',{"examine": None, "next_app_status":None, "no_app_type":error, "expired": None } )
 
 def processed_availability(availabilities):
@@ -89,7 +90,7 @@ def processed_availability(availabilities):
             cursor.execute("""SELECT count(*) from appointment where app_date=%s and did=%s""",[next_date, did])
             count= cursor.fetchone()[0]
             #print(f"count{count}")
-        if count >3: available= False
+        if count >5: available= False
         processed_availabilities.append((did, day_name, next_date, shift_start, shift_end, available))
         doctor_added = False
         # Check if the list is empty

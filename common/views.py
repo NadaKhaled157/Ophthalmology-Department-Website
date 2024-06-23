@@ -23,6 +23,9 @@ def welcome_page(request):
         response = False
     if response:
         inquiry = request.session['retrieved_inquiry']
+        request.session['form_code'] = None
+        request.session['response'] = None
+
         return render(request, 'common/welcome-page.html',{'form_submitted':form_submitted,'form_code':form_code,'inquiry':inquiry,'response':True})
     # except:
         # return render(request, 'common/welcome-page.html',{'form_submitted':False,'response':None})
