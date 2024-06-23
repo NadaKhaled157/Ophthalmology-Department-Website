@@ -60,7 +60,8 @@ def appointment(request):
 
         with connection.cursor() as cursor:
             cursor.execute("SELECT next_app_status FROM medical_history WHERE pid=%s ORDER BY mid DESC", [pid])
-            next_app_status= cursor.fetchone()[0] #latest "next_appointment"
+            next_app= cursor.fetchone() #latest "next_appointment"
+            next_app_status= next_app[0] if next_app else None
         if next_app_status==appointment_type:
             if appointment_type=='follow_up':
                 with connection.cursor() as cursor:
@@ -70,7 +71,7 @@ def appointment(request):
                 else: return render(request,'patientprofile/appointment.html', {"expired":"Your followup date is expired! Examine Again or contact your doctor!"})
             else:
                 return redirect('patientprofile:available_time', appointment_type= appointment_type)
-        elif not next_app_status: #this means next_app_status is Null, that happen for new patients
+        elif next_app_status is None: #this means next_app_status is Null, that happen for new patients
             return render(request, 'patientprofile/appointment.html', {"examine": "Sorry! You have to examine first." })
         else:
             return render(request, 'patientprofile/appointment.html', {"next_app_status": next_app_status,"error_next_app": "If you think this happen by mistake, please contact your doctor. Thanks!" })
