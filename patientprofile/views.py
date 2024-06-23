@@ -12,14 +12,20 @@ from django.db import connection
 from datetime import date, timedelta
 from datetime import datetime
 from dateutil.relativedelta import relativedelta, MO, TU, WE, TH, FR, SA, SU
-
+from pathlib import Path
 # Create your views here.
 def pprofile(request):
     pid = request.session.get('id')
     patient_name = request.session.get('name')
 
     with connection.cursor() as cursor:
-        cursor.execute("SELECT s.fname, s.lname, m.diagnosis, m.treatment, m.followup from medical_history m inner join doctor d ON m.did = d.did inner join staff s ON d.eid= s.eid where pid = %s", [pid])
+        cursor.execute("""SELECT s.fname, s.lname, m.diagnosis, m.treatment, m.followup, m.dosage, m.frequency, a.app_date, a.app_time
+                            FROM medical_history m
+                            INNER JOIN appointment a ON m.aid = a.aid
+                            INNER JOIN doctor d ON m.did = d.did
+                            INNER JOIN staff s ON d.eid = s.eid
+                            WHERE m.pid = %s"""
+                                    , [pid])
         history = cursor.fetchall()
 
     with connection.cursor() as cursor:
@@ -54,12 +60,19 @@ def appointment(request):
                 cursor.execute("SELECT next_app_status FROM medical_history WHERE pid=%s ORDER BY mid DESC", [pid])
                 next_app_status= cursor.fetchone()[0] #latest "next_appointment"
             if next_app_status==appointment_type:
-                return redirect('patientprofile:available_time', appointment_type= appointment_type)
+                if appointment_type=='follow_up':
+                    with connection.cursor() as cursor:
+                        cursor.execute("SELECT followup FROM medical_history WHERE pid=%s ORDER BY mid DESC", [pid])
+                        followup_date= cursor.fetchone()[0]
+                    if is_future_date(followup_date): return redirect('patientprofile:available_time', appointment_type= appointment_type)
+                    else: return render(request,'patientprofile/appointment.html', {"expired":"Your followup date is expired! Examine Again or contact your doctor!"})
+                else:
+                    return redirect('patientprofile:available_time', appointment_type= appointment_type)
             else:
                 return render(request, 'patientprofile/appointment.html', {"next_app_status": next_app_status,"error_next_app": "If you think this happen by mistake, please contact your doctor. Thanks!" })
         except: #this means next_app_status is Null, that happen for new patients
             return render(request, 'patientprofile/appointment.html', {"examine": "Sorry! You have to examine first." })
-    return render(request, 'patientprofile/appointment.html',{"examine": None, "next_app_status":None, "no_app_type":error } )
+    return render(request, 'patientprofile/appointment.html',{"examine": None, "next_app_status":None, "no_app_type":error, "expired": None } )
 
 def processed_availability(availabilities):
     # Process the examination_availabilities to convert days to next upcoming dates
@@ -96,6 +109,8 @@ def processed_availability(availabilities):
 
 def available_time(request, appointment_type):
     pid= request.session.get('id')
+    decoded_paths_and_ids = retrieve_image(appointment_type,pid)
+    print('paths_with_ids', decoded_paths_and_ids)
     if  appointment_type == 'examination':
             with connection.cursor() as cursor:
                 cursor.execute("""
@@ -108,28 +123,30 @@ def available_time(request, appointment_type):
                 examination_availabilities = cursor.fetchall()
             processed_availabilities, doctor= processed_availability(examination_availabilities)
 
-            return render(request, 'patientprofile/available_time.html', {'doctors_data':doctor,"shifts": processed_availabilities,"appointment_type": "examination"})
+            return render(request, 'patientprofile/available_time.html', {'doctors_data':doctor,"shifts": processed_availabilities,"appointment_type": "examination", 'paths_with_ids':decoded_paths_and_ids})
 
 
     elif appointment_type == 'follow_up':
-        with connection.cursor() as cursor:
-            cursor.execute("SELECT followup FROM medical_history WHERE did = (SELECT did FROM patient WHERE pid = %s) ORDER BY mid DESC", [pid])
-            followup= cursor.fetchone()[0] #this is latest followup datetime (2024-22-06)
-            followup_date = datetime.strptime(followup, '%Y-%m-%d').date()  # Convert string to datetime.date
-            day_of_week = followup_date.strftime('%A')  # Get day of the week as a string that corresponds to that date (e.g., 'Monday')
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT followup FROM medical_history WHERE did = (SELECT did FROM patient WHERE pid = %s) ORDER BY mid DESC", [pid])
+                followup= cursor.fetchone()[0] #this is latest followup datetime (2024-22-06)
+                followup_date = datetime.strptime(followup, '%Y-%m-%d').date()  # Convert string to datetime.date
+                day_of_week = followup_date.strftime('%A')  # Get day of the week as a string that corresponds to that date (e.g., 'Monday')
 
-        with connection.cursor() as cursor:
-            cursor.execute("SELECT s.fname || ' ' || s.lname AS doctor_name, d.d_specialization, a.day ,a.shift_start, a.shift_end, d.did FROM doctor d inner join availability a ON d.did = a.did inner join staff s on s.eid = d.eid WHERE (a.did = (SELECT did FROM patient WHERE pid = %s)) and (a.day= %s) ", [pid, day_of_week])
-            followup_availabilities = cursor.fetchall()
-            print(followup_availabilities)
-        return render(request, 'patientprofile/available_time.html', {"followup_availabilities": followup_availabilities,"appointment_type": "follow_up", "followup_date":followup})
-
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT s.fname || ' ' || s.lname AS doctor_name, d.d_specialization, a.day ,a.shift_start, a.shift_end, d.did FROM doctor d inner join availability a ON d.did = a.did inner join staff s on s.eid = d.eid WHERE (a.did = (SELECT did FROM patient WHERE pid = %s)) and (a.day= %s) ", [pid, day_of_week])
+                followup_availabilities = cursor.fetchall()
+                print(followup_availabilities)
+            return render(request, 'patientprofile/available_time.html', {"followup_availabilities": followup_availabilities,"appointment_type": "follow_up", "followup_date":followup, 'paths_with_ids':decoded_paths_and_ids})
+        except: #in case did is updated in patient table  but not updated in medical_history table
+            return HttpResponse("You have no record with this Doctor. If you think this happen by mistake please contact your doctor.")
     elif appointment_type == 'surgery':
         with connection.cursor() as cursor:
             cursor.execute("SELECT s.fname || ' ' || s.lname AS doctor_name,d.d_specialization, a.day, a.shift_start, a.shift_end, d.did FROM doctor d inner join availability a ON d.did = a.did inner join staff s on s.eid = d.eid WHERE d.d_specialization='Surgeon'")
             operation_availabilities = cursor.fetchall()
         processed_availabilities, doctor= processed_availability(operation_availabilities)
-        return render(request, 'patientprofile/available_time.html', {"shifts": processed_availabilities,'doctors_data':doctor, "appointment_type": "surgery"})
+        return render(request, 'patientprofile/available_time.html', {"shifts": processed_availabilities,'doctors_data':doctor, "appointment_type": "surgery", 'paths_with_ids':decoded_paths_and_ids})
 
     return render(request, 'patientprofile/available_time.html')
 
@@ -340,3 +357,54 @@ def format_time(time_str):
         formatted_time_str = '0' + formatted_time_str
 
     return formatted_time_str
+
+
+def is_future_date(date_str):
+    try:
+        given_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+        today = datetime.today().date()
+        return given_date >= today
+    except ValueError:
+        # Handle invalid date format
+        print("Invalid date format. Please use 'YYYY-MM-DD'.")
+        return False
+
+def check_image(img_path):
+    default_image_path = '../../../media/default-image.jpg'
+
+    actual_image_path = Path('media') / img_path
+    # print(actual_image_path)
+    if actual_image_path.exists():
+        image_path = img_path
+    else:
+        image_path = default_image_path
+    return image_path
+
+def retrieve_image(appointment_type,pid):
+    if appointment_type == "examination" or appointment_type == "surgery":
+        with connection.cursor() as cursor:
+            if appointment_type == "examination":
+                cursor.execute("""SELECT did, d_photo FROM doctor WHERE d_specialization not in ('Surgeon')""")
+            if appointment_type == "surgery":
+                cursor.execute("""SELECT did, d_photo FROM doctor WHERE d_specialization in ('Surgeon')""")
+            encoded_paths_and_ids = cursor.fetchall()
+            decoded_paths_and_ids = []
+        for record in encoded_paths_and_ids:
+            img_path_decoded = record[1].tobytes().decode('utf-8')
+            patient_image = check_image(img_path_decoded)
+            decoded_paths_and_ids.append((record[0],patient_image))
+
+    elif appointment_type == "follow_up":
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                           SELECT d.did, d.d_photo
+                           FROM doctor d
+                           JOIN patient p on p.did = d.did
+                           WHERE p.pid = %s""",[pid])
+            encoded_paths_and_ids = cursor.fetchall()
+            print(encoded_paths_and_ids)
+            decoded_paths_and_ids = []
+            img_path_decoded = encoded_paths_and_ids[0][1].tobytes().decode('utf-8')
+            patient_image = check_image(img_path_decoded)
+            decoded_paths_and_ids.append((encoded_paths_and_ids[0][0],patient_image))
+    return decoded_paths_and_ids

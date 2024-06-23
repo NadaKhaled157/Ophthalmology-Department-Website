@@ -5,24 +5,37 @@
     <h1 class="mt-2 ms-3">{{name}}'s Medical History</h1>
   {% if history %}
     <div class="card my-4">
-      {% comment %} <div class="card-header" style="background-color: #3b7197; color:white;"><h1>{{patient_name}}'s Medical History</h1></div> {% endcomment %}
       <div class="card-body">
         <table class="table">
           <thead>
              <tr>
-                <th>Date of Visit</th>
                 <th>Doctor</th>
-                <th>Reason for Visit</th>
-                <th>Treatment or Procedure</th>
+                <th>Appointment Date</th>
+                <th>Appoitnment Time</th>
+                <th>Diagnosis</th>
+                <th>Treatment</th>
+                <th>Follow up</th>
+                <th>Dosage</th>
+                <th>Frequency</th>
+
+
              </tr>
           </thead>
           <tbody>
             {% for h in history%}
               <tr>
-                  <td>{{h.4}}</td>
                   <td>{{h.0}} {{h.1}}</td>
-                  <td>{{h.3}}</td>
                   <td>{{h.7}}</td>
+                  <td>{{h.8}}</td>
+
+                  <td>{{h.2}}</td>
+                  <td>{{h.3}}</td>
+                  <td>{{h.4}}</td>
+                  <td>{{h.5}}</td>
+                  <td>{{h.6}}</td>
+
+
+
               </tr>
               {% endfor %}
           </tbody>

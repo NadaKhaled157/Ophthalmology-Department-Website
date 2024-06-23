@@ -1,39 +1,58 @@
 {% extends 'base.html' %}
 {% load static %}
+{% block page_title %}
+  Inquiry Sent
+{% endblock %}
 {% block content %}
-<style>
-  body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-    }
+  {% block css_style %}
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <!-- Font Awesome icons (free version) -->
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css" />
+    <!-- Core theme CSS (includes Bootstrap) -->
+    <link href="{% static 'common/styles.css' %}" rel="stylesheet" />
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+      }
 
-    .custom-card {
-      width: 80vw;
-      height: 80vh;
-      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.5);
-      border-radius: 10px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      background-color:  #3b7197;
-    }
+      .custom-card {
+        width: 80vw;
+        height: 80vh;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.5);
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: #74bde0;
+      }
 
-    .custom-card-body {
-      width: 80%;
-      height: 80%;
-      overflow-y: auto;
-    }
-</style>
-<div class="custom-card">
-  <div class="custom-card-body">
-    <div class="container"><br>
-      <h1 class="mx-auto my-2 text-center" style="color: #d9d9a6; font-weight: bold ;">Sent Successfully!</h1><br><br>
-      <div class="text-center">
-        <div class="mb-3">
-          <h1 class="mx-auto my-2 text-center" style="color: white; font-weight: bold ;">Thanks for your request! Your doctor'll respond to you Soon.</h1><br><br>
-          <a href="{% url 'patientprofile:patient-profile' %}" class="card-link" style="color: #d9d9a6; font-weight: bold ;font-size: larger;"><h2>Back to your profile</h2></a>
+      .custom-card-body {
+        width: 80%;
+        height: 80%;
+        overflow-y: auto;
+      }
+    </style>
+  {% endblock %}
+  <div class="custom-card">
+    <div class="custom-card-body">
+      <div class="container">
+        <br />
+        <h1 class="mx-auto my-2 text-center" style="color: #fffde3; font-weight: bold ;">Sent Successfully!</h1><br /><br />
+        <div class="text-center">
+          <div class="mb-3">
+            <h1 class="mx-auto my-2 text-center" style="color: white; font-weight: bold ;">Thanks for your request!<br /> Your doctor will get back to you Soon.</h1><br /><br />
+            <a href="{% url 'patientprofile:patient-profile' %}" class="card-link" style="color: #fffde3; font-weight: bold ;font-size: larger;"><h2>Back to your profile</h2></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}

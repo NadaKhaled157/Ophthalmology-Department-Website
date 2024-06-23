@@ -51,27 +51,27 @@
               <div class="container">
                 <br />
                 <div class="text-center">
-                  <a href="{% url 'patientprofile:patient-profile' %}"><img src="{% static 'images/hospital-logo.png' %}" style="width: 300px;" alt="logo" /></a>
+                  <a href="{% url 'patientprofile:patient-profile' %}"><img src="{% static 'images/hospital-logo.png' %}" style="width: 150px;" alt="logo" /></a>
                 </div>
-                 <form action="{% url 'doctorprofile:visitor-form' %}" method="POST" id="contactForm">
+                <form action="{% url 'doctorprofile:visitor-form' %}" method="POST" id="contactForm">
                   {% csrf_token %}
                   <input type="hidden" name="check_responses" value="False" />
                   <div class="mb-3">
-                    <label for="patient-name" class="form-label" style="color: white; font-weight: bold ;font-size: larger;">Your Name</label>
+                    <label for="patient-name" class="form-label" style="color: white; font-weight: bold ;font-size: medium;">Your Name</label>
                     <input type="text" class="form-control" id="name" name="v_name" value="{{ p_name }}" readonly />
                   </div>
                   <div class="mb-3">
-                    <label for="patient-name" class="form-label" style="color: white; font-weight: bold ;font-size: larger;">Your Email</label>
-                    <input type="text" class="form-control" id="email" name="v_email" value="{{ p_email }}" readonly  />
+                    <label for="patient-name" class="form-label" style="color: white; font-weight: bold ;font-size: medium;">Your Email</label>
+                    <input type="text" class="form-control" id="email" name="v_email" value="{{ p_email }}" readonly />
                   </div>
 
                   <div class="mb-3">
-                    <label for="patient-name" class="form-label" style="color: white; font-weight: bold ;font-size: larger;">Your Phone Number</label>
-                    <input type="text" class="form-control" id="phone" name="v_phone" value="{{ phone_number }}" readonly  />
+                    <label for="patient-name" class="form-label" style="color: white; font-weight: bold ;font-size: medium;">Your Phone Number</label>
+                    <input type="text" class="form-control" id="phone" name="v_phone" value="{{ phone_number }}" readonly />
                   </div>
 
                   <div class="mb-3">
-                    <label for="inquiry" class="form-label" style="color: white; font-weight: bold ;font-size: larger;">Inquiry</label>
+                    <label for="inquiry" class="form-label" style="color: white; font-weight: bold ;font-size: medium;">Inquiry</label>
                     <textarea class="form-control" id="message" name="v_request" rows="3" required></textarea>
                   </div>
 
