@@ -16,6 +16,7 @@ def login(request):
                            FROM admin""")
             usernames = cursor.fetchall()
         if any(user in tup for tup in usernames):
+            request.session['user'] = user
             with connection.cursor() as cursor:
                 cursor.execute("""SELECT password
                                FROM admin
@@ -32,19 +33,11 @@ def login(request):
             return render(request, 'adminPage/login.html', {'wrong':wrong})
     return render(request, 'adminPage/login.html')
 
-def admin_profile(request):
-    # Ordering and viewing the staff
-    order = request.GET.get('group', 'eid')
-    with connection.cursor() as cursor:
-        cursor.execute("""SELECT eid, fname, lname, role, salary
-                        FROM staff
-                        ORDER BY eid""")
-        data = cursor.fetchall()
+def admin_profile(request):        
+    admin = request.session.get('user')
 
-    # Admin name
-        cursor.execute("""SELECT username 
-                        FROM admin""")
-        admin = cursor.fetchone()
+    # Ordering and viewing the staff
+    with connection.cursor() as cursor:
 
     # Getting patients number
         cursor.execute("""SELECT count(*)

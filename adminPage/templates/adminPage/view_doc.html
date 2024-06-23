@@ -3,7 +3,6 @@
     <table class="table">
         <thead>
             <tr scope="col" align="center">
-                <th>Image</th>
                 <th>ID</th>
                 <th>Doctor Name</th>
                 <th>Age</th>
@@ -16,12 +15,11 @@
         <tbody>
             {% for doc in viewed %}
             <tr scope="row" align="center">
-                <td><img src="/media/{{ doc.0 }}" alt="hugenerd" width="10" height="10" class="rounded-circle"/></td>
                 <td>{{doc.1}}</td>
                 <td>{{doc.2}} {{doc.3}}</td>
                 <td>{{doc.4}}</td>
-                <td>{{doc.5}}</td>
                 <td>{{doc.6}}</td>
+                <td>{{doc.5}}</td>
                 <td>{{doc.7}}</td>
                 <td>
                     <a href="{%  url 'edit_doc' doc.1 %}" class="link-dark"><i class="fa-solid fa-pen-to-square fs-5 me-2"></i></a>
