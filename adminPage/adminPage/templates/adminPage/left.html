@@ -1,0 +1,63 @@
+<div style="text-align: center; color:white; margin-top: 10px;">
+  <h4><i class="fa-regular fa-user"></i> {{name}}</h4>
+</div>
+
+<hr style="margin: auto; border-top: 3px solid white; width: 90%;">
+
+<div style="color:white; margin-left: 10%; margin-bottom: 5px;">
+  <div class="row">
+      <label>Staff: {{staffn.0}} </label>
+    <div class="row">
+      <label>Doctors: {{doctorn.0}} </label>
+    </div>
+    </div>
+  <div class="row">
+      <label>Nurses: {{nurse.0}} </label>
+    <div class="row">
+      <label>Technicians: {{tech.0}} </label>
+    </div>
+    </div>
+  <div class="row">
+      <label>Patients: {{patient.0}} </label>
+    </div>
+    <div class="row">
+      <label>Appointments: {{app.0}} </label>
+  </div>
+  <div class="row">
+    <label>Income: {{amount.0}} $</label>
+</div>
+</div>
+
+<hr style="margin: auto; border-top: 3px solid white; width: 90%;">
+
+<div class="col-auto" align="center">
+  <a href="{% url 'role' %}" class="btn btn-primary" style="background-color: white; border-color: white; color:#3b7197; width:80%; margin-top:15px;">Add Employee</a>
+</div>
+
+<div class="col-auto" align="center" style="margin-bottom: 80%;">
+  <form method="post" action="{% url 'admin_profile' %}" id="actionForm">
+      {% csrf_token %}
+      <div class="form-group">
+          <div style="width:80%; margin-top:15px;">
+              <select class="form-control" name="view" onchange="document.getElementById('actionForm').submit();">
+                  <option value="">View table</option>
+                  <option value="doctor">Doctors</option>
+                  <option value="nurse">Nurses</option>
+                  <option value="technician">Technicians</option>
+                  <option value="patient">Patients</option>
+                  <option value="appointment">Appointments</option>
+                  <option value="remove">Remove</option>
+              </select>
+          </div>
+      </div>
+  </form>
+</div>
+
+<hr style="margin: auto; border-top: 3px solid white; width: 90%;">
+
+<div class="col-auto" align="center">
+  <a href="{% url 'login' %}" class="btn btn-primary" style="background-color: white; border-color: white; color:#3b7197; width:80%; margin-top:15px; margin-bottom: 15px;">
+    <i class="fa fa-sign-out" aria-hidden="true"></i>
+    Logout
+  </a>
+</div>

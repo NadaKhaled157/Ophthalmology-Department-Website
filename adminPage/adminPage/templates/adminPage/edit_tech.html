@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Technician</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div>
+        {% include 'adminPage/nav.html' %}
+    </div>
+    <div class="container" align="center">
+        <div class="card mx-auto mt-4 col-sm-6" style="width: 30rem;">
+            <div class="card-header" style="background-color: #3b7197; color: white;">
+                <h4 style="font-weight: bold;">Edit Technicain</h4>
+            </div>
+            <div class="card-body">
+                <form action="{% url 'edit_tech' tid %}" method="POST">
+                    {%csrf_token%}
+                    <div class="custom-row mb-3">
+                        <input type="text" class="form-control" name="first_name" value={{tech.1}} placeholder="First Name" required>
+                    </div>
+                    <div class="custom-row mb-3">
+                        <input type="text" class="form-control" name="last_name" value={{tech.2}} placeholder="Last Name" required>
+                    </div>
+                    <div class="custom-row mb-3">
+                        <input type="text" class="form-control" name="address" value={{tech.3}} placeholder="Address" required>
+                    </div>
+                    <div class="custom-row mb-3">
+                        <input type="number" class="form-control" name="age" value={{tech.4}} placeholder="Age" required>
+                    </div>
+                    <div class="custom-row mb-3">
+                        <input type="text" class="form-control" name="did" value={{tech.5}} placeholder="Dr. ID" required>
+                    </div>
+                    <div class="custom-row mb-3">
+                        <input type="text" class="form-control" name="salary" value={{tech.6}} placeholder="Salary" required>
+                    </div>
+                    <input type="submit" class="btn btn-success" value="Edit" style="width: 18rem; margin-right: 1em; font-weight: bold; font-size: large;background: #4A8DB7; border:0px">
+                    <a href="{% url 'cancel_edit' %}" class="btn btn-danger" style="width: 8rem; font-weight: bold; font-size: large;">Cancel</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

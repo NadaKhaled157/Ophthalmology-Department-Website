@@ -1,0 +1,33 @@
+<div class="container">
+    <h4 align="center" style="margin-top: 10px;">Doctors</h4>
+    <table class="table">
+        <thead>
+            <tr scope="col" align="center">
+                <th>ID</th>
+                <th>Doctor Name</th>
+                <th>Age</th>
+                <th>Email</th>
+                <th>Specialization</th>
+                <th>Salary</th>
+                <th>Modify</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for doc in viewed %}
+            <tr scope="row" align="center">
+                <td>{{doc.1}}</td>
+                <td>{{doc.2}} {{doc.3}}</td>
+                <td>{{doc.4}}</td>
+                <td>{{doc.6}}</td>
+                <td>{{doc.5}}</td>
+                <td>{{doc.7}}</td>
+                <td>
+                    <a href="{%  url 'edit_doc' doc.1 %}" class="link-dark"><i class="fa-solid fa-pen-to-square fs-5 me-2"></i></a>
+                    <a href="{% url 'available' doc.1 %}" class="link-dark"><i class="fa-solid fa-clock fs-5 me-2"></i></a>
+                    <a href="{% url 'rmv_doc' doc.1 %}" class="link-dark"><i class="fa-solid fa-trash fs-5"></i></a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

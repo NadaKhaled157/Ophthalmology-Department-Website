@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />   
+</head>
+
+<body>
+    <div class="row">
+        <div class="col-sm-2" style="height:100hv; background-color: #3b7197;">
+            <div>
+                {% include 'adminPage/left.html' %}
+            </div>
+        </div>
+        <div class="col-sm-10">
+            {% if person == 'patient' %}
+                {% include 'adminPage/view_patient.html' %}
+            {% elif person == 'doctor' %}
+                {% include 'adminPage/view_doc.html' %}
+            {% elif person == 'nurse' %}
+                {% include 'adminPage/view_nur.html' %}
+            {% elif person == 'technician' %}
+                {% include 'adminPage/view_tech.html' %}
+            {% elif person == 'appointment' %}
+                {% include 'adminPage/view_app.html' %}
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
