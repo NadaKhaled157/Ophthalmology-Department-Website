@@ -47,13 +47,14 @@ def pprofile(request):
     return render(request, 'patientprofile/pprofile.html', context)
 
 def appointment(request):
-    try:
-        error = request.session['no_app_type']
-    except:
-        error = False
+    error= False
     pid= request.session.get('id')
     if request.method == 'POST':
         appointment_type = request.POST.get('appointment_type')
+        if appointment_type ==None:
+            error= True
+            return render(request, 'patientprofile/appointment.html',{"examine": None, "next_app_status":None, "no_app_type":error, "expired": None } )
+
         if appointment_type=='examination':
             return redirect('patientprofile:available_time', appointment_type= appointment_type)
         try:

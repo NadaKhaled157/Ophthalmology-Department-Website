@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_title %}
+  Guest Inquiries
+{% endblock %}
+{% block content %}
+  {% include 'doctorprofile/navbar.html' with doctor_id=doctor_id %}
+  <div class="container">
+    <div class="card my-4">
+      <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #74bde0; color:white;">Answer Guests Inquiries</div>
+      <div class="card-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Form Number</th>
+              <th scope="col">Guest Name</th>
+              <th scope="col">Guest Email</th>
+              <th scope="col">Handle</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for form in forms %}
+              <tr>
+                <th scope="row">{{ form.0 }}</th>
+                <td>{{ form.1 }}</td>
+                <td>{{ form.2 }}</td>
+                <td>
+                  <div class="d-flex">
+                    <button type="button" class="btn btn-light mx-1" style="color:#3b7197; border-color: #3b7197;" data-bs-toggle="modal" data-bs-target="#modal{{ form.0 }}">Respond</button>
+                    <form action="{% url 'doctorprofile:guest_forms' %}" method="POST">
+                      <input type="hidden" name="deleted_form" value="{{ form.0 }}" />
+                      {% csrf_token %}
+                      <input type="submit" class="btn btn-outline-danger mx-1" value="Delete" />
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  {% for form in forms %}
+    <!-- Modal -->
+    <div class="modal fade" id="modal{{ form.0 }}" tabindex="-1" aria-labelledby="exampleModalLabel{{ form.0 }}" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title fs-5" id="exampleModalLabel{{ form.0 }}">Respond to Guest</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form action="{% url 'doctorprofile:guest_forms' %}" method="POST">
+            {% csrf_token %}
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="modal_id" class="col-form-label"><strong>Form Number:</strong></label>
+                <input type="text" class="form-control" id="modal_id" name="modal_id" value="{{ form.0 }}" readonly />
+              </div>
+              <div class="mb-3">
+                <label for="recipient-name" class="col-form-label"><strong>Guest Name:</strong></label>
+                <input type="text" class="form-control" id="recipient-name" value="{{ form.1 }}" readonly />
+              </div>
+              <div class="mb-3">
+                <label for="recipient-email" class="col-form-label"><strong>Guest Email:</strong></label>
+                <input type="text" class="form-control" id="recipient-email" value="{{ form.2 }}" readonly />
+              </div>
+              <div class="mb-3">
+                <label for="inquiry" class="col-form-label"><strong>Request:</strong></label>
+                <p>{{ form.3 }}</p>
+              </div>
+              <div class="mb-3">
+                <label for="response" class="col-form-label"><strong>Write a Response:</strong></label>
+                <textarea class="form-control" id="response" name="response"></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <input type="submit" class="btn btn-light" style="background-color:#3b7197; color:white; border-color: #3b7197;" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="You can't edit this response later." value="Send Response" />
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+  <script>
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map((tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl))
+  </script>
+{% endblock %}
