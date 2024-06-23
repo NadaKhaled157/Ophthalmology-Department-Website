@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
+{% block page_title %}
+  Inquiries
+{% endblock %}
 {% block content %}
   {% block css_style %}
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
@@ -20,35 +23,35 @@
         background-color: #fff;
         box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
       }
-      
+
       .custom-table th,
       .custom-table td {
         padding: 12px 20px;
         text-align: left;
         border-bottom: 1px solid #ddd;
       }
-      
+
       .custom-table th {
         background-color: #f7f7f7;
         font-weight: bold;
       }
-      
+
       .custom-table tr:hover {
         background-color: #f5f5f5;
       }
     </style>
   {% endblock %}
   {% include 'patientprofile/navbar.html' %}
-  <div class="container" style="text-align: center; margin: 0 auto;">
+  <div class="container" style="margin: 0 auto;">
     <div class="text-center my-3">
       <h2>See what your doctor has to say</h2>
     </div>
-    <div class="card my-4" style="box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);">
-      <div class="card-header" style="background-color: #3b7197; color:white; box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.55); border-radius: 5px;">
-        <h1>Contact Forms</h1>
+    <div class="card my-4" style="box-shadow: 0 -0.5rem 1rem rgba(0, 0, 0, 0.15);">
+      <div class="card-header" style="background-color: #3b7197; color:white; box-shadow: 0 -0.5rem 1rem rgba(0, 0, 0, 0.15); border-radius: 5px;">
+        <h1 class="text-center">Contact Forms</h1>
       </div>
       <div class="card-body">
-        <table class="custom-table">
+        <table class="table table-hover">
           <thead>
             <tr>
               <th>Request</th>
@@ -60,7 +63,11 @@
               <tr>
                 <td>{{ form.0 }}</td>
                 <td>
-                  <button type="button" data-bs-toggle="modal" data-bs-target="#modal{{ form.2 }}" style="text-decoration:none; color:#3b7197; border:none; background-color:white;">Check Response</button>
+                  {% if form.1 == 'Pending' %}
+                    Your doctor will get back to you soon.
+                  {% else %}
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#modal{{ form.2 }}" style="text-decoration:none; color:#3b7197; border:none; background-color:rgba(0,0,0,0);">Check Response</button>
+                  {% endif %}
                 </td>
               </tr>
             {% endfor %}
@@ -71,43 +78,63 @@
   </div>
 
   <!-- RESPONSE MODAL -->
-  <div class="modal fade" id="modal{{ form.2 }}" tabindex="-1" aria-labelledby="exampleModalLabel{{ form.2 }}" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title fs-5" id="exampleModalLabel{{ form.2 }}">Respond to Patient</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        {% comment %} <div class="modal-body">
-          <div class="mb-3">
-            <label for="modal_id" class="col-form-label"><strong>Form Number:</strong></label>
-            <input type="text" class="form-control" id="modal_id" name="modal_id" value="{{ modal_id }}" readonly />
+  {% for form in forms %}
+    <div class="modal fade" id="modal{{ form.2 }}" tabindex="-1" aria-labelledby="exampleModalLabel{{ form.2 }}" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel{{ form.2 }}">Response for Inquiry No. <strong style="color:#3b7197">{{ form.2 }}</strong></h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          <div class="mb-3">
-            <label for="recipient-name" class="col-form-label"><strong>Patient Name:</strong></label>
-            <input type="text" class="form-control" id="recipient-name" value="{{ p_fname }} {{ p_lname }}" readonly />
-          </div>
-          <div class="mb-3">
-            <label for="recipient-name" class="col-form-label"><strong>Request:</strong></label>
-            <p>{{ inquiry }}</p>
-          </div>
-          {% if form.5 == 'Pending' %}
-            <div class="mb-3">
-              <label for="response" class="col-form-label"><strong>Write a Response:</strong></label>
-              <textarea class="form-control" id="response" name="response"></textarea>
+          <div class="modal-body">
+            {% if form.1 != 'Pending' %}
+              <div class="card">
+                <div class="card-header" style="background-color: #74bde0; color:white;">Doctor Information</div>
+                <table class="table">
+                  <tbody>
+                    <tr>
+                      <td>
+                        <strong>Doctor Name:</strong>
+                      </td>
+                      <td>{{ form.3 }}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <strong>Specialization:</strong>
+                      </td>
+                      <td>{{ form.4 }}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <strong>Email:</strong>
+                      </td>
+                      <td>{{ form.5 }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            {% endif %}
+            <div class="card mt-2">
+              <div class="card-header" style="background-color: #74bde0; color:white;">Inquiry</div>
+              <div class="card-body">{{ form.0 }}</div>
             </div>
-          {% elif form.5 == 'Answered' %}
-            <div class="mb-3">
-              <label for="response" class="col-form-label"><strong>Edit Your Response:</strong></label>
-              <textarea class="form-control" id="response" name="response">{{ form.4 }}</textarea>
-            </div>
-          {% endif %}
-        </div> {% endcomment %}
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <input type="submit" class="btn btn-light" style="background-color:#3b7197; color:white; border-color: #3b7197;" value="Send Response" />
+            {% comment %} {% if form.1 != 'Pending' %}
+              {% endcomment %}
+              <div class="card mt-2">
+                <div class="card-header" style="background-color: #74bde0; color:white;">Response</div>
+                <div class="card-body">{{ form.1 }}</div>
+              </div>
+              {% comment %}
+            {% else %}
+              <div class="card mt-2" style="border:none;">
+                <div class="card-body text-center">
+                  <h6>Your doctor will get back to you soon.</h6>
+                </div>
+              </div>
+            {% endif %} {% endcomment %}
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  {% endfor %}
 {% endblock %}
