@@ -18,7 +18,7 @@
             </div>
             <div class="card-body">
                 <form action="{% url 'edit_nur' nid %}" method="POST">
-s                    {%csrf_token%}
+                    {%csrf_token%}
                     <div class="custom-row mb-3">
                         <input type="text" class="form-control" name="first_name"  value={{nur.1}} placeholder="First Name" required>
                     </div>
