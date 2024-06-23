@@ -10,19 +10,23 @@
         <table class="table">
           <thead>
              <tr>
-                <th>Date of Visit</th>
                 <th>Doctor</th>
-                <th>Reason for Visit</th>
-                <th>Treatment or Procedure</th>
+                <th>Diagnosis</th>
+                <th>Treatment</th>
+                <th>Follow up</th>
+                <th>Dosage</th>
+                <th>Frequency</th>
              </tr>
           </thead>
           <tbody>
             {% for h in history%}
               <tr>
-                  <td>{{h.3}}{{h.4}}</td>
                   <td>{{h.0}} {{h.1}}</td>
                   <td>{{h.2}}</td>
-                  <td></td>
+                  <td>{{h.3}}</td>
+                  <td>{{h.4}}</td>
+                  <td>{{h.5}}</td>
+                  <td>{{h.6}}</td>
               </tr>
               {% endfor %}
           </tbody>  

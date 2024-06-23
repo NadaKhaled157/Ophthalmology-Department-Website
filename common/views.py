@@ -9,6 +9,7 @@ from django.contrib.auth.hashers import make_password
 from django.core.files.storage import default_storage
 from django.db import connection
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect, Http404
+from pathlib import Path
 
 
 
@@ -48,6 +49,7 @@ def index(request):
         if img:
             img_name = img.name
             img_path = default_storage.save(img_name, img)
+            return
             request.session['img_path'] = img_path
 
         with connection.cursor() as cursor:
@@ -130,6 +132,8 @@ def authenticate_user(request):
             wrong_email = "This user does not exist"
             return render(request, "common/login.html",{'wrong_email': True})
     return render(request, "common/login.html")
+
+
 
 
 

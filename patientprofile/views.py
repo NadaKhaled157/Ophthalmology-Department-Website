@@ -12,6 +12,7 @@ from django.db import connection
 from datetime import date, timedelta
 from datetime import datetime
 from dateutil.relativedelta import relativedelta, MO, TU, WE, TH, FR, SA, SU
+from pathlib import Path
 
 # Create your views here.
 def pprofile(request):
@@ -23,9 +24,10 @@ def pprofile(request):
         history = cursor.fetchall()
 
     with connection.cursor() as cursor:
-        cursor.execute("SELECT p_photo from patient where pid = %s", [pid])
-        photo = cursor.fetchone()
-        p_img = photo[0].tobytes() # type: ignore
+        cursor.execute("SELECT * from patient where pid = %s", [pid])
+        patient= cursor.fetchone()
+        photo = patient[5]
+        p_img = photo.tobytes() # type: ignore
         img_path = p_img.decode('utf-8')
 
     context = {
@@ -33,7 +35,7 @@ def pprofile(request):
         'id': pid,
         'photo': img_path,
         'history': history,
-        'patient_name': patient_name
+        'patient': patient
     }
 
     return render(request, 'patientprofile/pprofile.html', context)
@@ -74,8 +76,7 @@ def processed_availability(availabilities):
             count= cursor.fetchone()[0]
             #print(f"count{count}")
         if count >3: available= False
-        processed_availabilities.append((did,  day_name, next_date, shift_start, shift_end, available))
-        # Initialize a flag to track whether the doctor is already in the list
+        processed_availabilities.append((did, day_name, next_date, shift_start, shift_end, available))
         doctor_added = False
         # Check if the list is empty
         if len(doctor) == 0:
@@ -91,11 +92,12 @@ def processed_availability(availabilities):
         # If the doctor hasn't been added, append them to the list
         if not doctor_added:
             doctor.append((did, doctor_name, d_specialization))
-
     return processed_availabilities, doctor
+
 
 def available_time(request, appointment_type):
     pid= request.session.get('id')
+    decoded_paths_and_ids = retrieve_image(appointment_type,pid)
     if  appointment_type == 'examination':
             with connection.cursor() as cursor:
                 cursor.execute("""
@@ -103,13 +105,12 @@ def available_time(request, appointment_type):
                     FROM doctor d
                     INNER JOIN availability a ON d.did = a.did
                     INNER JOIN staff s ON s.eid = d.eid
-                    Where d.d_specialization not in ('Surgery')
+                    Where d.d_specialization not in ('Surgeon')
                 """)
                 examination_availabilities = cursor.fetchall()
+            # print(decoded_paths_and_ids)
             processed_availabilities, doctor= processed_availability(examination_availabilities)
-            # return HttpResponse(doctor)
-            return render(request, 'patientprofile/available_time.html', {'doctors_data':doctor,"shifts": processed_availabilities,"appointment_type": "examination"})
-
+            return render(request, 'patientprofile/available_time.html', {'doctors_data':doctor,"shifts": processed_availabilities,"appointment_type": "examination",'paths_with_ids':decoded_paths_and_ids})
 
     elif appointment_type == 'follow_up':
         with connection.cursor() as cursor:
@@ -122,14 +123,14 @@ def available_time(request, appointment_type):
             cursor.execute("SELECT s.fname || ' ' || s.lname AS doctor_name, d.d_specialization, a.day ,a.shift_start, a.shift_end, d.did FROM doctor d inner join availability a ON d.did = a.did inner join staff s on s.eid = d.eid WHERE (a.did = (SELECT did FROM patient WHERE pid = %s)) and (a.day= %s) ", [pid, day_of_week])
             followup_availabilities = cursor.fetchall()
             print(followup_availabilities)
-        return render(request, 'patientprofile/available_time.html', {"followup_availabilities": followup_availabilities,"appointment_type": "follow_up", "followup_date":followup})
+        return render(request, 'patientprofile/available_time.html', {"followup_availabilities": followup_availabilities,"appointment_type": "follow_up", "followup_date":followup,'paths_with_ids':decoded_paths_and_ids})
 
     elif appointment_type == 'surgery':
         with connection.cursor() as cursor:
-            cursor.execute("SELECT s.fname || ' ' || s.lname AS doctor_name,d.d_specialization, a.day, a.shift_start, a.shift_end, d.did FROM doctor d inner join availability a ON d.did = a.did inner join staff s on s.eid = d.eid WHERE d.d_specialization='surgery'")
+            cursor.execute("SELECT s.fname || ' ' || s.lname AS doctor_name,d.d_specialization, a.day, a.shift_start, a.shift_end, d.did FROM doctor d inner join availability a ON d.did = a.did inner join staff s on s.eid = d.eid WHERE d.d_specialization='Surgeon'")
             operation_availabilities = cursor.fetchall()
         processed_availabilities, doctor= processed_availability(operation_availabilities)
-        return render(request, 'patientprofile/available_time.html', {"shifts": processed_availabilities,'doctors_data':doctor, "appointment_type": "surgery"})
+        return render(request, 'patientprofile/available_time.html', {"shifts": processed_availabilities,'doctors_data':doctor, "appointment_type": "surgery",'paths_with_ids':decoded_paths_and_ids})
 
     return render(request, 'patientprofile/available_time.html')
 
@@ -141,13 +142,17 @@ def process_appointment(request): #after choosing appointment and available_time
         print("did inside process_appointment ",did)
         app_type=request.POST.get('appointment_type')
         # print(time)---> (2020-06-22) - Monday - 8:30 a.m. - 10:30 a.m.
-        app_day, app_date , start_time, end_time = time.split('*')
+        app_day,app_date , start_time, end_time = time.split('*')
         if app_type=='examination':  #insert new did for patient
             with connection.cursor() as cursor:
                 cursor.execute("UPDATE patient SET did = %s WHERE pid = %s", [did, pid])
 
         if app_type=='surgery':
+            with connection.cursor() as cursor:
+                cursor.execute("INSERT INTO appointment (app_date, app_time, app_type, pid, did) Values (%s, %s, %s, %s, %s)",
+                                [app_date, start_time, app_type, pid, did ])
             return redirect('patientprofile:operation')
+
         else: #insert appointment data for followup and examination
             with connection.cursor() as cursor:
                 cursor.execute("INSERT INTO appointment (app_date, app_time, app_type, pid, did) Values (%s, %s, %s, %s, %s)",
@@ -155,15 +160,6 @@ def process_appointment(request): #after choosing appointment and available_time
 
             return redirect('patientprofile:payment',app_type=app_type, did=did, app_date=app_date, start_time=start_time, app_day=app_day)
     return HttpResponse("Waiting to process the appointment")
-
-# def history(request):
-#     pid = request.session.get('id')
-#     patient_name = request.session.get('name')
-#     with connection.cursor() as cursor:
-#         cursor.execute("SELECT s.fname, s.lname, m.diagnosis, m.treatment, m.followup from medical_history m inner join doctor d ON m.did = d.did inner join staff s ON d.eid= s.eid where pid = %s", [pid])
-#         history = cursor.fetchall() #list of tuples, each tuple represents a row of data returned by the query
-#     return render (request, 'patientprofile/history.html', {"history": history,"patient_name": patient_name })
-
 
 def contact(request):
     pid = request.session.get('id')
@@ -173,27 +169,46 @@ def contact(request):
         did=cursor.fetchone()[0]
         print("diddd", did)
     if not did:
-        return render (request, 'patientprofile/visitor_form.html')
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT p_fname || ' ' || p_lname AS p_name, email, phone_number from patient where pid =%s", [pid])
+            p_name, p_email, phone_number=cursor.fetchone()
+        return render (request, 'patientprofile/visitor_form.html', {"p_name":p_name, "p_email":p_email, "phone_number":phone_number})
     else:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT s.fname || ' ' || s.lname AS doctor_name from staff s inner join doctor d on d.eid=s.eid where d.did =%s",[did])
+            doctor_name= cursor.fetchone()[0]
         if request.method=='POST':
             inquiry= request.POST.get('inquiry')
             with connection.cursor() as cursor:
                 cursor.execute("INSERT INTO form (pid, request ,did) Values (%s, %s, %s)", [pid, inquiry, did])
                 return redirect ('patientprofile:success_request')
-        return render (request, 'patientprofile/contact.html')
+        return render (request, 'patientprofile/contact.html', {"doctor_name":doctor_name})
 
+
+# def doctor_response(request):
+#     pid = request.session.get('id')
+#     with connection.cursor() as cursor:
+#         cursor.execute("SELECT request, response, fnum, form_status from form where pid = %s",[pid])
+#         forms= cursor.fetchall()
+#     return render (request, 'patientprofile/doctor_response.html', {"forms": forms})
 
 def doctor_response(request):
     pid = request.session.get('id')
     with connection.cursor() as cursor:
-        cursor.execute("SELECT request, response, fnum from form where pid = %s",[pid])
+        cursor.execute("""SELECT f.request, f.response, f.fnum , s.fname || ' ' || s.lname AS patient_name, d.d_specialization, d.email
+                       from form f
+                       inner join doctor d on f.did= d.did
+                       inner join staff s on d.eid= s.eid 
+                        where pid = %s""",[pid])
         forms= cursor.fetchall()
     return render (request, 'patientprofile/doctor_response.html', {"forms": forms})
 
 
+
 def payment(request,app_type,did, app_date, start_time, app_day):
     p_name= request.session.get('name')
-    fees="200"
+    pid= request.session.get('id')
+    fees=200
     with connection.cursor() as cursor:
         cursor.execute("SELECT d.d_specialization, s.fname, s.lname from doctor d inner join staff s on d.eid=s.eid Where d.did= %s",[did])
         d_specialization, fname, lname= cursor.fetchone()
@@ -206,8 +221,13 @@ def payment(request,app_type,did, app_date, start_time, app_day):
         if d_specialization=='Consultant': fees=100;
     elif app_type=='surgery':
         fees= "will be determined by the hospital soon"
-
-    return render (request, 'patientprofile/payment.html',{"doc_name": doc_name,"patient_name":p_name, "d_specialization": d_specialization,"app_date": app_date, "app_day":app_day ,"app_type": app_type, "start_time":start_time, "fees": fees})
+    print(app_date, start_time, app_type, pid, did)
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT aid from appointment where app_date = %s and app_time=%s and app_type= %s and pid=%s and did = %s",
+                        [app_date, start_time, app_type, pid, did ])
+        aid= cursor.fetchone()[0]
+    print("aid in payment", aid)
+    return render (request, 'patientprofile/payment.html',{"doc_name": doc_name,"patient_name":p_name, "d_specialization": d_specialization,"app_date": app_date, "app_day":app_day ,"app_type": app_type, "start_time":start_time, "fees": fees, "aid":aid})
 
 def success_request(request):
     return render (request, 'patientprofile/success_request.html')
@@ -215,27 +235,44 @@ def success_request(request):
 def success_payment(request):
     print(request.method)
     if request.method=="POST":
+        aid=request.POST.get('aid')
         fees= request.POST.get('fees')
         payment_method= request.POST.get('payment-method')
         if payment_method=='cash':
+            print("aid in success_payment", aid)
             with connection.cursor() as cursor:
-                cursor.execute("""INSERT INTO billing (payment_status, amount) Values (%s, %s)""",['Pending', fees])
+                cursor.execute("""INSERT INTO billing (payment_status, amount) Values (%s, %s) RETURNING bid """,['Pending', fees])
+                bid = cursor.fetchone()[0]
+            print("bid", bid)
+            with connection.cursor() as cursor:
+                cursor.execute("""UPDATE appointment SET bid = %s WHERE aid = %s""", [bid, aid])
+
+            return render (request, 'patientprofile/success_payment.html')
+
         elif payment_method=='visa':
-            return redirect('patientprofile:pay_visa', fees=fees)
+                return redirect('patientprofile:pay_visa', fees=fees, aid=aid)
+    else:
+        return HttpResponse("POST is not seen ")
 
-    return render (request, 'patientprofile/success_payment.html')
 
-def pay_visa(request, fees):
-    return render (request, 'patientprofile/pay_visa.html', {"fees": fees})
+
+def pay_visa(request, fees, aid):
+    return render (request, 'patientprofile/pay_visa.html', {"fees": fees, "aid": aid})
 
 def success_payment_visa(request):
     date= datetime.today()
     if request.method=='POST':
         fees= request.POST.get('fees')
+        aid= request.POST.get('aid')
         with connection.cursor() as cursor:
-            cursor.execute("""INSERT INTO billing (bdate, payment_status, amount) Values (%s,%s, %s)""",[date,'Paid', fees])
-    return render (request, 'patientprofile/success_payment.html')
-
+            cursor.execute("""INSERT INTO billing (bdate, payment_status, amount) Values (%s,%s, %s) returning bid """,[date,'Paid', fees])
+            bid = cursor.fetchone()[0]
+        with connection.cursor() as cursor:
+            cursor.execute("""UPDATE appointment SET bid = %s WHERE aid = %s""", [bid, aid])
+        print(aid)
+        return render (request, 'patientprofile/success_payment.html')
+    else:
+        return HttpResponse("POST is not seen ")
 
 def edit(request):
     pid = request.session.get('id')
@@ -249,6 +286,7 @@ def edit(request):
         fname=request.POST.get('fname')
         lname=request.POST.get('lname')
         address = request.POST.get('address')
+        age = request.POST.get('age')
         email = request.POST.get('email')
         phone_number = request.POST.get('phone_number')
         password = request.POST.get('password')
@@ -262,11 +300,10 @@ def edit(request):
             img_path = default_storage.save(img_name, img)
         with connection.cursor() as cursor:
             cursor.execute(
-                "UPDATE patient SET p_fname= %s, p_lname= %s, email = %s, password = %s, address = %s, phone_number = %s, p_photo = %s WHERE pid = %s",
-                [fname, lname, email, hashed_password, address, phone_number, img_path, pid]
+                "UPDATE patient SET p_fname= %s, p_lname= %s, email = %s, p_age= %s, password = %s, address = %s, phone_number = %s, p_photo = %s WHERE pid = %s",
+                [fname, lname, email, age,hashed_password, address, phone_number, img_path, pid]
             )
 
-        target_url = f'/patient/pprofile'
         target_url = f'/patient/pprofile'
         return redirect(target_url)
     else:
@@ -316,3 +353,43 @@ def format_time(time_str):
         formatted_time_str = '0' + formatted_time_str
 
     return formatted_time_str
+
+def check_image(img_path):
+    default_image_path = '../../../media/default-image.jpg'
+
+    actual_image_path = Path('media') / img_path
+    # print(actual_image_path)
+    if actual_image_path.exists():
+        image_path = img_path
+    else:
+        image_path = default_image_path
+    return image_path
+
+def retrieve_image(appointment_type,pid):
+    if appointment_type == "examination" or appointment_type == "surgery":
+        with connection.cursor() as cursor:
+            if appointment_type == "examination":
+                cursor.execute("""SELECT did, d_photo FROM doctor WHERE d_specialization not in ('Surgeon')""")
+            if appointment_type == "surgery":
+                cursor.execute("""SELECT did, d_photo FROM doctor WHERE d_specialization in ('Surgeon')""")
+            encoded_paths_and_ids = cursor.fetchall()
+            decoded_paths_and_ids = []
+        for record in encoded_paths_and_ids:
+            img_path_decoded = record[1].tobytes().decode('utf-8')
+            patient_image = check_image(img_path_decoded)
+            decoded_paths_and_ids.append((record[0],patient_image))
+
+    elif appointment_type == "follow_up":
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                           SELECT d.did, d.d_photo 
+                           FROM doctor d 
+                           JOIN patient p on p.did = d.did 
+                           WHERE p.pid = %s""",[pid])
+            encoded_paths_and_ids = cursor.fetchall()
+            print(encoded_paths_and_ids)
+            decoded_paths_and_ids = []
+            img_path_decoded = encoded_paths_and_ids[0][1].tobytes().decode('utf-8')
+            patient_image = check_image(img_path_decoded)
+            decoded_paths_and_ids.append((encoded_paths_and_ids[0][0],patient_image))
+    return decoded_paths_and_ids
