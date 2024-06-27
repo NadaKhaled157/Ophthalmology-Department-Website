@@ -1,4 +1,4 @@
-![WhatsApp Image 2024-06-23 at 12 21 09](https://github.com/NadaKhaled157/Ophthalmology-Department/assets/125503056/ae52c09a-1123-47fd-a336-331a176c0f59)# MySufferingQL
+# MySufferingQL
 A web application project using Django 
 
 Here are the features given for patient, doctor, admin, and guests of the website:
