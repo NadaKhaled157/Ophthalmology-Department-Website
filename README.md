@@ -1,6 +1,8 @@
 # MySufferingQL
 A web application project for an ophthalmology department in a hospital using Django.
 # Video Demo
+
+# Detailed Video 
 https://drive.google.com/file/d/1oAfKLN5-9j5vu8pubXLiNFbDFsNwHXdW/view?usp=drivesdk
 # Website Features
 Here are the features given for patient, doctor, admin, and guests of the website:
