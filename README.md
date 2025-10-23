@@ -2,7 +2,7 @@
 A web application project for an ophthalmology department in a hospital using Django.
 
 # Video Demo
-![Demo](demo.gif)
+<img src="demo.gif" width="600">
 
 # Detailed Video 
 https://drive.google.com/file/d/1oAfKLN5-9j5vu8pubXLiNFbDFsNwHXdW/view?usp=drivesdk
